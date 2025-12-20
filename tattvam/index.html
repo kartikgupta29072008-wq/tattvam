@@ -1,0 +1,2014 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tattvam - AI Assessment Suite</title>
+    
+    <!-- React & ReactDOM -->
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    
+    <!-- Babel -->
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['Inter', 'sans-serif'], serif: ['Merriweather', 'serif'], mono: ['JetBrains Mono', 'monospace'] },
+                    animation: { 'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite' },
+                    colors: {
+                        tattvam: { 50: '#fdfbf7', 100: '#f7f3e8', 500: '#d4af37', 600: '#b08d26', 900: '#4a3b0f' }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <!-- KaTeX -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/mhchem.min.js"></script>
+
+
+    <style>
+       @media print {
+    @page { margin: 1cm; size: A4; }
+    
+    /* RESET THE SCROLL LOCKS */
+    html, body, #root, .h-screen, .overflow-hidden, .overflow-auto, .overflow-y-auto {
+        height: auto !important;
+        overflow: visible !important;
+        position: static !important;
+    }
+
+    /* Hide UI elements */
+    .print-hidden { display: none !important; }
+    
+    /* Standardize text and layout */
+    body { 
+        background: white; 
+        -webkit-print-color-adjust: exact; 
+        color: black !important;
+    }
+    
+    /* Ensure full width and no internal scrolling */
+    .print-w-full { width: 100% !important; max-width: none !important; }
+    .print-overflow-visible { overflow: visible !important; }
+    .print-p-0 { padding: 0 !important; }
+    
+    /* Prevent questions from being split across pages */
+    .break-inside-avoid { break-inside: avoid; page-break-inside: avoid; }
+    
+    /* Handle columns */
+    .print-col-2 { column-count: 2; column-gap: 2rem; }
+}
+    </style>
+</head>
+<body class="bg-tattvam-50 text-slate-900 h-screen overflow-hidden">
+    <div id="root" class="h-full"></div>
+
+    <script type="text/babel">
+        const { useState, useEffect, useRef } = React;
+
+        // --- ICONS ---
+        const Icon = ({ name, className = "w-5 h-5", ...props }) => {
+            const icons = {
+                Plus: <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className} {...props}><path d="M5 12h14"/><path d="M12 5v14"/></svg>,
+                Trash2: <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className} {...props}><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/><line x1="10" x2="10" y1="11" y2="17"/><line x1="14" x2="14" y1="11" y2="17"/></svg>,
+                Save: <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className} {...props}><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>,
+                ArrowLeft: <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className} {...props}><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></svg>,
+                Upload: <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className} {...props}><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" x2="12" y1="3" y2="15"/></svg>,
+                Loader2: <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className} {...props}><path d="M21 12a9 9 0 1 1-6.219-8.56"/></svg>,
+                Play: <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className} {...props}><polygon points="5 3 19 12 5 21 5 3"/></svg>,
+                CheckCircle2: <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className} {...props}><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></svg>,
+                XCircle: <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className} {...props}><circle cx="12" cy="12" r="10"/><path d="m15 9-6 6"/><path d="m9 9 6 6"/></svg>,
+                Edit2: <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className} {...props}><path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"/></svg>,
+                FileText: <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className} {...props}><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/><line x1="16" x2="8" y1="13" y2="13"/><line x1="16" x2="8" y1="17" y2="17"/><line x1="10" x2="8" y1="9" y2="9"/></svg>,
+                Atom: <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className} {...props}><circle cx="12" cy="12" r="1"/><path d="M20.2 20.2c2.04-2.03.02-7.36-4.5-11.9-4.54-4.52-9.87-6.54-11.9-4.5-2.04 2.03-.02 7.36 4.5 11.9 4.54 4.52 9.87 6.54 11.9 4.5Z"/><path d="M15.7 15.7c4.52-4.54 6.54-9.87 4.5-11.9-2.03-2.04-7.36-.02-11.9 4.5-4.52 4.54-6.54 9.87-4.5 11.9 2.03 2.04 7.36.02 11.9-4.5Z"/></svg>,
+                Settings: <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className} {...props}><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.47a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.39a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></svg>,
+                Printer: <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className} {...props}><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect width="12" height="8" x="6" y="14"/></svg>,
+                BookOpen: <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className} {...props}><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>,
+                Sparkles: <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className} {...props}><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"/></svg>,
+                Lightbulb: <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className} {...props}><path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-1 1.5-2 1.5-3.5 0-2.25-2.25-4-5-4S8 5.75 8 8c0 1.5.5 2.5 1.5 3.5.8.8 1.3 1.5 1.5 2.5"/><path d="M9 18h6"/><path d="M10 22h4"/></svg>,
+                RefreshCw: <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className} {...props}><path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"/><path d="M8 16H3v5"/></svg>,
+                Image: <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className} {...props}><rect width="18" height="18" x="3" y="3" rx="2" ry="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/></svg>,
+                X: <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className} {...props}><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>,
+                Wand2: <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className} {...props}><path d="m21.64 3.64-1.28-1.28a1.21 1.21 0 0 0-1.72 0L2.36 18.64a1.21 1.21 0 0 0 0 1.72l1.28 1.28a1.2 1.2 0 0 0 1.72 0L21.64 5.36a1.2 1.2 0 0 0 0-1.72Z"/><path d="m14 7 3 3"/><path d="M5 6v4"/><path d="M19 14v4"/><path d="M10 2v2"/><path d="M7 8H3"/><path d="M21 16h-4"/><circle cx="20" cy="4" r="2"/><circle cx="17.5" cy="17.5" r="2.5"/><circle cx="6.5" cy="6.5" r="2.5"/></svg>,
+                Search: <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className} {...props}><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>,
+                BrainCircuit: <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className} {...props}><path d="M12 5a3 3 0 1 0-5.997.125 4 4 0 0 0-2.526 5.77 4 4 0 0 0 .556 6.588A4 4 0 1 0 12 18Z"/><path d="M12 5a3 3 0 1 1 5.997.125 4 4 0 0 1 2.526 5.77 4 4 0 0 1-.556 6.588A4 4 0 1 1 12 18Z"/><path d="M15 13a4.5 4.5 0 0 1-3-4 4.5 4.5 0 0 1-3 4"/><path d="M17.599 6.5a3 3 0 0 0 .399-1.375"/><path d="M6.003 5.125A3 3 0 0 0 6.401 6.5"/><path d="M3.477 10.896a4 4 0 0 1 .585-.396"/><path d="M19.938 10.5a4 4 0 0 1 .585.396"/><path d="M6 18a4 4 0 0 1-1.97-3.284"/><path d="M17.97 14.716A4 4 0 0 1 16 18"/></svg>,
+                ListChecks: <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className} {...props}><path d="m3 17 2 2 4-4"/><path d="m3 7 2 2 4-4"/><path d="M13 6h8"/><path d="M13 12h8"/><path d="M13 18h8"/></svg>,
+                Grid: <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className} {...props}><rect width="18" height="18" x="3" y="3" rx="2" ry="2"/><path d="M3 9h18"/><path d="M3 15h18"/><path d="M9 3v18"/><path d="M15 3v18"/></svg>,
+                Clock: <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className} {...props}><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>,
+                Flag: <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className} {...props}><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/><line x1="4" x2="4" y1="22" y2="15"/></svg>,
+                ChevronRight: <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className} {...props}><path d="m9 18 6-6-6-6"/></svg>,
+                ChevronLeft: <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className} {...props}><path d="m15 18-6-6 6-6"/></svg>,
+                Download: <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className} {...props}><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" x2="12" y1="15" y2="3"/></svg>,
+                Clipboard: <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className} {...props}><rect width="8" height="4" x="8" y="2" rx="1" ry="1"/><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/></svg>
+            };
+            return icons[name] || null;
+        };
+
+      const LatexRenderer = ({ content, className = "" }) => {
+            const containerRef = useRef(null);
+            useEffect(() => {
+                if (!containerRef.current || !window.katex) return;
+                
+                // 1. Clean the text: Fix missing spaces after commands and double-escaped breaks
+                let text = content || '';
+                
+                // 2. Split by Math Delimiters ($$ for block, $ for inline)
+                const parts = text.split(/(\$\$[\s\S]*?\$\$|\$[\s\S]*?\$)/g);
+                
+                containerRef.current.innerHTML = '';
+                
+                parts.forEach(part => {
+                    const span = document.createElement('span');
+                    
+                    if (part.startsWith('$$') && part.endsWith('$$')) {
+                        // Display Mode (Block Math)
+                        try { 
+                            window.katex.render(part.slice(2, -2), span, { displayMode: true, throwOnError: false, trust: true }); 
+                        } catch (e) { span.innerText = part; }
+                    } 
+                    else if (part.startsWith('$') && part.endsWith('$')) {
+                        // Inline Mode
+                        try { 
+                            window.katex.render(part.slice(1, -1), span, { displayMode: false, throwOnError: false, trust: true }); 
+                        } catch (e) { span.innerText = part; }
+                    } 
+                    else {
+                        // Regular Text - Handle newlines cleanly
+                        // We strictly replace \n with <br> to keep formatting
+                        span.innerHTML = part.replace(/\n/g, '<br/>');
+                    }
+                    containerRef.current.appendChild(span);
+                });
+            }, [content]);
+            
+            return <div ref={containerRef} className={`latex-content leading-relaxed whitespace-pre-wrap ${className}`} />;
+        };
+
+        // --- UTILS ---
+        const safeParseJSON = (text) => {
+            try {
+                let clean = text.replace(/```json/g, '').replace(/```/g, '').trim();
+                const start = clean.search(/[{[]/);
+                const end = clean.lastIndexOf(/[}\]]/);
+                if (start !== -1 && end !== -1 && end > start) clean = clean.substring(start, end + 1);
+                return JSON.parse(clean);
+            } catch (e) { throw new Error("Invalid AI response."); }
+        };
+
+        const fetchWithRetry = async (url, options, retries = 1) => {
+            try {
+                const response = await fetch(url, options);
+                if (!response.ok) throw new Error("API Error: " + response.statusText);
+                return await response.json();
+            } catch (err) {
+                if (retries > 0) return fetchWithRetry(url, options, retries - 1);
+                throw err;
+            }
+        };
+
+        const fileToBase64 = (file) => new Promise((resolve) => {
+            const reader = new FileReader();
+            reader.readAsDataURL(file);
+            reader.onload = () => resolve(reader.result.replace('data:', '').replace(/^.+,/, ''));
+        });
+
+        const cropDiagram = (base64Image, box) => new Promise((resolve) => {
+            if (!box || box.length !== 4) return resolve(null);
+            const img = new window.Image();
+            img.onload = () => {
+                const canvas = document.createElement('canvas');
+                const [ymin, xmin, ymax, xmax] = box;
+                const width = img.width;
+                const height = img.height;
+                const realX = (xmin / 1000) * width;
+                const realY = (ymin / 1000) * height;
+                const realW = ((xmax - xmin) / 1000) * width;
+                const realH = ((ymax - ymin) / 1000) * height;
+                const pad = 10;
+                const sx = Math.max(0, realX - pad);
+                const sy = Math.max(0, realY - pad);
+                const sw = Math.min(width - sx, realW + (pad*2));
+                const sh = Math.min(height - sy, realH + (pad*2));
+                canvas.width = sw;
+                canvas.height = sh;
+                const ctx = canvas.getContext('2d');
+                ctx.drawImage(img, sx, sy, sw, sh, 0, 0, sw, sh);
+                resolve(canvas.toDataURL('image/jpeg', 0.7));
+            };
+            img.src = "data:image/png;base64," + base64Image;
+        });
+
+        // --- API CALLS ---
+        const apiCall = async (apiKey, prompt, imageData = null) => {
+            const body = {
+                contents: [{ parts: [{ text: prompt }, ...(imageData ? [{ inlineData: { mimeType: "image/png", data: imageData } }] : [])] }],
+                generationConfig: { responseMimeType: "application/json" }
+            };
+            const data = await fetchWithRetry(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`, {
+                method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body)
+            });
+            return safeParseJSON(data.candidates?.[0]?.content?.parts?.[0]?.text);
+        };
+// ... inside the API CALLS section ...
+
+        const analyzeResultImage = async (base64, apiKey) => {
+            const prompt = `Analyze this result/scorecard image. Extract data strictly into JSON: 
+            {
+              "testName": "Exam Name/Heading",
+              "score": Number (obtained marks),
+              "maxMarks": Number (total marks),
+              "rank": Number (if available, else null),
+              "percentile": Number (if available, else null),
+              "subjects": { "Physics": 50, "Math": 40 ... } (Map subject name to marks obtained)
+            }`;
+            return await apiCall(apiKey, prompt, base64);
+        };
+
+        const generateAnalysisInsights = async (history, apiKey) => {
+            const prompt = `Act as an academic mentor. Analyze this student's performance history JSON. 
+            History: ${JSON.stringify(history)}.
+            Provide a deep analysis.
+            Output JSON: {
+              "summary": "Brief summary of performance trend.",
+              "strengths": ["Strength 1", "Strength 2"],
+              "weaknesses": ["Weakness 1", "Weakness 2"],
+              "advice": "Specific actionable advice for improvement."
+            }`;
+            return await apiCall(apiKey, prompt);
+        };
+const transcribeImage = async (base64, apiKey) => {
+            const prompt = `Analyze this page. Identify exam questions. 
+            Rules for Transcription:
+            1. **MATH:** Use LaTeX for all math. Example: $x^2 + y^2$.
+            2. **CHEMISTRY:** Use \\ce{...} for chemical formulas. Example: $\\ce{H2SO4}$, $\\ce{2H2 + O2 -> 2H2O}$.
+            3. **ESCAPING:** You must escape backslashes in JSON strings. Use \\\\frac instead of \\frac.
+            4. **Diagrams:** Detect if a specific diagram/graph exists for the question.
+            
+            Structure:
+            For every question, output a JSON object:
+            { 
+              "text": "The question text...", 
+              "type": "SINGLE" (or MULTI, NUMERICAL, MATRIX), 
+              "options": ["Option A", "Option B"...], 
+              "marks": {"pos":3, "neg":1}, 
+              "difficulty": "Medium", 
+              "diagram_box": [ymin, xmin, ymax, xmax] (0-1000 scale, TIGHT CROP, or null if no diagram)
+            }`;
+            
+            const results = await apiCall(apiKey, prompt, base64);
+            if (Array.isArray(results)) {
+                for (let q of results) {
+                    if (q.diagram_box) { 
+                        q.diagram = await cropDiagram(base64, q.diagram_box); 
+                        delete q.diagram_box; 
+                    }
+                    if(!q.marks) q.marks = { pos: 4, neg: 1 };
+                    if(!q.type) q.type = 'SINGLE';
+                }
+            }
+            return results;
+        };
+
+        const generateExplanation = async (q, k) => {
+            const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${k}`, { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({ contents: [{ parts: [{ text: `Explain: "${q.text}". Type: ${q.type}.` }] }] }) });
+            const d = await res.json();
+            return d.candidates?.[0]?.content?.parts?.[0]?.text || "";
+        };
+
+        const generateDistractors = async (q, k) => apiCall(k, `Q: "${q.text}". Generate 3 wrong options. JSON: ["A", "B", "C"]`);
+        const generateRemix = async (q, k) => apiCall(k, `Remix this question. Q: "${q.text}". Output JSON: { "text": "New Q", "options": ["A","B","C","D"] }`);
+        const generateGuide = async (qs, k) => {
+            const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${k}`, { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({ contents: [{ parts: [{ text: `Study Guide for:\n${qs.map(q=>q.text).join('\n')}` }] }] }) });
+            const d = await res.json();
+            return d.candidates?.[0]?.content?.parts?.[0]?.text || "";
+        };
+        const generateTemplateConfig = async (userPrompt, title, k) => {
+            const prompt = `Act as an expert exam designer. Request: "${userPrompt}". Title: "${title}". Generate JSON: { "header": "String", "watermark": "String", "font": "serif/sans/mono", "twoCol": Boolean, "showMarks": Boolean, "instructions": "String" }`;
+            return await apiCall(k, prompt);
+        };
+
+        // --- NEW: MANVANCHIT AI QUESTION GENERATOR ---
+        const generateAIQuestions = async (topic, count, difficulty, type, depth, apiKey) => {
+            const prompt = `Act as an expert academic question setter.
+            Topic/Context: "${topic}"
+            Depth Level: ${depth} (Focus on ${depth} understanding).
+            Task: Generate ${count} distinct questions.
+            Difficulty: ${difficulty}.
+            Question Type: ${type} (If 'MIXED', use a variety of SINGLE, MULTI, NUMERICAL).
+            
+            Output a strictly valid JSON array of objects matching this schema:
+            [{
+              "text": "Question text (use LaTeX $...$ for math)",
+              "type": "SINGLE" (or MULTI, NUMERICAL, MATRIX),
+              "options": ["Option A", "Option B", "Option C", "Option D"] (required for SCQ/MCQ),
+              "correctIndex": 0 (integer index for SCQ),
+              "correctIndices": [0, 2] (array for MULTI),
+              "correctNum": "10.5" (string for NUMERICAL),
+              "matrix": { "rows": ["A","B"], "cols": ["P","Q"] } (for MATRIX),
+              "matrixAns": { "0": [1], "1": [0] } (row index -> col indices),
+              "marks": {"pos": 4, "neg": 1},
+              "explanation": "Brief solution."
+            }]`;
+            
+            return await apiCall(apiKey, prompt);
+        };
+
+        // --- NEW: SMART IMPORT (PASTE PARSER) ---
+        const parsePastedText = async (rawText, apiKey) => {
+            const prompt = `Parse this raw text into structured quiz questions.
+            Raw Text: "${rawText}"
+            Identify questions. For each, determine type (SINGLE, MULTI, NUMERICAL).
+            Output JSON: [{ "text": "...", "type": "SINGLE", "options": ["A", "B"...], "correctIndex": 0, "correctNum": "5", "marks": {"pos": 4, "neg": 1} }]`;
+            return await apiCall(apiKey, prompt);
+        };
+
+        // --- COMPONENTS ---
+        const ApiKeyModal = ({ apiKey, setApiKey, onClose, onSave }) => (
+            <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-[100] p-4">
+                <div className="bg-white rounded-2xl p-6 max-w-sm w-full shadow-2xl">
+                    <h3 className="text-xl font-bold mb-2">API Key Required</h3>
+                    <p className="text-sm text-slate-500 mb-4">Paste Gemini API key.</p>
+                    <input type="password" className="w-full p-3 border rounded-lg mb-4" value={apiKey} onChange={e => setApiKey(e.target.value)} />
+                    <div className="flex gap-2"><button onClick={onClose} className="flex-1 py-2 text-slate-500 hover:bg-slate-100 rounded-lg">Cancel</button><button onClick={() => onSave(apiKey)} disabled={!apiKey} className="flex-1 py-2 bg-tattvam-600 text-white rounded-lg hover:bg-tattvam-500 disabled:opacity-50">Save</button></div>
+                </div>
+            </div>
+        );
+
+        const QuizSetupModal = ({ onClose, onStart }) => {
+            const [mins, setMins] = useState(180);
+            const [shuffle, setShuffle] = useState(false);
+            return (
+                <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-[100] p-4">
+                    <div className="bg-white rounded-2xl p-6 max-w-sm w-full shadow-2xl animate-in zoom-in-95">
+                        <div className="flex justify-between items-center mb-4"><h3 className="text-xl font-bold">Exam Setup</h3><button onClick={onClose}><Icon name="X" className="text-slate-400" /></button></div>
+                        <div className="space-y-4 mb-6">
+                            <div><label className="text-xs font-bold text-slate-500 uppercase block mb-1">Duration (Minutes)</label><input type="number" value={mins} onChange={e=>setMins(e.target.value)} className="w-full p-2 border rounded-lg" /></div>
+                            <div className="flex items-center gap-2"><input type="checkbox" checked={shuffle} onChange={e=>setShuffle(e.target.checked)} className="w-4 h-4" /><span className="text-sm">Shuffle Questions</span></div>
+                        </div>
+                        <button onClick={() => onStart(mins, shuffle)} className="w-full bg-emerald-600 text-white py-3 rounded-lg font-bold hover:bg-emerald-700">Start Exam</button>
+                    </div>
+                </div>
+            );
+        };
+
+        const StudyGuideModal = ({ content, onClose }) => (
+            <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-[100] p-4">
+                <div className="bg-white rounded-2xl w-full max-w-3xl h-[80vh] flex flex-col shadow-2xl animate-in zoom-in-95">
+                    <div className="flex justify-between items-center p-6 border-b border-slate-100"><h3 className="text-xl font-bold text-tattvam-900 flex items-center gap-2"><Icon name="Sparkles" className="w-5 h-5 text-tattvam-600" /> AI Study Guide</h3><button onClick={onClose}><Icon name="X" className="w-5 h-5 text-slate-400 hover:text-red-500" /></button></div>
+                    <div className="flex-1 overflow-y-auto p-8 bg-tattvam-50"><div className="prose max-w-none">{content.split('\n').map((line, i) => { if (line.startsWith('# ')) return <h1 key={i} className="text-2xl font-bold mb-4 mt-6 text-slate-900">{line.replace('# ', '')}</h1>; if (line.startsWith('## ')) return <h2 key={i} className="text-xl font-bold mb-3 mt-5 text-slate-800">{line.replace('## ', '')}</h2>; if (line.startsWith('- ')) return <li key={i} className="ml-4 list-disc mb-1"><LatexRenderer content={line.replace('- ', '')} /></li>; return <p key={i} className="mb-2 text-slate-700"><LatexRenderer content={line} /></p> })}</div></div>
+                    <div className="p-4 border-t border-slate-100 flex justify-end"><button onClick={() => window.print()} className="flex items-center gap-2 text-slate-600 hover:text-tattvam-600 font-medium px-4"><Icon name="Printer" className="w-4 h-4" /> Print</button></div>
+                </div>
+            </div>
+        );
+
+        const ManvanchitModal = ({ onClose, onImport, apiKey }) => {
+            const [mode, setMode] = useState('generator'); // 'generator' or 'paste'
+            const [topic, setTopic] = useState('');
+            const [count, setCount] = useState(5);
+            const [difficulty, setDifficulty] = useState('Medium');
+            const [type, setType] = useState('MIXED');
+            const [depth, setDepth] = useState('Conceptual');
+            const [generating, setGenerating] = useState(false);
+            const [reviewList, setReviewList] = useState([]);
+            const [step, setStep] = useState('input');
+            const [editingId, setEditingId] = useState(null);
+            
+            const [rawText, setRawText] = useState('');
+            const [parsing, setParsing] = useState(false);
+
+            const handleGenerate = async () => {
+                if(!topic.trim()) return alert("Please enter a topic or paste context.");
+                setGenerating(true);
+                try {
+                    const qs = await generateAIQuestions(topic, count, difficulty, type, depth, apiKey);
+                    const safeQs = Array.isArray(qs) ? qs.map(q => ({...q, id: Math.random()})) : [];
+                    setReviewList(safeQs);
+                    setStep('review');
+                } catch(e) { alert("Generation failed: " + e.message); }
+                setGenerating(false);
+            };
+
+            const handleSmartPaste = async () => {
+                if(!rawText) return;
+                setParsing(true);
+                try {
+                    const questions = await parsePastedText(rawText, apiKey);
+                    const safeQs = Array.isArray(questions) ? questions.map(q => ({...q, id: Math.random()})) : [];
+                    setReviewList(safeQs);
+                    setStep('review');
+                } catch(e) { alert("Parsing error: " + e.message); }
+                setParsing(false);
+            };
+
+            const toggleQuestion = (id) => { setReviewList(prev => prev.map(q => q.id === id ? { ...q, selected: q.selected === false ? true : false } : q)); };
+            const handleConfirm = () => { const final = reviewList.filter(q => q.selected !== false); onImport(final); onClose(); };
+            const updateQuestionText = (id, newText) => { setReviewList(prev => prev.map(q => q.id === id ? { ...q, text: newText } : q)); };
+
+            return (
+                <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-[100] p-6">
+                    <div className="bg-white w-full max-w-4xl h-[90vh] rounded-xl shadow-2xl flex flex-col overflow-hidden animate-in zoom-in-95">
+                        <div className="bg-slate-900 p-4 flex justify-between items-center text-white">
+                            <div className="flex items-center gap-2"><Icon name="BrainCircuit" className="w-5 h-5 text-tattvam-500" /><span className="font-bold text-lg">MANVANCHIT</span></div>
+                            <button onClick={onClose} className="bg-red-500 hover:bg-red-600 p-1.5 rounded text-white transition-colors"><Icon name="X" className="w-5 h-5" /></button>
+                        </div>
+
+                        {/* Tabs */}
+                        {step === 'input' && (
+                            <div className="bg-slate-100 flex p-1 border-b">
+                                <button onClick={() => setMode('generator')} className={`flex-1 py-2 text-sm font-bold rounded-t ${mode==='generator' ? 'bg-white text-tattvam-900 shadow-sm' : 'text-slate-500'}`}>AI Generator</button>
+                                <button onClick={() => setMode('paste')} className={`flex-1 py-2 text-sm font-bold rounded-t ${mode==='paste' ? 'bg-white text-tattvam-900 shadow-sm' : 'text-slate-500'}`}>Smart Paste</button>
+                            </div>
+                        )}
+
+                        {step === 'input' ? (
+                            <div className="p-8 flex-1 overflow-y-auto bg-slate-50 flex flex-col items-center justify-center">
+                                {mode === 'generator' ? (
+                                    <div className="w-full max-w-lg space-y-6">
+                                        <textarea value={topic} onChange={e => setTopic(e.target.value)} className="w-full h-32 p-4 border-2 border-indigo-100 rounded-xl focus:border-indigo-500 outline-none text-sm" placeholder="Enter topic, syllabus, or instructions..." />
+                                        <div className="grid grid-cols-2 gap-4">
+                                            <div><label className="text-xs font-bold text-slate-500 uppercase block mb-1">Difficulty</label><select value={difficulty} onChange={e => setDifficulty(e.target.value)} className="w-full p-2 border rounded-lg bg-white text-sm"><option>Easy</option><option>Medium</option><option>Hard</option><option>JEE Main</option><option>JEE Adv</option><option>NEET</option></select></div>
+                                            <div><label className="text-xs font-bold text-slate-500 uppercase block mb-1">Count</label><select value={count} onChange={e => setCount(Number(e.target.value))} className="w-full p-2 border rounded-lg bg-white text-sm"><option>3</option><option>5</option><option>10</option><option>15</option><option>20</option></select></div>
+                                            <div><label className="text-xs font-bold text-slate-500 uppercase block mb-1">Type</label><select value={type} onChange={e => setType(e.target.value)} className="w-full p-2 border rounded-lg bg-white text-sm"><option value="MIXED">Mixed</option><option value="SINGLE">Single Correct</option><option value="MULTI">Multi Correct</option><option value="NUMERICAL">Numerical</option></select></div>
+                                            <div><label className="text-xs font-bold text-slate-500 uppercase block mb-1">Depth</label><select value={depth} onChange={e => setDepth(e.target.value)} className="w-full p-2 border rounded-lg bg-white text-sm"><option>Conceptual</option><option>Application</option><option>Analytical</option><option>Memory Based</option></select></div>
+                                        </div>
+                                        <div className="flex gap-3">
+                                            <button onClick={onClose} className="flex-1 py-4 text-slate-500 hover:bg-slate-200 rounded-xl font-bold">Cancel</button>
+                                            <button onClick={handleGenerate} disabled={generating} className="flex-[2] py-4 bg-indigo-600 text-white rounded-xl font-bold text-lg hover:bg-indigo-700 shadow-lg disabled:opacity-50 flex justify-center gap-2 items-center">{generating ? <><Icon name="Loader2" className="animate-spin" /> Generating...</> : <><Icon name="Wand2" /> Generate</>}</button>
+                                        </div>
+                                    </div>
+                                ) : (
+                                    <div className="w-full max-w-2xl space-y-6">
+                                        <textarea value={rawText} onChange={e => setRawText(e.target.value)} className="w-full h-64 p-4 border-2 border-slate-300 rounded-xl focus:border-tattvam-500 outline-none font-mono text-sm" placeholder="Paste raw text here... Example: Q1. A particle moves... (A) 5 m/s..." />
+                                        <div className="flex gap-3">
+                                            <button onClick={onClose} className="flex-1 py-4 text-slate-500 hover:bg-slate-200 rounded-xl font-bold">Cancel</button>
+                                            <button onClick={handleSmartPaste} disabled={parsing || !rawText} className="flex-[2] py-4 bg-indigo-600 text-white rounded-xl font-bold text-lg hover:bg-indigo-700 shadow-lg disabled:opacity-50 flex justify-center gap-2 items-center">{parsing ? <><Icon name="Loader2" className="animate-spin" /> Parsing...</> : <><Icon name="Sparkles" /> Process</>}</button>
+                                        </div>
+                                    </div>
+                                )}
+                            </div>
+                        ) : (
+                            <div className="flex flex-col flex-1 overflow-hidden bg-slate-50">
+                                <div className="p-4 bg-white border-b flex justify-between items-center">
+                                    <div><h3 className="font-bold text-slate-800">Review Questions</h3><p className="text-xs text-slate-500">Uncheck to discard. Click edit to modify text.</p></div>
+                                    <div className="flex gap-2">
+                                        <button onClick={() => setStep('input')} className="text-slate-500 hover:text-slate-700 text-sm font-medium px-3">Back</button>
+                                        <button onClick={handleConfirm} className="bg-indigo-600 text-white px-6 py-2 rounded-lg font-bold hover:bg-indigo-700 flex items-center gap-2 shadow-sm"><Icon name="ListChecks" className="w-4 h-4" /> Import {reviewList.filter(q=>q.selected!==false).length} Questions</button>
+                                    </div>
+                                </div>
+                                <div className="flex-1 overflow-y-auto p-6 space-y-4">
+                                    {reviewList.map((q, i) => (
+                                        <div key={q.id} className={`bg-white rounded-xl p-4 border-2 transition-all ${q.selected === false ? 'border-slate-200 opacity-50' : 'border-indigo-100 shadow-sm'}`}>
+                                            <div className="flex items-start gap-3">
+                                                <input type="checkbox" checked={q.selected !== false} onChange={() => toggleQuestion(q.id)} className="mt-1 w-5 h-5 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500" />
+                                                <div className="flex-1">
+                                                    <div className="flex justify-between items-start mb-2">
+                                                        <div className="flex gap-2">
+                                                            <span className="text-[10px] font-bold bg-slate-100 text-slate-600 px-2 py-0.5 rounded">{q.type}</span>
+                                                            <span className="text-[10px] font-bold bg-green-50 text-green-700 px-2 py-0.5 rounded">+{q.marks?.pos} / -{q.marks?.neg}</span>
+                                                        </div>
+                                                        <button onClick={() => setEditingId(editingId === q.id ? null : q.id)} className="text-slate-400 hover:text-indigo-600"><Icon name="Edit2" className="w-4 h-4" /></button>
+                                                    </div>
+                                                    
+                                                    {editingId === q.id ? (
+                                                        <textarea value={q.text} onChange={(e) => updateQuestionText(q.id, e.target.value)} className="w-full p-2 border rounded text-sm font-mono" rows={3} />
+                                                    ) : (
+                                                        <div className="text-sm font-medium text-slate-900 mb-2"><LatexRenderer content={q.text} /></div>
+                                                    )}
+
+                                                    {(q.type === 'SINGLE' || q.type === 'MULTI') && (
+                                                        <div className="grid grid-cols-2 gap-2 text-xs text-slate-600">
+                                                            {q.options?.map((opt, oIdx) => (
+                                                                <div key={oIdx} className="flex gap-1 items-center">
+                                                                    <span className={`w-4 h-4 flex items-center justify-center border rounded-full ${q.correctIndex === oIdx ? 'bg-green-500 text-white border-green-500' : 'border-slate-300'}`}>{String.fromCharCode(65+oIdx)}</span>
+                                                                    <span><LatexRenderer content={opt} /></span>
+                                                                </div>
+                                                            ))}
+                                                        </div>
+                                                    )}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+                        )}
+                    </div>
+                </div>
+            );
+        };
+const ImageCropper = ({ src, onConfirm, onCancel }) => {
+            const imgRef = useRef(null);
+            const [selection, setSelection] = useState(null); // {x,y,w,h} in %
+            const [isDragging, setIsDragging] = useState(false);
+            const [startPos, setStartPos] = useState(null);
+
+            const getPos = (e) => {
+                const rect = imgRef.current.getBoundingClientRect();
+                const clientX = e.clientX || e.touches?.[0]?.clientX;
+                const clientY = e.clientY || e.touches?.[0]?.clientY;
+                return {
+                    x: ((clientX - rect.left) / rect.width) * 100,
+                    y: ((clientY - rect.top) / rect.height) * 100
+                };
+            };
+
+            const handleMouseDown = (e) => {
+                e.preventDefault();
+                setIsDragging(true);
+                const pos = getPos(e);
+                setStartPos(pos);
+                setSelection({ x: pos.x, y: pos.y, w: 0, h: 0 });
+            };
+
+            const handleMouseMove = (e) => {
+                if (!isDragging) return;
+                const current = getPos(e);
+                const x = Math.min(current.x, startPos.x);
+                const y = Math.min(current.y, startPos.y);
+                const w = Math.abs(current.x - startPos.x);
+                const h = Math.abs(current.y - startPos.y);
+                setSelection({ x, y, w, h });
+            };
+
+            const handleCrop = () => {
+                if (!selection || selection.w < 1 || selection.h < 1) return alert("Select an area first.");
+                const canvas = document.createElement('canvas');
+                const img = imgRef.current;
+                const naturalW = img.naturalWidth;
+                const naturalH = img.naturalHeight;
+
+                canvas.width = (selection.w / 100) * naturalW;
+                canvas.height = (selection.h / 100) * naturalH;
+                const ctx = canvas.getContext('2d');
+
+                ctx.drawImage(
+                    img,
+                    (selection.x / 100) * naturalW,
+                    (selection.y / 100) * naturalH,
+                    canvas.width,
+                    canvas.height,
+                    0, 0, canvas.width, canvas.height
+                );
+                onConfirm(canvas.toDataURL('image/jpeg', 0.8));
+            };
+
+            return (
+                <div className="fixed inset-0 bg-black/90 z-[60] flex flex-col items-center justify-center p-4">
+                    <div className="bg-slate-800 text-white w-full max-w-lg p-2 rounded-t-xl flex justify-between items-center">
+                        <span className="font-bold text-sm flex items-center gap-2"><Icon name="Image" /> Crop Diagram</span>
+                        <div className="flex gap-2">
+                            <button onClick={onCancel} className="text-xs hover:text-slate-300">Cancel</button>
+                            <button onClick={handleCrop} className="bg-indigo-600 px-3 py-1 rounded text-xs font-bold hover:bg-indigo-500">Apply Crop</button>
+                        </div>
+                    </div>
+                    <div 
+                        className="relative bg-black border-2 border-slate-700 select-none max-h-[80vh] overflow-hidden"
+                        onMouseDown={handleMouseDown}
+                        onMouseMove={handleMouseMove}
+                        onMouseUp={() => setIsDragging(false)}
+                        onTouchStart={handleMouseDown}
+                        onTouchMove={handleMouseMove}
+                        onTouchEnd={() => setIsDragging(false)}
+                    >
+                        <img ref={imgRef} src={src} className="max-w-full max-h-[70vh] object-contain pointer-events-none" />
+                        {selection && (
+                            <div 
+                                className="absolute border-2 border-white shadow-[0_0_0_9999px_rgba(0,0,0,0.5)]"
+                                style={{
+                                    left: `${selection.x}%`,
+                                    top: `${selection.y}%`,
+                                    width: `${selection.w}%`,
+                                    height: `${selection.h}%`
+                                }}
+                            >
+                                <div className="absolute -top-6 left-0 bg-indigo-600 text-white text-[10px] px-1 rounded">Crop Area</div>
+                            </div>
+                        )}
+                    </div>
+                    <div className="text-slate-400 text-xs mt-2">Drag to select the diagram area.</div>
+                </div>
+            );
+        };
+const MoleculeStudio = ({ onConfirm, onCancel }) => {
+            const [mode, setMode] = useState('search'); // search | draw
+            const [query, setQuery] = useState('');
+            const [loading, setLoading] = useState(false);
+            const [preview, setPreview] = useState(null);
+            
+            // Drawing Refs
+            const canvasRef = useRef(null);
+            const [isDrawing, setIsDrawing] = useState(false);
+
+            // Fetch from PubChem
+            const fetchStructure = async () => {
+                if(!query) return;
+                setLoading(true);
+                try {
+                    // Try by Name first
+                    let url = `https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/name/${encodeURIComponent(query)}/PNG?record_type=2d&image_size=large`;
+                    // Check if it's SMILES (heuristic: contains non-alpha)
+                    if (query.match(/[^a-zA-Z]/)) {
+                         url = `https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/smiles/${encodeURIComponent(query)}/PNG?record_type=2d&image_size=large`;
+                    }
+                    
+                    const res = await fetch(url);
+                    if(!res.ok) throw new Error("Molecule not found");
+                    const blob = await res.blob();
+                    const reader = new FileReader();
+                    reader.onload = (e) => setPreview(e.target.result);
+                    reader.readAsDataURL(blob);
+                } catch(e) { alert("Could not find molecule. Try SMILES code or Check Spelling."); }
+                setLoading(false);
+            };
+
+            // Canvas Drawing Logic
+            useEffect(() => {
+                if(mode === 'draw' && canvasRef.current) {
+                    const ctx = canvasRef.current.getContext('2d');
+                    ctx.fillStyle = "white";
+                    ctx.fillRect(0,0, 500, 400); // White bg
+                    ctx.strokeStyle = "black";
+                    ctx.lineWidth = 2;
+                    ctx.lineCap = "round";
+                    ctx.lineJoin = "round";
+                }
+            }, [mode]);
+
+            const startDraw = (e) => {
+                const ctx = canvasRef.current.getContext('2d');
+                const rect = canvasRef.current.getBoundingClientRect();
+                ctx.beginPath();
+                ctx.moveTo(e.clientX - rect.left, e.clientY - rect.top);
+                setIsDrawing(true);
+            };
+            const draw = (e) => {
+                if(!isDrawing) return;
+                const ctx = canvasRef.current.getContext('2d');
+                const rect = canvasRef.current.getBoundingClientRect();
+                ctx.lineTo(e.clientX - rect.left, e.clientY - rect.top);
+                ctx.stroke();
+            };
+            const stopDraw = () => setIsDrawing(false);
+
+            return (
+                <div className="fixed inset-0 bg-black/80 z-[70] flex items-center justify-center p-4 animate-in fade-in">
+                    <div className="bg-white w-full max-w-lg rounded-xl shadow-2xl overflow-hidden flex flex-col">
+                        <div className="bg-indigo-900 text-white p-4 flex justify-between items-center">
+                            <h3 className="font-bold flex items-center gap-2"><Icon name="Atom" /> Molecule Studio</h3>
+                            <button onClick={onCancel}><Icon name="X" /></button>
+                        </div>
+                        
+                        {/* Tabs */}
+                        <div className="flex border-b">
+                            <button onClick={() => setMode('search')} className={`flex-1 py-3 text-sm font-bold ${mode==='search' ? 'text-indigo-600 border-b-2 border-indigo-600' : 'text-slate-400'}`}>Search / SMILES</button>
+                            <button onClick={() => setMode('draw')} className={`flex-1 py-3 text-sm font-bold ${mode==='draw' ? 'text-indigo-600 border-b-2 border-indigo-600' : 'text-slate-400'}`}>Freehand Draw</button>
+                        </div>
+
+                        <div className="p-6 flex-1 bg-slate-50 flex flex-col items-center justify-center min-h-[300px]">
+                            {mode === 'search' ? (
+                                <div className="w-full space-y-4">
+                                    <div className="flex gap-2">
+                                        <input 
+                                            value={query} 
+                                            onChange={e => setQuery(e.target.value)} 
+                                            onKeyDown={e => e.key === 'Enter' && fetchStructure()}
+                                            className="flex-1 border p-2 rounded outline-none focus:border-indigo-500" 
+                                            placeholder="e.g. Benzene, Aspirin, or C1=CC=C1..." 
+                                        />
+                                        <button onClick={fetchStructure} disabled={loading} className="bg-indigo-600 text-white px-4 rounded font-bold hover:bg-indigo-700 disabled:opacity-50">
+                                            {loading ? <Icon name="Loader2" className="animate-spin" /> : <Icon name="Search" />}
+                                        </button>
+                                    </div>
+                                    <div className="border-2 border-dashed border-slate-200 h-64 rounded-lg flex items-center justify-center bg-white relative">
+                                        {preview ? (
+                                            <img src={preview} className="max-w-full max-h-full object-contain p-4" />
+                                        ) : (
+                                            <span className="text-slate-400 text-xs">Preview Area</span>
+                                        )}
+                                    </div>
+                                    <button onClick={() => preview && onConfirm(preview)} disabled={!preview} className="w-full bg-green-600 text-white py-2 rounded font-bold disabled:opacity-50">Use Diagram</button>
+                                </div>
+                            ) : (
+                                <div className="w-full">
+                                    <canvas 
+                                        ref={canvasRef} 
+                                        width={500} 
+                                        height={400} 
+                                        className="bg-white border shadow-inner cursor-crosshair w-full h-64 touch-none"
+                                        onMouseDown={startDraw} onMouseMove={draw} onMouseUp={stopDraw} onMouseLeave={stopDraw}
+                                    />
+                                    <div className="flex justify-between mt-4">
+                                        <button onClick={() => {const ctx=canvasRef.current.getContext('2d'); ctx.fillStyle="white"; ctx.fillRect(0,0,500,400);}} className="text-red-500 text-xs font-bold hover:underline">Clear Canvas</button>
+                                        <button onClick={() => onConfirm(canvasRef.current.toDataURL())} className="bg-indigo-600 text-white px-6 py-2 rounded font-bold">Use Drawing</button>
+                                    </div>
+                                </div>
+                            )}
+                        </div>
+                    </div>
+                </div>
+            );
+        };
+const QuestionEditor = ({ question, onSave, onCancel, apiKey, onRequestKey }) => {
+            const [form, setForm] = useState({ ...question });
+            const [load, setLoad] = useState('');
+            
+            // --- FIXED: Removed Duplicate Declaration Here ---
+            const [showCropper, setShowCropper] = useState(false);   
+            const [moleculeMode, setMoleculeMode] = useState(false); 
+
+            const run = async (msg, fn) => {
+                if (!apiKey) return onRequestKey();
+                if (!form.text) return alert("Text needed.");
+                setLoad(msg);
+                try { await fn(); } catch (e) { alert(e.message); }
+                setLoad('');
+            };
+
+            const handleImageUpload = (e) => {
+                const file = e.target.files[0];
+                if(file) {
+                    const reader = new FileReader();
+                    reader.onload = (ev) => setForm({...form, diagram: ev.target.result});
+                    reader.readAsDataURL(file);
+                }
+            };
+
+            return (
+                <div className="bg-white rounded-xl shadow-lg border-2 border-tattvam-100 p-6 relative">
+                    {/* The Crop Modal */}
+                    {showCropper && form.diagram && (
+                        <ImageCropper 
+                            src={form.diagram} 
+                            onCancel={() => setShowCropper(false)}
+                            onConfirm={(newImg) => {
+                                setForm({ ...form, diagram: newImg });
+                                setShowCropper(false);
+                            }} 
+                        />
+                    )}
+
+                    {load && <div className="absolute inset-0 bg-white/80 backdrop-blur-[1px] z-20 flex items-center justify-center rounded-xl"><div className="bg-white px-4 py-2 rounded-full shadow-lg flex items-center gap-2 border border-tattvam-500"><Icon name="Sparkles" className="w-4 h-4 text-tattvam-600 animate-spin" /><span className="text-xs font-bold text-tattvam-900">{load}</span></div></div>}
+                    
+                    <div className="flex justify-between items-center mb-4">
+                        <div className="flex gap-2 items-center">
+                            <h4 className="text-sm font-bold text-tattvam-600 uppercase">Edit Question</h4>
+                            {form.pyq_tag && <span className="text-[10px] bg-amber-100 text-amber-800 px-2 py-0.5 rounded-full font-bold border border-amber-200">{form.pyq_tag}</span>}
+                            <select value={form.type || 'SINGLE'} onChange={e => setForm({...form, type: e.target.value})} className="text-xs border rounded p-1 font-bold text-slate-600"><option value="SINGLE">Single Correct</option><option value="MULTI">Multi Correct</option><option value="NUMERICAL">Numerical</option><option value="MATRIX">Matrix Match</option></select>
+                            <div className="flex items-center text-xs gap-1 border rounded px-2 bg-slate-50"><span className="text-green-600 font-bold">+</span><input type="number" className="w-8 bg-transparent" value={form.marks?.pos || 4} onChange={e => setForm({...form, marks: {...form.marks, pos: Number(e.target.value)}})} /><span className="text-red-600 font-bold border-l pl-1">-</span><input type="number" className="w-8 bg-transparent" value={form.marks?.neg || 1} onChange={e => setForm({...form, marks: {...form.marks, neg: Number(e.target.value)}})} /></div>
+                        </div>
+                        <button onClick={() => run('Remixing...', async () => { const r = await generateRemix(form, apiKey); setForm(p => ({...p, text: r.text, options: r.options})); })} className="text-[10px] font-bold text-white bg-gradient-to-r from-purple-500 to-tattvam-500 hover:from-purple-600 hover:to-tattvam-600 px-3 py-1.5 rounded-full flex items-center gap-1 shadow-sm"><Icon name="RefreshCw" className="w-3 h-3" /> Remix</button>
+                    </div>
+                    
+                    <div className="grid md:grid-cols-3 gap-6 mb-4">
+                        <div className="md:col-span-2"><label className="block text-xs font-semibold text-slate-500 mb-1">Question Text</label><textarea value={form.text} onChange={e => setForm({...form, text: e.target.value})} className="w-full p-3 border border-slate-200 rounded-lg focus:ring-2 focus:ring-tattvam-500 outline-none font-mono text-sm h-32" /></div>
+                        
+                        {/* --- DIAGRAM SECTION --- */}
+                        <div>
+                            <div className="flex justify-between items-center mb-1">
+                                <label className="block text-xs font-semibold text-slate-500">Diagram</label>
+                                <div className="flex gap-1">
+                                    <button onClick={() => setMoleculeMode(true)} className="text-[10px] bg-purple-50 text-purple-600 px-2 py-0.5 rounded hover:bg-purple-100 font-bold flex items-center gap-1 border border-purple-100" title="Draw or Search Chemicals"><Icon name="Atom" className="w-3 h-3" /> Molecule</button>
+                                    {form.diagram && (
+                                        <button onClick={() => setShowCropper(true)} className="text-[10px] bg-indigo-50 text-indigo-600 px-2 py-0.5 rounded hover:bg-indigo-100 font-bold flex items-center gap-1 border border-indigo-100" title="Crop visible area"><Icon name="Edit2" className="w-3 h-3" /> Crop</button>
+                                    )}
+                                </div>
+                            </div>
+
+                            {moleculeMode && <MoleculeStudio onCancel={() => setMoleculeMode(false)} onConfirm={(img) => { setForm({...form, diagram: img}); setMoleculeMode(false); }} />}
+                            {showCropper && form.diagram && <ImageCropper src={form.diagram} onCancel={() => setShowCropper(false)} onConfirm={(newImg) => { setForm({ ...form, diagram: newImg }); setShowCropper(false); }} />}
+
+                            <div className="h-32 border-2 border-dashed border-slate-200 rounded-lg flex flex-col items-center justify-center relative overflow-hidden bg-slate-50 group hover:border-tattvam-400 transition-colors">
+                                {form.diagram ? (
+                                    <>
+                                        <img src={form.diagram} className="w-full h-full object-contain" />
+                                        <button onClick={() => setForm({...form, diagram: null})} className="absolute top-1 right-1 bg-red-500 text-white p-1 rounded-full opacity-0 group-hover:opacity-100 transition-opacity shadow-sm" title="Remove Diagram"><Icon name="X" className="w-3 h-3" /></button>
+                                    </>
+                                ) : (
+                                    <label className="cursor-pointer flex flex-col items-center w-full h-full justify-center">
+                                        <Icon name="Image" className="w-6 h-6 text-slate-300 mb-1" />
+                                        <span className="text-[10px] text-slate-400 font-medium">Click to upload</span>
+                                        <input type="file" accept="image/*" className="hidden" onChange={handleImageUpload} />
+                                    </label>
+                                )}
+                            </div>
+                        </div>
+                    </div>
+
+                    <div className="mb-4">
+                        <div className="flex justify-between items-center mb-1"><label className="block text-xs font-semibold text-slate-500">Answer Key</label>{(form.type === 'SINGLE' || form.type === 'MULTI') && <button onClick={() => run('Options...', async () => { const o = await generateDistractors(form, apiKey); setForm(p => ({...p, options: [...(p.options||[]), ...o]})); })} className="text-[10px] font-bold text-tattvam-600 bg-tattvam-50 hover:bg-tattvam-100 px-2 py-1 rounded-full flex items-center gap-1"><Icon name="Sparkles" className="w-3 h-3" /> Auto-Fill</button>}</div>
+                        {(form.type === 'SINGLE' || form.type === 'MULTI' || !form.type) && <div className="space-y-2">{form.options?.map((opt, idx) => (<div key={idx} className="flex items-center gap-2"><input type={form.type === 'MULTI' ? 'checkbox' : 'radio'} name="correctAnswer" checked={form.type === 'MULTI' ? form.correctIndices?.includes(idx) : form.correctIndex === idx} onChange={() => { if(form.type === 'MULTI') { const cur = form.correctIndices || []; setForm({...form, correctIndices: cur.includes(idx) ? cur.filter(x=>x!==idx) : [...cur, idx]}); } else { setForm({...form, correctIndex: idx}); } }} className="w-4 h-4 text-tattvam-600" /><input type="text" value={opt} onChange={e => {const n = [...form.options]; n[idx]=e.target.value; setForm({...form, options:n})}} className="flex-1 p-2 border border-slate-200 rounded-md text-sm outline-none focus:border-tattvam-500" /><button onClick={() => {const n=form.options.filter((_,i)=>i!==idx); setForm({...form, options:n})}} className="text-slate-300 hover:text-red-500"><Icon name="X" className="w-4 h-4" /></button></div>))}<button onClick={() => setForm({...form, options: [...(form.options||[]), "New Option"]})} className="text-xs text-tattvam-600 font-medium hover:underline flex items-center gap-1 mt-2"><Icon name="Plus" className="w-3 h-3" /> Add Option</button></div>}
+                        {form.type === 'NUMERICAL' && <div className="flex items-center gap-2 bg-blue-50 p-3 rounded"><span className="text-sm font-bold text-blue-800">Correct Value:</span><input type="text" value={form.correctNum || ''} onChange={e => setForm({...form, correctNum: e.target.value})} className="border p-2 rounded w-32" placeholder="e.g. 5.5" /></div>}
+                        
+                        {/* MATRIX INPUT BLOCK */}
+                        {form.type === 'MATRIX' && (
+                            <div className="col-span-3 bg-slate-50 p-4 rounded-lg border border-slate-200">
+                                <div className="flex gap-4 mb-4">
+                                    <div className="flex-1">
+                                        <h5 className="text-xs font-bold text-indigo-800 uppercase mb-2 border-b border-indigo-100 pb-1">Column I (Rows)</h5>
+                                        {form.matrix?.rows?.map((r, i) => (
+                                            <div key={i} className="flex gap-2 mb-2 items-center">
+                                                <span className="font-bold text-xs text-slate-400 w-4">{String.fromCharCode(65+i)}</span>
+                                                <input value={r} onChange={e => {const nr=[...form.matrix.rows]; nr[i]=e.target.value; setForm({...form, matrix:{...form.matrix, rows: nr}})}} className="flex-1 border p-1.5 rounded text-sm focus:border-indigo-500 outline-none" placeholder={`Row ${String.fromCharCode(65+i)} Text`} />
+                                                <button onClick={() => {const nr=form.matrix.rows.filter((_,idx)=>idx!==i); setForm({...form, matrix:{...form.matrix, rows: nr}})}} className="text-red-400 hover:text-red-600"><Icon name="X" className="w-3 h-3"/></button>
+                                            </div>
+                                        ))}
+                                        <button onClick={() => setForm({...form, matrix:{...form.matrix, rows:[...(form.matrix.rows||[]), ""]}})} className="text-[10px] font-bold text-indigo-600 hover:underline">+ Add Row</button>
+                                    </div>
+                                    <div className="flex-1">
+                                        <h5 className="text-xs font-bold text-indigo-800 uppercase mb-2 border-b border-indigo-100 pb-1">Column II (Cols)</h5>
+                                        {form.matrix?.cols?.map((c, i) => (
+                                            <div key={i} className="flex gap-2 mb-2 items-center">
+                                                <span className="font-bold text-xs text-slate-400 w-4">{i+1}</span>
+                                                <input value={c} onChange={e => {const nc=[...form.matrix.cols]; nc[i]=e.target.value; setForm({...form, matrix:{...form.matrix, cols: nc}})}} className="flex-1 border p-1.5 rounded text-sm focus:border-indigo-500 outline-none" placeholder={`Col ${i+1} Text`} />
+                                                <button onClick={() => {const nc=form.matrix.cols.filter((_,idx)=>idx!==i); setForm({...form, matrix:{...form.matrix, cols: nc}})}} className="text-red-400 hover:text-red-600"><Icon name="X" className="w-3 h-3"/></button>
+                                            </div>
+                                        ))}
+                                        <button onClick={() => setForm({...form, matrix:{...form.matrix, cols:[...(form.matrix.cols||[]), ""]}})} className="text-[10px] font-bold text-indigo-600 hover:underline">+ Add Column</button>
+                                    </div>
+                                </div>
+                                
+                                <div className="bg-white p-3 rounded border border-slate-200">
+                                    <h5 className="text-xs font-bold text-slate-600 uppercase mb-2 text-center">Correct Connections</h5>
+                                    <div className="overflow-x-auto">
+                                        <table className="w-full text-center">
+                                            <thead>
+                                                <tr>
+                                                    <th></th>
+                                                    {form.matrix?.cols?.map((_, c) => <th key={c} className="text-xs text-slate-500 pb-1">{c+1}</th>)}
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                {form.matrix?.rows?.map((_, r) => (
+                                                    <tr key={r}>
+                                                        <td className="text-xs font-bold text-slate-500 pr-2">{String.fromCharCode(65+r)}</td>
+                                                        {form.matrix?.cols?.map((_, c) => (
+                                                            <td key={c} className="p-1">
+                                                                <input type="checkbox" checked={form.matrixAns?.[r]?.includes(c)} onChange={() => { const cur = form.matrixAns?.[r] || []; const newAns = cur.includes(c) ? cur.filter(x => x !== c) : [...cur, c]; setForm({ ...form, matrixAns: { ...form.matrixAns, [r]: newAns } }); }} className="w-4 h-4 accent-indigo-600 cursor-pointer" />
+                                                            </td>
+                                                        ))}
+                                                    </tr>
+                                                ))}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        )}
+                    </div>
+
+                    <div className="mb-6"><div className="flex justify-between items-center mb-1"><label className="block text-xs font-semibold text-slate-500">Explanation</label><button onClick={() => run('Explaining...', async () => { const e = await generateExplanation(form, apiKey); setForm(p => ({...p, explanation: e})); })} className="text-[10px] font-bold text-tattvam-600 bg-tattvam-50 hover:bg-tattvam-100 px-2 py-1 rounded-full flex items-center gap-1"><Icon name="Lightbulb" className="w-3 h-3" /> AI Explain</button></div><textarea value={form.explanation || ''} onChange={e => setForm({...form, explanation: e.target.value})} className="w-full p-3 border border-slate-200 rounded-lg focus:ring-2 focus:ring-tattvam-500 outline-none text-sm h-20" /></div>
+                    <div className="flex justify-end gap-3 pt-4 border-t border-slate-100"><button onClick={onCancel} className="px-4 py-2 text-slate-600 hover:bg-slate-100 rounded-lg text-sm">Cancel</button><button onClick={() => onSave(form)} className="px-4 py-2 bg-tattvam-600 text-white rounded-lg hover:bg-tattvam-500 text-sm font-medium flex items-center gap-2"><Icon name="Save" className="w-4 h-4" /> Save</button></div>
+                </div>
+            );
+        };    
+const AnalysisNotebook = ({ notebook, onUpdate, onBack, apiKey, onRequestKey }) => {
+            const [uploading, setUploading] = useState(false);
+            const [analyzing, setAnalyzing] = useState(false);
+            
+            const handleImageUpload = async (e) => {
+                const file = e.target.files[0];
+                if (!file) return;
+                if (!apiKey) return onRequestKey();
+                
+                setUploading(true);
+                try {
+                    const b64 = await fileToBase64(file);
+                    const data = await analyzeResultImage(b64, apiKey);
+                    const newEntry = {
+                        id: Date.now().toString(),
+                        date: new Date().toISOString(),
+                        ...data,
+                        type: 'IMAGE_IMPORT'
+                    };
+                    onUpdate({ ...notebook, entries: [newEntry, ...(notebook.entries || [])] });
+                } catch (err) { alert("Analysis failed: " + err.message); }
+                setUploading(false);
+            };
+
+            const runDeepAnalysis = async () => {
+                if (!notebook.entries?.length) return alert("No entries to analyze.");
+                if (!apiKey) return onRequestKey();
+                setAnalyzing(true);
+                try {
+                    const insights = await generateAnalysisInsights(notebook.entries, apiKey);
+                    onUpdate({ ...notebook, insights });
+                } catch (e) { alert(e.message); }
+                setAnalyzing(false);
+            };
+
+            const Chart = ({ entries }) => {
+                if(!entries || entries.length < 2) return null;
+                const rev = [...entries].reverse();
+                const max = Math.max(...rev.map(e => e.score));
+                return (
+                    <div className="h-40 flex items-end gap-2 mt-4 border-b border-l border-slate-300 p-2">
+                        {rev.map((e, i) => (
+                            <div key={i} className="flex-1 flex flex-col items-center group relative">
+                                <div className="absolute bottom-full mb-1 bg-black text-white text-[10px] px-1 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">{e.score}/{e.maxMarks}</div>
+                                <div style={{ height: `${(e.score/max)*100}%` }} className="w-full bg-indigo-500 rounded-t-sm opacity-80 hover:opacity-100 transition-all"></div>
+                            </div>
+                        ))}
+                    </div>
+                );
+            };
+
+            return (
+                <div className="h-full flex flex-col bg-slate-50">
+                    <div className="bg-white border-b px-6 py-4 flex items-center justify-between shadow-sm">
+                        <div className="flex items-center gap-4">
+                            <button onClick={onBack} className="p-2 rounded-full hover:bg-slate-100"><Icon name="ArrowLeft" /></button>
+                            <div>
+                                <input value={notebook.title} onChange={e => onUpdate({...notebook, title: e.target.value})} className="font-bold text-xl outline-none" placeholder="Notebook Title" />
+                                <p className="text-xs text-slate-500">{notebook.entries?.length || 0} Entries</p>
+                            </div>
+                        </div>
+                        <div className="flex gap-2">
+                            <label className="flex items-center gap-2 bg-white border border-indigo-100 text-indigo-600 px-4 py-2 rounded-lg cursor-pointer hover:bg-indigo-50 font-bold shadow-sm">
+                                {uploading ? <Icon name="Loader2" className="animate-spin" /> : <Icon name="Camera" />}
+                                <span>Scan Result</span>
+                                <input type="file" className="hidden" accept="image/*" onChange={handleImageUpload} disabled={uploading} />
+                            </label>
+                            <button onClick={runDeepAnalysis} disabled={analyzing} className="flex items-center gap-2 bg-tattvam-900 text-white px-4 py-2 rounded-lg hover:bg-tattvam-800 font-bold shadow-sm">
+                                {analyzing ? <Icon name="Loader2" className="animate-spin" /> : <Icon name="BrainCircuit" />} Deep Analysis
+                            </button>
+                        </div>
+                    </div>
+
+                    <div className="flex-1 overflow-y-auto p-6 md:p-8">
+                        <div className="grid md:grid-cols-3 gap-6 max-w-6xl mx-auto">
+                            {/* Left: Stats & Insights */}
+                            <div className="space-y-6">
+                                {notebook.insights && (
+                                    <div className="bg-white p-6 rounded-xl shadow-sm border border-purple-100">
+                                        <div className="flex items-center gap-2 text-purple-700 font-bold mb-4"><Icon name="Sparkles" /> AI Mentor</div>
+                                        <p className="text-sm font-medium text-slate-800 mb-3 italic">"{notebook.insights.summary}"</p>
+                                        <div className="space-y-3">
+                                            <div>
+                                                <span className="text-xs font-bold text-green-600 uppercase">Strengths</span>
+                                                <div className="flex flex-wrap gap-1 mt-1">{notebook.insights.strengths?.map(s=><span key={s} className="text-[10px] bg-green-50 text-green-700 px-2 py-0.5 rounded border border-green-100">{s}</span>)}</div>
+                                            </div>
+                                            <div>
+                                                <span className="text-xs font-bold text-red-500 uppercase">Focus Areas</span>
+                                                <div className="flex flex-wrap gap-1 mt-1">{notebook.insights.weaknesses?.map(w=><span key={w} className="text-[10px] bg-red-50 text-red-700 px-2 py-0.5 rounded border border-red-100">{w}</span>)}</div>
+                                            </div>
+                                            <div className="bg-purple-50 p-3 rounded text-xs text-purple-800 border-l-2 border-purple-400">
+                                                <strong>Advice:</strong> {notebook.insights.advice}
+                                            </div>
+                                        </div>
+                                    </div>
+                                )}
+                                <div className="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+                                    <h4 className="font-bold text-slate-700 mb-2 flex items-center gap-2"><Icon name="ListChecks" /> Performance Trend</h4>
+                                    <Chart entries={notebook.entries} />
+                                </div>
+                            </div>
+
+                            {/* Right: History List */}
+                            <div className="md:col-span-2 space-y-4">
+                                <h3 className="font-bold text-slate-500 uppercase text-xs tracking-wider">History Log</h3>
+                                {notebook.entries?.map(entry => (
+                                    <div key={entry.id} className="bg-white p-5 rounded-xl border border-slate-200 hover:border-indigo-300 transition-all shadow-sm">
+                                        <div className="flex justify-between items-start mb-3">
+                                            <div>
+                                                <h4 className="font-bold text-lg text-slate-800">{entry.testName || "Untitled Test"}</h4>
+                                                <p className="text-xs text-slate-400">{new Date(entry.date).toLocaleDateString()} • {entry.type === 'IMAGE_IMPORT' ? 'Scanned' : 'Quiz'}</p>
+                                            </div>
+                                            <div className="text-right">
+                                                <div className="text-2xl font-black text-indigo-600">{entry.score} <span className="text-sm text-slate-400 font-medium">/ {entry.maxMarks}</span></div>
+                                                {entry.percentile && <div className="text-xs font-bold text-green-600">{entry.percentile}%ile</div>}
+                                            </div>
+                                        </div>
+                                        {entry.subjects && (
+                                            <div className="flex gap-2 mt-4 pt-4 border-t border-slate-50 overflow-x-auto">
+                                                {Object.entries(entry.subjects).map(([sub, marks]) => (
+                                                    <div key={sub} className="flex-shrink-0 bg-slate-50 px-3 py-1.5 rounded-lg border border-slate-100">
+                                                        <div className="text-[10px] text-slate-500 uppercase font-bold">{sub}</div>
+                                                        <div className="font-mono font-bold text-slate-700">{marks}</div>
+                                                    </div>
+                                                ))}
+                                            </div>
+                                        )}
+                                    </div>
+                                ))}
+                                {!notebook.entries?.length && <div className="text-center py-10 text-slate-400 bg-white rounded-xl border-2 border-dashed">No entries yet. Scan a result or take a quiz.</div>}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            );
+        };
+const Dashboard = ({ tests, notebooks, onCreateTest, onCreateNotebook, onDeleteTest, onDeleteNotebook, onSelectTest, onSelectNotebook, onSettings, onImport }) => {
+            const [tab, setTab] = useState('tests'); // tests | analysis
+            const fileInputRef = useRef(null);
+
+            // 1. EXPORT FULL BACKUP
+            const handleExportBackup = () => {
+                const data = { tests, notebooks };
+                const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(data, null, 2));
+                const node = document.createElement('a');
+                node.setAttribute("href", dataStr);
+                node.setAttribute("download", "tattvam_FULL_BACKUP_" + new Date().toISOString().slice(0, 10) + ".json");
+                document.body.appendChild(node);
+                node.click();
+                node.remove();
+            };
+
+            // 2. EXPORT SINGLE TEST (New Feature)
+            const handleExportSingleTest = (e, test) => {
+                e.stopPropagation(); // Stop opening the editor
+                const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(test, null, 2));
+                const node = document.createElement('a');
+                node.setAttribute("href", dataStr);
+                // Sanitize title for filename
+                const filename = test.title.replace(/[^a-z0-9]/gi, '_').toLowerCase();
+                node.setAttribute("download", `${filename}_test.json`);
+                document.body.appendChild(node);
+                node.click();
+                node.remove();
+            };
+
+            // 3. UNIVERSAL IMPORT (Handles Single & Bulk)
+            const onFileChange = (e) => {
+                const file = e.target.files[0];
+                if (!file) return;
+                const reader = new FileReader();
+                reader.onload = (event) => {
+                    try {
+                        const imported = JSON.parse(event.target.result);
+                        
+                        // Case A: Full Backup (Has 'tests' or 'notebooks' keys)
+                        if (imported.tests || imported.notebooks) {
+                            onImport(imported.tests || [], imported.notebooks || []);
+                            alert(`Imported ${imported.tests?.length || 0} tests and ${imported.notebooks?.length || 0} notebooks.`);
+                        } 
+                        // Case B: Single Test Object (Has 'questions' and 'title')
+                        else if (imported.title && Array.isArray(imported.questions)) {
+                            // Assign a new ID to avoid collisions, or keep existing if you prefer
+                            const newTest = { ...imported, id: Date.now().toString() }; 
+                            onImport([newTest], []);
+                            alert(`Imported single test: "${imported.title}"`);
+                        }
+                        // Case C: Array of Tests (Old format)
+                        else if (Array.isArray(imported)) {
+                            onImport(imported, []);
+                            alert(`Imported ${imported.length} tests.`);
+                        } 
+                        else {
+                            alert("Unknown file format. Please upload a valid Tattvam JSON file.");
+                        }
+                    } catch (err) {
+                        alert("Error parsing file: " + err.message);
+                    }
+                };
+                reader.readAsText(file);
+                e.target.value = null; // Reset input
+            };
+
+            return (
+                <div className="max-w-6xl mx-auto p-6 animate-in fade-in h-full flex flex-col font-sans">
+                    <div className="flex flex-col md:flex-row justify-between items-center mb-8 border-b border-slate-200 pb-6 shrink-0 gap-4">
+                        <div>
+                            <h1 className="text-3xl font-bold text-slate-900 flex items-center gap-3"><Icon name="Atom" className="w-8 h-8 text-tattvam-600" /> Tattvam</h1>
+                            <p className="text-slate-500 mt-1">Assessment & Analysis Suite</p>
+                        </div>
+                        
+                        {/* TAB SWITCHER */}
+                        <div className="bg-slate-100 p-1 rounded-lg flex font-bold text-sm">
+                            <button onClick={() => setTab('tests')} className={`px-4 py-2 rounded-md transition-all ${tab==='tests' ? 'bg-white shadow text-slate-900' : 'text-slate-500'}`}>My Tests</button>
+                            <button onClick={() => setTab('analysis')} className={`px-4 py-2 rounded-md transition-all ${tab==='analysis' ? 'bg-white shadow text-slate-900' : 'text-slate-500'}`}>Analysis Notebooks</button>
+                        </div>
+
+                        <div className="flex gap-2">
+                            {/* Hidden File Input */}
+                            <input type="file" ref={fileInputRef} onChange={onFileChange} className="hidden" accept=".json" />
+                            
+                            <button onClick={() => fileInputRef.current.click()} className="p-2 text-slate-400 hover:text-indigo-600 bg-white border rounded-lg shadow-sm" title="Import Any JSON"><Icon name="Upload" className="w-5 h-5" /></button>
+                            <button onClick={handleExportBackup} className="p-2 text-slate-400 hover:text-indigo-600 bg-white border rounded-lg shadow-sm" title="Export Full Backup"><Icon name="Download" className="w-5 h-5" /></button>
+                            <button onClick={onSettings} className="p-2 text-slate-400 hover:text-tattvam-600 hover:bg-tattvam-50 rounded-full"><Icon name="Settings" className="w-6 h-6" /></button>
+                            
+                            {/* DYNAMIC CREATE BUTTON */}
+                            {tab === 'tests' ? (
+                                <button onClick={onCreateTest} className="flex items-center gap-2 bg-tattvam-600 text-white px-5 py-2.5 rounded-lg hover:bg-tattvam-500 font-medium shadow-sm"><Icon name="Plus" className="w-5 h-5" /> New Test</button>
+                            ) : (
+                                <button onClick={onCreateNotebook} className="flex items-center gap-2 bg-indigo-600 text-white px-5 py-2.5 rounded-lg hover:bg-indigo-500 font-medium shadow-sm"><Icon name="BookOpen" className="w-5 h-5" /> New Notebook</button>
+                            )}
+                        </div>
+                    </div>
+
+                    <div className="flex-1 overflow-y-auto pb-10">
+                        {tab === 'tests' ? (
+                            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                                {tests.map(test => (
+                                    <div key={test.id} onClick={() => onSelectTest(test.id)} className="group bg-white rounded-xl p-6 shadow-sm border border-slate-200 hover:shadow-md hover:border-tattvam-300 cursor-pointer transition-all relative overflow-hidden h-48 flex flex-col">
+                                        <div className="flex justify-between items-start mb-4">
+                                            <div className="bg-tattvam-50 p-3 rounded-lg"><Icon name="FileText" className="w-6 h-6 text-tattvam-600" /></div>
+                                            <div className="flex gap-1">
+                                                {/* NEW: Single Test Export Button */}
+                                                <button onClick={(e) => handleExportSingleTest(e, test)} className="text-slate-300 hover:text-indigo-600 p-2 hover:bg-indigo-50 rounded-lg" title="Export Single Test"><Icon name="Download" className="w-4 h-4" /></button>
+                                                <button onClick={(e) => onDeleteTest(e, test.id)} className="text-slate-300 hover:text-red-500 p-2 hover:bg-red-50 rounded-lg" title="Delete"><Icon name="Trash2" className="w-4 h-4" /></button>
+                                            </div>
+                                        </div>
+                                        <h3 className="font-bold text-lg text-slate-800 mb-1 truncate">{test.title}</h3>
+                                        <p className="text-sm text-slate-400 mb-6">{new Date(test.created).toLocaleDateString()}</p>
+                                        <div className="flex items-center justify-between mt-auto pt-4 border-t border-slate-50"><span className="text-xs font-bold text-slate-500 bg-slate-100 px-2 py-1 rounded">{test.questions.length} Qs</span><span className="text-tattvam-600 text-sm font-semibold flex items-center gap-1 group-hover:translate-x-1 transition-transform">Open <Icon name="ArrowLeft" className="w-4 h-4 rotate-180" /></span></div>
+                                    </div>
+                                ))}
+                                {tests.length === 0 && <div className="col-span-full text-center py-20 text-slate-400 border-2 border-dashed rounded-xl">No tests found.</div>}
+                            </div>
+                        ) : (
+                            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                                {notebooks.map(nb => (
+                                    <div key={nb.id} onClick={() => onSelectNotebook(nb.id)} className="group bg-white rounded-xl p-6 shadow-sm border border-slate-200 hover:shadow-md hover:border-indigo-300 cursor-pointer transition-all relative overflow-hidden h-48 flex flex-col">
+                                        <div className="flex justify-between items-start mb-4"><div className="bg-indigo-50 p-3 rounded-lg"><Icon name="Grid" className="w-6 h-6 text-indigo-600" /></div><button onClick={(e) => onDeleteNotebook(e, nb.id)} className="text-slate-300 hover:text-red-500 p-2 hover:bg-red-50 rounded-lg"><Icon name="Trash2" className="w-4 h-4" /></button></div>
+                                        <h3 className="font-bold text-lg text-slate-800 mb-1 truncate">{nb.title}</h3>
+                                        <p className="text-sm text-slate-400 mb-6">Updated: {new Date(nb.updated || Date.now()).toLocaleDateString()}</p>
+                                        <div className="flex items-center justify-between mt-auto pt-4 border-t border-slate-50"><span className="text-xs font-bold text-indigo-800 bg-indigo-100 px-2 py-1 rounded">{nb.entries?.length || 0} Entries</span><span className="text-indigo-600 text-sm font-semibold flex items-center gap-1 group-hover:translate-x-1 transition-transform">Analyze <Icon name="ArrowLeft" className="w-4 h-4 rotate-180" /></span></div>
+                                    </div>
+                                ))}
+                                {notebooks.length === 0 && <div className="col-span-full text-center py-20 text-slate-400 border-2 border-dashed rounded-xl">No notebooks found. Create one to analyze results.</div>}
+                            </div>
+                        )}
+                    </div>
+                </div>
+            );
+        };
+const Editor = ({ test, onUpdateTest, onBack, onPlay, onPrint, apiKey, onRequestKey }) => {
+            // --- STATE MANAGEMENT ---
+            const [proc, setProc] = useState(false);
+            const [step, setStep] = useState('');
+            const [editId, setEditId] = useState(null);
+            const [guide, setGuide] = useState(null);
+            const [guideLoad, setGuideLoad] = useState(false);
+            const [manvanchit, setManvanchit] = useState(false);
+            
+            // Ref for the hidden file input (Answer Key)
+            const answerKeyInputRef = useRef(null);
+
+            // --- 1. CLIPBOARD PASTE LISTENER ---
+            useEffect(() => {
+                const handlePaste = async (e) => {
+                    if (proc || editId) return; // Don't interrupt if busy or editing
+                    const items = e.clipboardData?.items;
+                    if (!items) return;
+
+                    const images = [];
+                    for (let i = 0; i < items.length; i++) {
+                        if (items[i].type.indexOf('image') !== -1) {
+                            images.push(items[i].getAsFile());
+                        }
+                    }
+
+                    if (images.length > 0) {
+                        e.preventDefault();
+                        if(confirm(`Detected ${images.length} image(s) in clipboard. Add to test?`)) {
+                            processFiles(images);
+                        }
+                    }
+                };
+                window.addEventListener('paste', handlePaste);
+                return () => window.removeEventListener('paste', handlePaste);
+            }, [proc, editId, apiKey]);
+
+            // --- 2. BATCH IMAGE PROCESSOR ---
+            const processFiles = async (files) => {
+                if (!apiKey) return onRequestKey();
+                setProc(true);
+                try {
+                    const newQuestions = [];
+                    for (let i = 0; i < files.length; i++) {
+                        setStep(`Analyzing Image ${i + 1} of ${files.length}...`);
+                        const b64 = await fileToBase64(files[i]);
+                        
+                        // Uses the updated strict prompting from transcribeImage
+                        const data = await transcribeImage(b64, apiKey); 
+                        
+                        // Add IDs and initialize default fields
+                        const processed = data.map(q => ({ 
+                            ...q, 
+                            id: Math.random(), 
+                            correctIndex: q.correctIndex ?? -1, 
+                            correctIndices: q.correctIndices ?? [], 
+                            correctNum: q.correctNum ?? '', 
+                            matrixAns: q.matrixAns ?? {}, 
+                            explanation: q.explanation ?? '' 
+                        }));
+                        newQuestions.push(...processed);
+                    }
+                    onUpdateTest({ questions: [...test.questions, ...newQuestions] });
+                } catch (err) { alert("Error processing images: " + err.message); }
+                setProc(false);
+                setStep('');
+            };
+
+            // --- 3. UPLOAD HANDLER ---
+            const handleUpload = (e) => {
+                const files = Array.from(e.target.files);
+                if (files.length) processFiles(files);
+                e.target.value = null; // Reset input so same file can be selected again
+            };
+
+            // --- 4. ANSWER KEY SCANNER ---
+            const handleAnswerKeyUpload = async (e) => {
+                const file = e.target.files[0];
+                if (!file) return;
+                if (!apiKey) return onRequestKey();
+
+                const confirmScan = confirm("This will overwrite existing answers for matching question numbers. Continue?");
+                if (!confirmScan) return;
+
+                setStep("Scanning Answer Key...");
+                setProc(true);
+
+                try {
+                    const b64 = await fileToBase64(file);
+                    // Prompt AI to extract as JSON
+                    const prompt = `Analyze this Answer Key image. Extract question numbers and answers. Output JSON: { "1": "A", "2": ["A","B"], "3": "5.5" }.`;
+                    const extractedAnswers = await apiCall(apiKey, prompt, b64);
+                    
+                    if (!extractedAnswers) throw new Error("Could not read answer key.");
+
+                    const updatedQuestions = test.questions.map((q, index) => {
+                        const qNum = (index + 1).toString();
+                        const keyVal = extractedAnswers[qNum];
+                        if (!keyVal) return q;
+
+                        let updates = {};
+                        // Helper to convert 'A' -> 0
+                        const toIdx = (char) => {
+                            if (typeof char !== 'string') return -1;
+                            const code = char.trim().toUpperCase().charCodeAt(0);
+                            return (code >= 65 && code <= 90) ? code - 65 : -1;
+                        };
+
+                        if (q.type === 'SINGLE') {
+                            const idx = toIdx(Array.isArray(keyVal) ? keyVal[0] : keyVal);
+                            if (idx !== -1) updates.correctIndex = idx;
+                        } else if (q.type === 'MULTI') {
+                            const valArray = Array.isArray(keyVal) ? keyVal : [keyVal];
+                            const indices = valArray.map(toIdx).filter(i => i !== -1);
+                            if (indices.length > 0) updates.correctIndices = indices;
+                        } else if (q.type === 'NUMERICAL') {
+                            updates.correctNum = keyVal.toString();
+                        }
+                        return { ...q, ...updates };
+                    });
+
+                    onUpdateTest({ questions: updatedQuestions });
+                    alert(`Updated ${Object.keys(extractedAnswers).length} answers.`);
+                } catch (err) { alert("Scan failed: " + err.message); }
+                setProc(false);
+                setStep("");
+                e.target.value = null;
+            };
+
+            // --- 5. GUIDE GENERATOR ---
+            const makeGuide = async () => {
+                if (!apiKey) return onRequestKey();
+                setGuideLoad(true);
+                try { setGuide(await generateGuide(test.questions, apiKey)); } catch (e) { alert(e.message); }
+                setGuideLoad(false);
+            };
+
+            return (
+                <div className="h-screen flex flex-col bg-slate-50">
+                    {/* Modals */}
+                    {guide && <StudyGuideModal content={guide} onClose={() => setGuide(null)} />}
+                    {manvanchit && <ManvanchitModal onClose={() => setManvanchit(false)} apiKey={apiKey} onImport={(q) => onUpdateTest({ questions: [...test.questions, ...q] })} />}
+                    
+                    {/* --- HEADER TOOLBAR --- */}
+                    <div className="bg-white border-b border-slate-200 px-6 py-4 flex items-center justify-between sticky top-0 z-30 shadow-sm shrink-0">
+                        <div className="flex items-center gap-4">
+                            <button onClick={onBack} className="p-2 hover:bg-slate-100 rounded-full text-slate-500"><Icon name="ArrowLeft" className="w-5 h-5" /></button>
+                            <input value={test.title} onChange={e => onUpdateTest({ title: e.target.value })} className="text-xl font-bold text-slate-900 border-none focus:ring-0 p-0 w-64 bg-transparent" placeholder="Test Title..." />
+                        </div>
+                        <div className="flex gap-2">
+                            {/* Hidden Input for Answer Key */}
+                            <input type="file" ref={answerKeyInputRef} onChange={handleAnswerKeyUpload} className="hidden" accept="image/*" />
+                            
+                            {/* Action Buttons */}
+                            <button onClick={() => answerKeyInputRef.current.click()} disabled={!test.questions.length} className="flex items-center gap-2 bg-amber-100 text-amber-800 px-4 py-2 rounded-lg hover:bg-amber-200 font-bold border border-amber-200" title="Upload Answer Key Image"><Icon name="ListChecks" className="w-4 h-4" /> Scan Key</button>
+                            <button onClick={() => setManvanchit(true)} className="flex items-center gap-2 bg-tattvam-900 text-white px-4 py-2 rounded-lg hover:bg-tattvam-800 font-medium border border-slate-700 shadow-sm"><Icon name="BrainCircuit" className="w-4 h-4" /> MANVANCHIT</button>
+                            <button onClick={makeGuide} disabled={guideLoad || !test.questions.length} className="flex items-center gap-2 bg-indigo-50 text-indigo-700 px-4 py-2 rounded-lg hover:bg-indigo-100 font-medium">{guideLoad ? <Icon name="Loader2" className="w-4 h-4 animate-spin" /> : <Icon name="Sparkles" className="w-4 h-4" />} Guide</button>
+                            <button onClick={onPrint} className="flex items-center gap-2 bg-slate-100 text-slate-700 px-4 py-2 rounded-lg hover:bg-slate-200 font-medium"><Icon name="Printer" className="w-4 h-4" /> Print</button>
+                            <button onClick={onPlay} disabled={!test.questions.length} className="flex items-center gap-2 bg-emerald-600 text-white px-4 py-2 rounded-lg hover:bg-emerald-700 disabled:opacity-50 font-medium"><Icon name="Play" className="w-4 h-4" /> Quiz</button>
+                        </div>
+                    </div>
+
+                    {/* --- MAIN WORKSPACE --- */}
+                    <div className="flex-1 overflow-y-auto p-4 md:p-8 max-w-4xl mx-auto w-full">
+                        
+                        {/* Loading / Processing Overlay */}
+                        {proc && (
+                            <div className="fixed inset-0 bg-white/80 backdrop-blur-[2px] z-50 flex flex-col items-center justify-center">
+                                <Icon name="Loader2" className="w-10 h-10 text-tattvam-600 animate-spin mb-3" />
+                                <p className="text-lg font-bold text-slate-700 animate-pulse">{step}</p>
+                            </div>
+                        )}
+
+                        {/* Upload & Paste Area */}
+                        <div className="mb-8">
+                            <label className={`flex flex-col items-center justify-center w-full h-32 border-2 border-dashed rounded-xl cursor-pointer transition-all ${proc ? 'bg-indigo-50 border-indigo-300' : 'bg-white border-slate-300 hover:border-indigo-500'}`}>
+                                <Icon name="Upload" className="w-8 h-8 text-slate-400 mb-2" />
+                                <p className="text-sm text-slate-600 font-medium">
+                                    Click to Upload Images or <span className="text-indigo-600 font-bold bg-indigo-50 px-2 py-0.5 rounded border border-indigo-100">Ctrl+V</span> to Paste
+                                </p>
+                                <input type="file" className="hidden" multiple accept="image/*" onChange={handleUpload} />
+                            </label>
+                        </div>
+
+                        {/* Question List */}
+                        <div className="space-y-6">
+                            {test.questions.map((q, idx) => (
+                                <div key={q.id}>
+                                    {editId === q.id ? 
+                                        /* Editing Mode (Uses your updated QuestionEditor) */
+                                        <QuestionEditor 
+                                            question={q} 
+                                            onSave={u => { onUpdateTest({ questions: test.questions.map(qt => qt.id === u.id ? u : qt) }); setEditId(null); }} 
+                                            onCancel={() => setEditId(null)} 
+                                            apiKey={apiKey} 
+                                            onRequestKey={onRequestKey} 
+                                        /> 
+                                        :
+                                        /* View Mode (Card Display) */
+                                        <div className="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden group hover:border-tattvam-200 transition-colors">
+                                            <div className="bg-slate-50 px-4 py-2 border-b border-slate-100 flex justify-between items-center">
+                                                <div className="flex items-center gap-2">
+                                                    <span className="text-xs font-bold text-slate-500 uppercase">Q{idx + 1}</span>
+                                                    {q.pyq_tag && <span className="text-[10px] bg-amber-100 text-amber-800 px-2 py-0.5 rounded-full font-bold border border-amber-200">{q.pyq_tag}</span>}
+                                                    <span className="text-[10px] bg-slate-100 px-2 py-0.5 rounded font-bold">{q.type || 'SINGLE'}</span>
+                                                    {q.difficulty && <span className={`text-[10px] px-2 py-0.5 rounded-full font-bold uppercase ${q.difficulty === 'Easy' ? 'bg-green-100 text-green-700' : q.difficulty === 'Hard' ? 'bg-red-100 text-red-700' : 'bg-blue-100 text-blue-700'}`}>{q.difficulty}</span>}
+                                                    <span className="text-[10px] font-mono text-slate-400">+{q.marks?.pos||4} / -{q.marks?.neg||1}</span>
+                                                </div>
+                                                <div className="flex gap-1">
+                                                    <button onClick={() => setEditId(q.id)} className="text-slate-400 hover:text-tattvam-600 p-1.5 hover:bg-tattvam-50 rounded"><Icon name="Edit2" className="w-4 h-4" /></button>
+                                                    <button onClick={() => onUpdateTest({ questions: test.questions.filter(qt => qt.id !== q.id) })} className="text-slate-400 hover:text-red-500 p-1.5 hover:bg-red-50 rounded"><Icon name="Trash2" className="w-4 h-4" /></button>
+                                                </div>
+                                            </div>
+                                            <div className="p-5 flex gap-6">
+                                                <div className="flex-1">
+                                                    <div className="font-medium text-slate-800 mb-4 text-lg"><LatexRenderer content={q.text} /></div>
+                                                    
+                                                    {/* Option Rendering */}
+                                                    {(q.type === 'SINGLE' || q.type === 'MULTI' || !q.type) && (
+                                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+                                                            {q.options?.map((opt, oIdx) => (
+                                                                <div key={oIdx} className={`flex items-start gap-3 text-sm p-2 rounded-lg border ${ (q.type==='SINGLE'?q.correctIndex===oIdx:q.correctIndices?.includes(oIdx)) ? 'bg-green-50 border-green-200 text-green-800' : 'border-transparent text-slate-600'}`}>
+                                                                    <span className={`font-mono text-xs mt-0.5 w-5 h-5 flex items-center justify-center rounded-full flex-shrink-0 border ${ (q.type==='SINGLE'?q.correctIndex===oIdx:q.correctIndices?.includes(oIdx)) ? 'border-green-600 bg-green-600 text-white' : 'border-slate-300'}`}>
+                                                                        {String.fromCharCode(65 + oIdx)}
+                                                                    </span>
+                                                                    <LatexRenderer content={opt} />
+                                                                </div>
+                                                            ))}
+                                                        </div>
+                                                    )}
+                                                    {q.type === 'NUMERICAL' && <div className="bg-blue-50 p-2 rounded text-blue-800 text-sm font-bold">Answer: {q.correctNum}</div>}
+                                                    {q.type === 'MATRIX' && <div className="text-xs text-slate-500 italic">Matrix Match Question</div>}
+                                                </div>
+                                                {q.diagram && <div className="w-32 md:w-48 flex-shrink-0"><img src={q.diagram} className="rounded-lg border border-slate-200 w-full h-auto object-contain" /></div>}
+                                            </div>
+                                        </div>
+                                    }
+                                </div>
+                            ))}
+                            {test.questions.length === 0 && !proc && <div className="text-center py-8 text-slate-400">No questions. Upload images to begin.</div>}
+                        </div>
+                    </div>
+                </div>
+            );
+        };
+const Player = ({ test, duration, onBack, notebooks, onSaveToNotebook }) => {
+            const [idx, setIdx] = useState(0);
+            const [ans, setAns] = useState({});
+            const [status, setStatus] = useState(new Array(test.questions.length).fill('not_visited'));
+            const [timeLeft, setTimeLeft] = useState(duration * 60);
+            const [isSubmitted, setIsSubmitted] = useState(false);
+            const [showPalette, setShowPalette] = useState(true);
+            const [saveModal, setSaveModal] = useState(false); // NEW: Modal state
+
+            // Timer Logic
+            useEffect(() => {
+                const timer = setInterval(() => {
+                    if(!isSubmitted && timeLeft > 0) setTimeLeft(prev => prev - 1);
+                }, 1000);
+                return () => clearInterval(timer);
+            }, [isSubmitted, timeLeft]);
+
+            // Status Tracker
+            useEffect(() => {
+                setStatus(prev => {
+                    const next = [...prev];
+                    if(next[idx] === 'not_visited') next[idx] = 'not_answered';
+                    return next;
+                });
+            }, [idx]);
+
+            const formatTime = (s) => {
+                const h = Math.floor(s/3600), m = Math.floor((s%3600)/60), sec = s%60;
+                return `${h}:${m<10?'0':''}${m}:${sec<10?'0':''}${sec}`;
+            };
+
+            const handleAns = (val) => {
+                if(isSubmitted) return;
+                const q = test.questions[idx];
+                if(q.type === 'MULTI') {
+                    const cur = ans[q.id] || [];
+                    const newAns = cur.includes(val) ? cur.filter(x=>x!==val) : [...cur, val];
+                    setAns({...ans, [q.id]: newAns});
+                    setStatus(prev => { const n=[...prev]; n[idx] = newAns.length ? 'answered' : 'not_answered'; return n; });
+                } else {
+                    setAns({...ans, [q.id]: val});
+                    setStatus(prev => { const n=[...prev]; n[idx] = val !== '' ? 'answered' : 'not_answered'; return n; });
+                }
+            };
+
+            const checkAns = (q, userAns) => {
+                if(!userAns && userAns !== 0) return false;
+                if(q.type === 'MULTI') {
+                    if(!userAns.length) return false;
+                    const correct = q.correctIndices || [];
+                    return correct.length === userAns.length && correct.every(i => userAns.includes(i));
+                }
+                if(q.type === 'NUMERICAL') return String(userAns).trim() === String(q.correctNum).trim();
+                return userAns === q.correctIndex;
+            };
+
+            // Calculate Scores
+            const score = test.questions.reduce((acc, q) => {
+                const userAns = ans[q.id];
+                if(userAns === undefined || (Array.isArray(userAns) && userAns.length===0) || userAns === '') return acc;
+                const isCor = checkAns(q, userAns);
+                return acc + (isCor ? (q.marks?.pos||1) : -(q.marks?.neg||0));
+            }, 0);
+            
+            const totalMarks = test.questions.reduce((acc, q) => acc + (q.marks?.pos||0), 0);
+
+            // NEW: Function to Save Result
+            const saveResult = (notebookId) => {
+                const entry = {
+                    id: Date.now().toString(),
+                    date: new Date().toISOString(),
+                    testName: test.title,
+                    score: score,
+                    maxMarks: totalMarks,
+                    subjects: {}, // You can extend this logic to group by subject tags if you add them later
+                    type: 'QUIZ_ATTEMPT'
+                };
+                onSaveToNotebook(notebookId, entry);
+                setSaveModal(false);
+                alert("Result saved successfully to Notebook!");
+            };
+
+            const q = test.questions[idx];
+
+            // --- RESULT SCREEN ---
+            if (isSubmitted) return (
+                <div className="h-screen flex flex-col bg-slate-50 font-sans">
+                    {/* NEW: Save Modal */}
+                    {saveModal && (
+                        <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-[100] p-4 backdrop-blur-sm animate-in fade-in">
+                            <div className="bg-white rounded-xl p-6 w-full max-w-sm shadow-2xl">
+                                <h3 className="font-bold text-lg mb-2 text-slate-800">Save to Notebook</h3>
+                                <p className="text-sm text-slate-500 mb-4">Select a notebook to store this result.</p>
+                                <div className="space-y-2 max-h-60 overflow-y-auto mb-4">
+                                    {notebooks && notebooks.map(nb => (
+                                        <button key={nb.id} onClick={() => saveResult(nb.id)} className="w-full text-left p-3 rounded-lg hover:bg-indigo-50 border border-slate-100 font-medium text-slate-700 flex items-center gap-2 group transition-colors">
+                                            <Icon name="BookMarked" className="w-4 h-4 text-slate-400 group-hover:text-indigo-600" />
+                                            {nb.title}
+                                        </button>
+                                    ))}
+                                    {(!notebooks || notebooks.length === 0) && (
+                                        <div className="text-center py-4 bg-slate-50 rounded-lg border border-dashed border-slate-200">
+                                            <p className="text-slate-500 text-xs">No notebooks found.</p>
+                                            <p className="text-xs text-slate-400">Go to Analysis tab to create one.</p>
+                                        </div>
+                                    )}
+                                </div>
+                                <button onClick={() => setSaveModal(false)} className="w-full py-2.5 bg-slate-100 rounded-lg text-slate-600 font-bold hover:bg-slate-200 transition-colors">Cancel</button>
+                            </div>
+                        </div>
+                    )}
+
+                    <div className="bg-white border-b px-6 py-4 flex justify-between items-center shadow-sm shrink-0">
+                        <h2 className="text-xl font-bold text-slate-800">Result Analysis</h2>
+                        <div className="flex gap-2">
+                             {/* NEW: Save Button */}
+                             <button onClick={() => setSaveModal(true)} className="flex items-center gap-2 bg-indigo-600 text-white px-4 py-2 rounded-lg font-bold hover:bg-indigo-700 shadow-sm transition-transform active:scale-95">
+                                <Icon name="BookMarked" className="w-4 h-4" /> Save Analysis
+                            </button>
+                            <button onClick={onBack} className="text-slate-500 hover:text-slate-700 font-medium px-4">Exit</button>
+                        </div>
+                    </div>
+
+                    <div className="flex-1 overflow-y-auto p-8">
+                        <div className="max-w-4xl mx-auto space-y-8">
+                            <div className="bg-white p-6 rounded-2xl shadow-sm border flex justify-around text-center">
+                                <div><div className="text-sm text-slate-500 uppercase font-bold">Total Score</div><div className="text-4xl font-black text-indigo-600 mt-2">{score} <span className="text-lg text-slate-300">/ {totalMarks}</span></div></div>
+                                <div><div className="text-sm text-slate-500 uppercase font-bold">Questions</div><div className="text-4xl font-black text-slate-700 mt-2">{test.questions.length}</div></div>
+                                <div><div className="text-sm text-slate-500 uppercase font-bold">Accuracy</div><div className="text-4xl font-black text-green-600 mt-2">{Math.round((test.questions.filter(q => checkAns(q, ans[q.id])).length / (Object.keys(ans).length || 1)) * 100)}%</div></div>
+                            </div>
+                            
+                            <div className="space-y-6">
+                                {test.questions.map((q, i) => {
+                                    const userAns = ans[q.id];
+                                    const isCorrect = checkAns(q, userAns);
+                                    const isAttempted = userAns !== undefined && userAns !== '' && (!Array.isArray(userAns) || userAns.length > 0);
+                                    return (
+                                        <div key={q.id} className={`bg-white p-6 rounded-xl border-l-4 shadow-sm ${!isAttempted ? 'border-slate-300' : isCorrect ? 'border-green-500' : 'border-red-500'}`}>
+                                            <div className="flex justify-between mb-4">
+                                                <span className="font-bold text-slate-700">Question {i+1}</span>
+                                                <span className={`text-xs font-bold px-2 py-1 rounded ${!isAttempted ? 'bg-slate-100 text-slate-500' : isCorrect ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`}>
+                                                    {!isAttempted ? 'Unattempted' : isCorrect ? `Correct (+${q.marks?.pos})` : `Incorrect (-${q.marks?.neg})`}
+                                                </span>
+                                            </div>
+                                            <div className="mb-4 text-slate-800"><LatexRenderer content={q.text} /></div>
+                                            {q.diagram && <img src={q.diagram} className="max-w-xs max-h-48 object-contain mb-4 rounded border" />}
+                                            
+                                            {(q.type === 'SINGLE' || q.type === 'MULTI') && (
+                                                <div className="grid grid-cols-2 gap-2 mb-4">
+                                                    {q.options?.map((opt, oIdx) => {
+                                                        const isUserSel = q.type === 'MULTI' ? userAns?.includes(oIdx) : userAns === oIdx;
+                                                        const isRight = q.type === 'MULTI' ? q.correctIndices?.includes(oIdx) : q.correctIndex === oIdx;
+                                                        let bg = "bg-slate-50 border-slate-200";
+                                                        if (isRight) bg = "bg-green-50 border-green-500 text-green-800";
+                                                        else if (isUserSel && !isRight) bg = "bg-red-50 border-red-500 text-red-800";
+                                                        
+                                                        return (
+                                                            <div key={oIdx} className={`p-3 rounded-lg border flex items-center gap-2 text-sm ${bg}`}>
+                                                                <span className="font-bold">{String.fromCharCode(65+oIdx)}</span> <LatexRenderer content={opt} />
+                                                                {isUserSel && <span className="ml-auto text-[10px] font-bold uppercase">Your Ans</span>}
+                                                            </div>
+                                                        );
+                                                    })}
+                                                </div>
+                                            )}
+                                            
+                                            <div className="bg-slate-50 p-4 rounded-lg text-sm text-slate-700">
+                                                <strong className="block text-indigo-600 mb-1">Explanation:</strong>
+                                                <LatexRenderer content={q.explanation || "No explanation provided."} />
+                                            </div>
+                                        </div>
+                                    );
+                                })}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            );
+
+            // --- QUIZ TAKING SCREEN ---
+            return (
+                <div className="h-screen flex flex-col bg-slate-50">
+                    <div className="bg-white border-b px-4 py-2 flex justify-between items-center shadow-sm shrink-0 h-16">
+                        <div className="flex items-center gap-4">
+                            <h2 className="font-bold text-lg text-slate-800 truncate max-w-xs">{test.title}</h2>
+                        </div>
+                        <div className="flex items-center gap-6">
+                            <div className="flex items-center gap-2 bg-slate-100 px-3 py-1.5 rounded-lg text-slate-700 font-mono font-bold">
+                                <Icon name="Clock" className="w-4 h-4" /> {timeLeft > 36000 ? "∞" : formatTime(timeLeft)}
+                            </div>
+                            <button onClick={() => { if(confirm("Submit Test?")) setIsSubmitted(true); }} className="bg-indigo-600 text-white px-6 py-2 rounded-lg font-bold hover:bg-indigo-700 shadow-sm text-sm">Submit Test</button>
+                        </div>
+                        <button onClick={() => setShowPalette(!showPalette)} className="md:hidden"><Icon name="Grid" /></button>
+                    </div>
+
+                    <div className="flex flex-1 overflow-hidden">
+                        <div className="flex-1 overflow-y-auto p-6 md:p-10">
+                            <div className="max-w-4xl mx-auto">
+                                <div className="flex justify-between items-start mb-6">
+                                    <div className="flex items-center gap-3">
+                                        <span className="text-xl font-bold text-slate-400">Q{idx+1}</span>
+                                        <span className="text-xs font-bold bg-slate-200 text-slate-600 px-2 py-1 rounded uppercase tracking-wider">{q.type}</span>
+                                        <span className="text-xs font-bold text-slate-400">+{q.marks?.pos} / -{q.marks?.neg}</span>
+                                    </div>
+                                </div>
+                                <div className="text-lg text-slate-800 leading-relaxed mb-8">
+                                    <LatexRenderer content={q.text} />
+                                    {q.diagram && <img src={q.diagram} className="mt-4 max-h-64 object-contain rounded-lg border border-slate-200" />}
+                                </div>
+                                <div className="space-y-3">
+                                    {(q.type === 'SINGLE' || q.type === 'MULTI' || !q.type) && q.options?.map((opt, oIdx) => {
+                                        const isSel = q.type === 'MULTI' ? ans[q.id]?.includes(oIdx) : ans[q.id] === oIdx;
+                                        return (
+                                            <div key={oIdx} onClick={() => handleAns(oIdx)} className={`p-4 rounded-xl border-2 cursor-pointer transition-all flex items-center gap-4 group ${isSel ? 'border-indigo-600 bg-indigo-50' : 'border-slate-200 hover:border-indigo-300 hover:bg-slate-50'}`}>
+                                                <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center text-xs font-bold transition-colors ${isSel ? 'bg-indigo-600 border-indigo-600 text-white' : 'border-slate-300 text-slate-400 group-hover:border-indigo-400'}`}>{String.fromCharCode(65+oIdx)}</div>
+                                                <div className="text-base text-slate-700"><LatexRenderer content={opt} /></div>
+                                            </div>
+                                        );
+                                    })}
+                                    {q.type === 'NUMERICAL' && (
+                                        <div><label className="block text-sm font-bold text-slate-500 mb-2">Your Answer</label><input type="text" value={ans[q.id] || ''} onChange={e => handleAns(e.target.value)} className="w-full md:w-1/2 p-4 text-xl border-2 border-slate-300 rounded-xl focus:border-indigo-500 outline-none font-mono" placeholder="Enter numerical value..." /></div>
+                                    )}
+                                </div>
+                                <div className="flex justify-between mt-10 pt-6 border-t border-slate-100">
+                                    <button onClick={() => idx > 0 && setIdx(idx-1)} disabled={idx===0} className="px-6 py-2 rounded-lg font-bold text-slate-500 hover:bg-slate-100 disabled:opacity-50 flex items-center gap-2"><Icon name="ChevronLeft" /> Previous</button>
+                                    <div className="flex gap-2"><button onClick={() => handleAns('')} className="px-4 py-2 text-sm text-red-500 hover:bg-red-50 rounded-lg font-medium">Clear</button><button onClick={() => idx < test.questions.length-1 && setIdx(idx+1)} disabled={idx===test.questions.length-1} className="bg-slate-900 text-white px-8 py-2 rounded-lg font-bold hover:bg-slate-800 flex items-center gap-2">Next <Icon name="ChevronRight" /></button></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div className={`${showPalette ? 'w-72' : 'w-0'} bg-white border-l transition-all duration-300 flex flex-col shrink-0 overflow-hidden`}>
+                            <div className="p-4 border-b bg-slate-50"><h3 className="font-bold text-sm uppercase text-slate-500">Question Palette</h3></div>
+                            <div className="flex-1 overflow-y-auto p-4"><div className="grid grid-cols-4 gap-2">{test.questions.map((_, i) => <button key={i} onClick={() => setIdx(i)} className={`h-10 w-10 rounded-lg border font-bold text-sm flex items-center justify-center transition-all ${status[i] === 'answered' ? 'bg-green-100 text-green-700 border-green-300' : 'bg-slate-100 text-slate-500 border-slate-200'} ${idx===i ? 'ring-2 ring-indigo-500 ring-offset-2' : ''}`}>{i+1}</button>)}</div></div>
+                        </div>
+                    </div>
+                </div>
+            );
+        };
+const PrintCustomizer = ({ cfg, setCfg, onClose, onAI, loading, totalCalculatedMarks }) => {
+            const [tab, setTab] = useState('design'); // design | content | layout
+            
+            const handleLogo = (e) => {
+                const file = e.target.files[0];
+                if(file) {
+                    const reader = new FileReader();
+                    reader.onload = (ev) => setCfg({...cfg, logo: ev.target.result});
+                    reader.readAsDataURL(file);
+                }
+            };
+
+            return (
+                <div className="fixed inset-y-0 right-0 w-80 bg-white shadow-2xl z-50 animate-in slide-in-from-right border-l flex flex-col h-full font-sans">
+                    {/* Header */}
+                    <div className="flex justify-between items-center p-5 border-b border-slate-100 shrink-0 bg-white">
+                        <div className="flex items-center gap-2 text-indigo-900">
+                            <Icon name="Settings" className="w-5 h-5" />
+                            <h3 className="font-bold text-lg">Design Studio</h3>
+                        </div>
+                        <button onClick={onClose} className="p-2 hover:bg-slate-100 rounded-full text-slate-400 hover:text-red-500 transition-colors"><Icon name="X" /></button>
+                    </div>
+
+                    {/* Tabs */}
+                    <div className="flex border-b border-slate-100">
+                        {['design', 'content', 'layout'].map(t => (
+                            <button key={t} onClick={() => setTab(t)} className={`flex-1 py-3 text-xs font-bold uppercase tracking-wider ${tab===t ? 'text-indigo-600 border-b-2 border-indigo-600' : 'text-slate-400 hover:bg-slate-50'}`}>
+                                {t}
+                            </button>
+                        ))}
+                    </div>
+
+                    {/* Scrollable Content */}
+                    <div className="flex-1 overflow-y-auto p-6 space-y-6 bg-slate-50/50">
+                        
+                        {/* --- TAB: DESIGN --- */}
+                        {tab === 'design' && (
+                            <div className="space-y-6 animate-in fade-in">
+                                <div>
+                                    <label className="text-xs font-bold text-slate-500 uppercase mb-2 block">Theme Style</label>
+                                    <div className="grid grid-cols-2 gap-2">
+                                        {['Classic', 'Modern', 'Minimal', 'Brutal'].map(th => (
+                                            <button key={th} onClick={() => setCfg({...cfg, theme: th})} className={`px-3 py-2 text-sm border rounded-lg transition-all ${cfg.theme === th ? 'bg-indigo-600 text-white border-indigo-600 shadow-md' : 'bg-white text-slate-600 border-slate-200 hover:border-indigo-300'}`}>
+                                                {th}
+                                            </button>
+                                        ))}
+                                    </div>
+                                </div>
+
+                                <div>
+                                    <label className="text-xs font-bold text-slate-500 uppercase mb-2 block">Institute Logo</label>
+                                    <div className="flex items-center gap-3">
+                                        {cfg.logo ? (
+                                            <div className="relative w-16 h-16 border rounded bg-white p-1">
+                                                <img src={cfg.logo} className="w-full h-full object-contain" />
+                                                <button onClick={() => setCfg({...cfg, logo: null})} className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-0.5"><Icon name="X" className="w-3 h-3" /></button>
+                                            </div>
+                                        ) : (
+                                            <label className="w-16 h-16 border-2 border-dashed border-slate-300 rounded hover:border-indigo-500 flex items-center justify-center cursor-pointer bg-white">
+                                                <Icon name="Image" className="text-slate-300" />
+                                                <input type="file" className="hidden" accept="image/*" onChange={handleLogo} />
+                                            </label>
+                                        )}
+                                        <div className="text-xs text-slate-400 flex-1">Upload a square or rectangular logo for the header.</div>
+                                    </div>
+                                </div>
+
+                                <div>
+                                    <label className="text-xs font-bold text-slate-500 uppercase mb-2 block">Typography</label>
+                                    <div className="flex border rounded-lg overflow-hidden bg-white">
+                                        {['serif', 'sans', 'mono'].map(f => (
+                                            <button key={f} onClick={() => setCfg({...cfg, font: f})} className={`flex-1 py-2 text-xs font-bold uppercase ${cfg.font === f ? 'bg-slate-800 text-white' : 'text-slate-500 hover:bg-slate-50'}`}>
+                                                {f}
+                                            </button>
+                                        ))}
+                                    </div>
+                                </div>
+                            </div>
+                        )}
+
+                        {/* --- TAB: CONTENT --- */}
+                        {tab === 'content' && (
+                            <div className="space-y-5 animate-in fade-in">
+                                <div className="bg-gradient-to-r from-purple-50 to-indigo-50 p-4 rounded-xl border border-indigo-100 shadow-sm">
+                                    <label className="text-xs font-bold text-indigo-700 uppercase flex items-center gap-1 mb-2"><Icon name="Wand2" className="w-3 h-3" /> AI Designer</label>
+                                    <textarea id="aiPrompt" className="w-full text-xs border border-indigo-200 p-2.5 rounded-lg mb-3 h-16 focus:ring-2 focus:ring-indigo-500 outline-none bg-white" placeholder="e.g. Strict IIT-JEE Physics Paper layout..."></textarea>
+                                    <button onClick={() => onAI(document.getElementById('aiPrompt').value)} disabled={loading} className="w-full bg-indigo-600 text-white text-xs py-2.5 rounded-lg font-bold flex items-center justify-center gap-2 hover:bg-indigo-700 disabled:opacity-50 shadow-sm transition-all">{loading ? <Icon name="Loader2" className="w-3 h-3 animate-spin" /> : <Icon name="Sparkles" className="w-3 h-3" />} Generate</button>
+                                </div>
+
+                                <div><label className="text-xs font-bold text-slate-500 uppercase">Header Title</label><input value={cfg.header} onChange={e => setCfg({...cfg, header: e.target.value})} className="w-full border p-2 rounded mt-1 text-sm" /></div>
+                                
+                                <div className="grid grid-cols-2 gap-3">
+                                    <div><label className="text-xs font-bold text-slate-500 uppercase">Duration</label><input value={cfg.duration} onChange={e => setCfg({...cfg, duration: e.target.value})} className="w-full border p-2 rounded mt-1 text-sm" /></div>
+                                    <div><label className="text-xs font-bold text-slate-500 uppercase">Max Marks</label><input value={cfg.maxMarks} onChange={e => setCfg({...cfg, maxMarks: e.target.value})} className="w-full border p-2 rounded mt-1 text-sm" placeholder={totalCalculatedMarks} /></div>
+                                </div>
+
+                                <div className="space-y-2 bg-white p-3 rounded border">
+                                    <div className="flex items-center justify-between">
+                                        <label className="text-sm font-bold text-slate-700">Add Solution QR</label>
+                                        <input type="checkbox" checked={cfg.showQR} onChange={e => setCfg({...cfg, showQR: e.target.checked})} className="w-5 h-5 accent-indigo-600" />
+                                    </div>
+                                    {cfg.showQR && (
+                                        <input value={cfg.qrLink} onChange={e => setCfg({...cfg, qrLink: e.target.value})} className="w-full border p-2 rounded text-xs" placeholder="Paste Solution Link (Drive/Video URL)..." />
+                                    )}
+                                </div>
+
+                                {/* NEW: Answer Key Toggle */}
+                                <div className="flex items-center justify-between bg-white p-3 rounded border">
+                                    <label className="text-sm font-bold text-slate-700">Include Answer Key</label>
+                                    <input type="checkbox" checked={cfg.showKey !== false} onChange={e => setCfg({...cfg, showKey: e.target.checked})} className="w-5 h-5 accent-indigo-600" />
+                                </div>
+
+                                <div><label className="text-xs font-bold text-slate-500 uppercase">Instructions</label><textarea value={cfg.instructions} onChange={e => setCfg({...cfg, instructions: e.target.value})} className="w-full border p-2 rounded mt-1 h-24 text-xs font-mono" /></div>
+                            </div>
+                        )}
+
+                        {/* --- TAB: LAYOUT --- */}
+                        {tab === 'layout' && (
+                            <div className="space-y-6 animate-in fade-in">
+                                <div>
+                                    <div className="flex justify-between mb-1"><label className="text-xs font-bold text-slate-500 uppercase">Font Size</label><span className="text-xs font-mono">{cfg.fontSize}px</span></div>
+                                    <input type="range" min="10" max="20" value={cfg.fontSize} onChange={e => setCfg({...cfg, fontSize: Number(e.target.value)})} className="w-full accent-indigo-600" />
+                                </div>
+                                <div>
+                                    <div className="flex justify-between mb-1"><label className="text-xs font-bold text-slate-500 uppercase">Spacing (Gap)</label><span className="text-xs font-mono">{cfg.gap}px</span></div>
+                                    <input type="range" min="4" max="16" value={cfg.gap} onChange={e => setCfg({...cfg, gap: Number(e.target.value)})} className="w-full accent-indigo-600" />
+                                </div>
+                                
+                                <div className="space-y-2">
+                                    <div className="flex justify-between items-center bg-white p-3 rounded border"><label className="text-sm text-slate-700">2-Column Mode</label><input type="checkbox" checked={cfg.twoCol} onChange={e => setCfg({...cfg, twoCol: e.target.checked})} className="w-5 h-5 accent-indigo-600" /></div>
+                                    <div className="flex justify-between items-center bg-white p-3 rounded border"><label className="text-sm text-slate-700">Show Marks</label><input type="checkbox" checked={cfg.showMarks} onChange={e => setCfg({...cfg, showMarks: e.target.checked})} className="w-5 h-5 accent-indigo-600" /></div>
+                                </div>
+                                
+                                <div><label className="text-xs font-bold text-slate-500 uppercase">Watermark</label><input value={cfg.watermark} onChange={e => setCfg({...cfg, watermark: e.target.value})} className="w-full border p-2 rounded mt-1 text-sm" placeholder="Confidential" /></div>
+                            </div>
+                        )}
+                    </div>
+
+                    {/* Footer */}
+                    <div className="p-4 border-t border-slate-100 bg-white shrink-0">
+                        <button onClick={onClose} className="w-full bg-slate-900 text-white py-3.5 rounded-xl font-bold hover:bg-slate-800 shadow-lg active:scale-95 transition-all flex items-center justify-center gap-2"><Icon name="CheckCircle2" className="w-5 h-5" /> Done</button>
+                    </div>
+                </div>
+            );
+        };
+const PrintView = ({ test, onBack, apiKey, onRequestKey }) => {
+            const calculatedTotal = test.questions.reduce((a,q)=>a+(q.marks?.pos||0),0);
+            
+            const [cfg, setCfg] = useState({ 
+                theme: 'Classic', 
+                header: test.title, 
+                logo: null,
+                watermark: '', 
+                twoCol: false, 
+                showMarks: true,
+                showKey: true, // Default to true
+                duration: "3 Hours",
+                maxMarks: "",
+                candidateLabel: "Candidate Name",
+                instructions: "1. All questions are compulsory.\n2. The question paper consists of " + test.questions.length + " questions.\n3. Use of calculators is not permitted.",
+                font: 'serif',
+                fontSize: 16,
+                gap: 8,
+                showQR: false,
+                qrLink: ''
+            });
+            const [showCfg, setShowCfg] = useState(false);
+            const [aiLoading, setAiLoading] = useState(false);
+
+            const handleAITemplate = async (prompt) => {
+                if(!apiKey) return onRequestKey();
+                setAiLoading(true);
+                try {
+                    const newCfg = await generateTemplateConfig(prompt, test.title, apiKey);
+                    setCfg(prev => ({ ...prev, ...newCfg }));
+                } catch(e) { alert("AI Error: " + e.message); }
+                setAiLoading(false);
+            };
+
+            const getThemeStyles = () => {
+                const base = "max-w-4xl mx-auto min-h-[11in] relative overflow-hidden print-w-full print-max-w-none ";
+                switch(cfg.theme) {
+                    case 'Modern': return { container: base + "font-sans bg-white text-slate-900", header: "bg-slate-900 text-white p-8 mb-8", title: "text-4xl font-black tracking-tight", meta: "text-slate-400" };
+                    case 'Minimal': return { container: base + "font-sans bg-white text-slate-800", header: "border-b pb-4 mb-8", title: "text-2xl font-light uppercase tracking-widest", meta: "text-slate-500 text-xs uppercase" };
+                    case 'Brutal': return { container: base + "font-mono bg-white text-black border-4 border-black p-4", header: "border-b-4 border-black pb-6 mb-8 bg-yellow-300 p-4 -mx-4 -mt-4", title: "text-4xl font-black uppercase", meta: "font-bold" };
+                    default: return { container: base + "font-serif bg-white text-black p-10", header: "border-b-2 border-black pb-6 mb-8 text-center", title: "text-3xl font-bold uppercase", meta: "" };
+                }
+            };
+            const theme = getThemeStyles();
+
+            return (
+                <div className="min-h-screen bg-slate-100 flex flex-col">
+                    {showCfg && <PrintCustomizer cfg={cfg} setCfg={setCfg} onClose={() => setShowCfg(false)} onAI={handleAITemplate} loading={aiLoading} totalCalculatedMarks={calculatedTotal} />}
+                    
+                    <div className="bg-slate-900 text-white px-6 py-4 flex justify-between items-center print-hidden shadow-md sticky top-0 z-50">
+                        <div className="flex items-center gap-4"><button onClick={onBack} className="hover:bg-slate-700 p-2 rounded-lg flex items-center gap-2"><Icon name="ArrowLeft" className="w-4 h-4" /> Back</button><span className="font-semibold">{test.title}</span></div>
+                        <div className="flex gap-2"><button onClick={() => setShowCfg(true)} className="bg-indigo-600 px-3 py-2 rounded text-sm font-bold flex items-center gap-2"><Icon name="Settings" className="w-4 h-4" /> Design Studio</button><button onClick={() => window.print()} className="bg-white text-slate-900 px-6 py-2 rounded-lg font-bold hover:bg-indigo-50 flex items-center gap-2 shadow-lg"><Icon name="Printer" className="w-4 h-4" /> Print</button></div>
+                    </div>
+                    
+                    <div className="flex-1 overflow-auto p-8 print-p-0 print-overflow-visible">
+                        <div className={theme.container} style={{ fontSize: `${cfg.fontSize}px` }}>
+                            {cfg.watermark && <div className="absolute inset-0 flex items-center justify-center pointer-events-none opacity-[0.08] z-0"><span className="text-9xl font-black -rotate-45 whitespace-nowrap">{cfg.watermark}</span></div>}
+                            
+                            {/* HEADER */}
+                            <div className={`relative z-10 ${theme.header}`}>
+                                <div className="flex justify-between items-start gap-6">
+                                    {cfg.logo && <img src={cfg.logo} className="h-20 w-auto object-contain mix-blend-multiply" />}
+                                    <div className="flex-1">
+                                        <h1 className={theme.title}>{cfg.header}</h1>
+                                        <div className={`flex flex-wrap gap-4 mt-2 ${theme.meta}`}>
+                                            <span><strong>Time:</strong> {cfg.duration}</span>
+                                            <span><strong>Marks:</strong> {cfg.maxMarks || calculatedTotal}</span>
+                                        </div>
+                                    </div>
+                                    {cfg.showQR && (
+                                        <div className="text-center">
+                                            <img src={`https://api.qrserver.com/v1/create-qr-code/?size=100x100&data=${encodeURIComponent(cfg.qrLink || "No Link")}`} className="w-20 h-20 border-2 border-white" />
+                                            <div className="text-[10px] font-bold mt-1 uppercase">Solutions</div>
+                                        </div>
+                                    )}
+                                </div>
+                                <div className="mt-6 text-sm whitespace-pre-line opacity-90">{cfg.instructions}</div>
+                                {cfg.theme === 'Classic' && (
+                                    <div className="mt-4 flex gap-4 text-sm font-serif pt-4 border-t border-black/20">
+                                        <span className="font-bold whitespace-nowrap">{cfg.candidateLabel}:</span>
+                                        <div className="border-b border-black flex-1 border-dashed"></div>
+                                    </div>
+                                )}
+                            </div>
+
+                            {/* QUESTIONS */}
+                            <div className={`relative z-10 ${cfg.twoCol ? 'print-col-2' : ''}`} style={{ columnGap: '2rem' }}>
+                                {test.questions.map((q, i) => (
+                                    <div key={q.id} className="break-inside-avoid mb-0" style={{ marginBottom: `${cfg.gap*2}px` }}>
+                                        <div className="flex gap-3">
+                                            <span className="font-bold opacity-70 flex-shrink-0" style={{ minWidth: '1.5em' }}>{i + 1}.</span>
+                                            <div className="flex-1">
+                                                <div className="leading-relaxed text-justify w-full"><LatexRenderer content={q.text} /></div>
+                                                {q.diagram && <img src={q.diagram} className="max-w-[180px] h-auto object-contain my-3 border border-gray-200 rounded" />}
+                                                
+                                                {(q.type === 'SINGLE' || q.type === 'MULTI' || !q.type) && (
+                                                    <div className="grid grid-cols-2 gap-x-6 gap-y-1 ml-1 mt-2">
+                                                        {q.options?.map((opt, oIdx) => (
+                                                            <div key={oIdx} className="flex items-start gap-2">
+                                                                <span className="font-bold text-[0.9em] opacity-80 mt-0.5">({String.fromCharCode(97 + oIdx)})</span>
+                                                                <div className=""><LatexRenderer content={opt} /></div>
+                                                            </div>
+                                                        ))}
+                                                    </div>
+                                                )}
+                                                
+                                                {q.type === 'MATRIX' && (
+                                                    <div className="flex gap-8 ml-2 mt-2 text-[0.9em]">
+                                                        <div><u className="font-bold block mb-1">Column I</u>{q.matrix?.rows?.map((r, idx) => <div key={idx} className="mb-0.5"><b className="mr-1">{String.fromCharCode(65+idx)}.</b> {r}</div>)}</div>
+                                                        <div><u className="font-bold block mb-1">Column II</u>{q.matrix?.cols?.map((c, idx) => <div key={idx} className="mb-0.5"><b className="mr-1">{idx+1}.</b> {c}</div>)}</div>
+                                                    </div>
+                                                )}
+
+                                                <div className="flex justify-between items-center mt-1">
+                                                    {q.type === 'NUMERICAL' ? <div className="border-b border-black w-24 h-4 opacity-30"></div> : <div></div>}
+                                                    {cfg.showMarks && <span className="text-[0.7em] font-bold border border-current px-1 opacity-50 rounded">+{q.marks?.pos||4}, -{q.marks?.neg||1}</span>}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+
+                            {/* --- ANSWER KEY SECTION --- */}
+                            {cfg.showKey !== false && (
+                                <div className="mt-8 pt-8 border-t-2 border-black/50" style={{ pageBreakBefore: 'always' }}>
+                                    <h2 className="text-xl font-bold text-center mb-6 uppercase tracking-wider">Answer Key</h2>
+                                    <div className="grid grid-cols-4 md:grid-cols-5 gap-4 text-sm font-mono">
+                                        {test.questions.map((q, i) => {
+                                            let ans = "-";
+                                            if (q.type === 'SINGLE' && q.correctIndex !== undefined && q.correctIndex !== -1) ans = String.fromCharCode(65 + q.correctIndex);
+                                            else if (q.type === 'MULTI' && q.correctIndices?.length) ans = q.correctIndices.map(x => String.fromCharCode(65 + x)).join(',');
+                                            else if (q.type === 'NUMERICAL') ans = q.correctNum;
+                                            else if (q.type === 'MATRIX' && q.matrixAns) {
+                                                // Format: A-1,2; B-3
+                                                ans = Object.entries(q.matrixAns).map(([r, cs]) => `${String.fromCharCode(65 + parseInt(r))}-${cs.map(c=>c+1).join(',')}`).join('; ');
+                                            }
+                                            
+                                            if (ans === "-" || ans === "") return null;
+
+                                            return (
+                                                <div key={i} className="flex gap-2 items-baseline border-b border-slate-200 pb-1">
+                                                    <span className="font-bold text-slate-500 w-8 text-right">{i+1}.</span>
+                                                    <span className="font-bold text-slate-900 break-all">{ans}</span>
+                                                </div>
+                                            );
+                                        })}
+                                    </div>
+                                </div>
+                            )}
+
+                            <div className="mt-12 pt-4 border-t opacity-30 text-center text-xs print-hidden">Designed with Tattvam</div>
+                        </div>
+                    </div>
+                </div>
+            );
+        };
+const QuizForge = () => {
+            const [view, setView] = useState('dashboard');
+            // 1. ADD NOTEBOOKS STATE
+            const [tests, setTests] = useState(() => JSON.parse(localStorage.getItem('quizforge_tests') || '[]'));
+            const [notebooks, setNotebooks] = useState(() => JSON.parse(localStorage.getItem('quizforge_notebooks') || '[]'));
+            
+            const [activeId, setActiveId] = useState(null);
+            const [activeNotebookId, setActiveNotebookId] = useState(null);
+            
+            const [apiKey, setApiKey] = useState(() => localStorage.getItem('gemini_api_key') || '');
+            const [modal, setModal] = useState(false);
+            const [quizDuration, setQuizDuration] = useState(180);
+            const [showQuizSetup, setShowQuizSetup] = useState(false);
+
+            useEffect(() => { localStorage.setItem('quizforge_tests', JSON.stringify(tests)); }, [tests]);
+            // 2. SAVE NOTEBOOKS TO LOCAL STORAGE
+            useEffect(() => { localStorage.setItem('quizforge_notebooks', JSON.stringify(notebooks)); }, [notebooks]);
+
+            const activeTest = tests.find(t => t.id === activeId);
+            const activeNotebook = notebooks.find(n => n.id === activeNotebookId);
+
+            const handleStartQuiz = (mins, shuffle) => {
+                setQuizDuration(mins === '' ? 99999 : Number(mins));
+                // Note: Shuffle logic omitted for brevity, add back if you had it
+                setShowQuizSetup(false);
+                setView('player');
+            };
+
+            const importData = (newTests, newNotebooks = []) => {
+                setTests(prev => [...prev, ...newTests]);
+                setNotebooks(prev => [...prev, ...newNotebooks]);
+            };
+            
+            // 3. HANDLERS FOR NOTEBOOKS
+            const handleUpdateNotebook = (u) => {
+                setNotebooks(notebooks.map(n => n.id === activeNotebookId ? u : n));
+            };
+            
+            // This allows the Player to save result to a notebook
+            const handleSaveToNotebook = (nbId, entry) => {
+                setNotebooks(prev => prev.map(nb => nb.id === nbId ? { ...nb, entries: [entry, ...(nb.entries||[])] } : nb));
+            };
+
+            return (
+                <div className="font-sans h-screen flex flex-col">
+                    {modal && <ApiKeyModal apiKey={apiKey} setApiKey={setApiKey} onClose={() => setModal(false)} onSave={(k) => { setApiKey(k); localStorage.setItem('gemini_api_key', k); setModal(false); }} />}
+                    {showQuizSetup && <QuizSetupModal onClose={() => setShowQuizSetup(false)} onStart={handleStartQuiz} />}
+                    
+                    {view === 'dashboard' && (
+                        <Dashboard 
+                            tests={tests} 
+                            notebooks={notebooks} 
+                            onCreateTest={() => { const n = { id: Date.now().toString(), title: 'Untitled', created: new Date().toISOString(), questions: [] }; setTests([n, ...tests]); setActiveId(n.id); setView('editor'); }} 
+                            onCreateNotebook={() => { const n = { id: Date.now().toString(), title: 'New Analysis Notebook', updated: new Date().toISOString(), entries: [] }; setNotebooks([n, ...notebooks]); setActiveNotebookId(n.id); setView('notebook'); }}
+                            onDeleteTest={(e, id) => { e.stopPropagation(); if(confirm("Delete?")) setTests(tests.filter(t => t.id !== id)); }} 
+                            onDeleteNotebook={(e, id) => { e.stopPropagation(); if(confirm("Delete?")) setNotebooks(notebooks.filter(n => n.id !== id)); }}
+                            onSelectTest={(id) => { setActiveId(id); setView('editor'); }} 
+                            onSelectNotebook={(id) => { setActiveNotebookId(id); setView('notebook'); }}
+                            onSettings={() => setModal(true)} 
+                            onImport={importData} 
+                        />
+                    )}
+
+                    {view === 'editor' && activeTest && <Editor test={activeTest} onUpdateTest={(u) => setTests(tests.map(t => t.id === activeId ? { ...t, ...u } : t))} onBack={() => setView('dashboard')} onPlay={() => setShowQuizSetup(true)} onPrint={() => setView('print')} apiKey={apiKey} onRequestKey={() => setModal(true)} />}
+                    
+                    {/* 4. NEW NOTEBOOK VIEW */}
+                    {view === 'notebook' && activeNotebook && (
+                        <AnalysisNotebook 
+                            notebook={activeNotebook} 
+                            onUpdate={handleUpdateNotebook} 
+                            onBack={() => setView('dashboard')} 
+                            apiKey={apiKey} 
+                            onRequestKey={() => setModal(true)} 
+                        />
+                    )}
+
+                    {/* 5. UPDATED PLAYER PROP PASSING (Pass notebooks and save handler) */}
+                    {view === 'player' && activeTest && <Player test={activeTest} duration={quizDuration} onBack={() => setView('editor')} notebooks={notebooks} onSaveToNotebook={handleSaveToNotebook} />}
+                    
+                    {view === 'print' && activeTest && <PrintView test={activeTest} onBack={() => setView('editor')} apiKey={apiKey} onRequestKey={() => setModal(true)} />}
+                </div>
+            );
+        };
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<QuizForge />);
+    </script>
+</body>
+</html>
