@@ -717,11 +717,12 @@ const MoleculeStudio = ({ onConfirm, onCancel }) => {
             );
         };
 const QuestionEditor = ({ question, onSave, onCancel, apiKey, onRequestKey }) => {
-            const [form, setForm] = useState({ ...question, subQuestions: question.subQuestions || [] });
+            const [form, setForm] = useState({ ...question });
             const [load, setLoad] = useState('');
-            const [showCropper, setShowCropper] = useState(false);
-            const [moleculeMode, setMoleculeMode] = useState(false);
-            const [activeSubId, setActiveSubId] = useState(null); // To edit specific sub-question
+            
+            // --- FIXED: Removed Duplicate Declaration Here ---
+            const [showCropper, setShowCropper] = useState(false);   
+            const [moleculeMode, setMoleculeMode] = useState(false); 
 
             const run = async (msg, fn) => {
                 if (!apiKey) return onRequestKey();
@@ -740,136 +741,135 @@ const QuestionEditor = ({ question, onSave, onCancel, apiKey, onRequestKey }) =>
                 }
             };
 
-            // Helper to add a new sub-question
-            const addSubQuestion = () => {
-                const newSub = {
-                    id: Date.now(),
-                    text: "New sub-question text...",
-                    type: "SINGLE",
-                    options: ["Option A", "Option B", "Option C", "Option D"],
-                    correctIndex: 0,
-                    marks: { pos: 3, neg: 1 }
-                };
-                setForm({ ...form, subQuestions: [...form.subQuestions, newSub] });
-            };
-
-            const updateSubQuestion = (id, updates) => {
-                setForm({
-                    ...form,
-                    subQuestions: form.subQuestions.map(sq => sq.id === id ? { ...sq, ...updates } : sq)
-                });
-            };
-
-            const deleteSubQuestion = (id) => {
-                setForm({ ...form, subQuestions: form.subQuestions.filter(sq => sq.id !== id) });
-            };
-
             return (
                 <div className="bg-white rounded-xl shadow-lg border-2 border-tattvam-100 p-6 relative">
-                    {/* ... (Cropper and Loader logic remains same) ... */}
-                    {showCropper && form.diagram && <ImageCropper src={form.diagram} onCancel={() => setShowCropper(false)} onConfirm={(newImg) => { setForm({ ...form, diagram: newImg }); setShowCropper(false); }} />}
-                    {load && <div className="absolute inset-0 bg-white/80 backdrop-blur-[1px] z-20 flex items-center justify-center rounded-xl"><div className="bg-white px-4 py-2 rounded-full shadow-lg flex items-center gap-2 border border-tattvam-500"><Icon name="Sparkles" className="w-4 h-4 text-tattvam-600 animate-spin" /><span className="text-xs font-bold text-tattvam-900">{load}</span></div></div>}
+                    {/* The Crop Modal */}
+                    {showCropper && form.diagram && (
+                        <ImageCropper 
+                            src={form.diagram} 
+                            onCancel={() => setShowCropper(false)}
+                            onConfirm={(newImg) => {
+                                setForm({ ...form, diagram: newImg });
+                                setShowCropper(false);
+                            }} 
+                        />
+                    )}
 
-                    {/* HEADER */}
+                    {load && <div className="absolute inset-0 bg-white/80 backdrop-blur-[1px] z-20 flex items-center justify-center rounded-xl"><div className="bg-white px-4 py-2 rounded-full shadow-lg flex items-center gap-2 border border-tattvam-500"><Icon name="Sparkles" className="w-4 h-4 text-tattvam-600 animate-spin" /><span className="text-xs font-bold text-tattvam-900">{load}</span></div></div>}
+                    
                     <div className="flex justify-between items-center mb-4">
                         <div className="flex gap-2 items-center">
                             <h4 className="text-sm font-bold text-tattvam-600 uppercase">Edit Question</h4>
-                            <select value={form.type || 'SINGLE'} onChange={e => setForm({...form, type: e.target.value})} className="text-xs border rounded p-1 font-bold text-slate-600">
-                                <option value="SINGLE">Single Correct</option>
-                                <option value="MULTI">Multi Correct</option>
-                                <option value="NUMERICAL">Numerical</option>
-                                <option value="MATRIX">Matrix Match</option>
-                                <option value="COMPREHENSION">Comprehension (Paragraph)</option>
-                            </select>
-                            {/* Marks only for non-comprehension parent (Comp marks are on sub-questions) */}
-                            {form.type !== 'COMPREHENSION' && (
-                                <div className="flex items-center text-xs gap-1 border rounded px-2 bg-slate-50"><span className="text-green-600 font-bold">+</span><input type="number" className="w-8 bg-transparent" value={form.marks?.pos || 4} onChange={e => setForm({...form, marks: {...form.marks, pos: Number(e.target.value)}})} /><span className="text-red-600 font-bold border-l pl-1">-</span><input type="number" className="w-8 bg-transparent" value={form.marks?.neg || 1} onChange={e => setForm({...form, marks: {...form.marks, neg: Number(e.target.value)}})} /></div>
-                            )}
+                            {form.pyq_tag && <span className="text-[10px] bg-amber-100 text-amber-800 px-2 py-0.5 rounded-full font-bold border border-amber-200">{form.pyq_tag}</span>}
+                            <select value={form.type || 'SINGLE'} onChange={e => setForm({...form, type: e.target.value})} className="text-xs border rounded p-1 font-bold text-slate-600"><option value="SINGLE">Single Correct</option><option value="MULTI">Multi Correct</option><option value="NUMERICAL">Numerical</option><option value="MATRIX">Matrix Match</option></select>
+                            <div className="flex items-center text-xs gap-1 border rounded px-2 bg-slate-50"><span className="text-green-600 font-bold">+</span><input type="number" className="w-8 bg-transparent" value={form.marks?.pos || 4} onChange={e => setForm({...form, marks: {...form.marks, pos: Number(e.target.value)}})} /><span className="text-red-600 font-bold border-l pl-1">-</span><input type="number" className="w-8 bg-transparent" value={form.marks?.neg || 1} onChange={e => setForm({...form, marks: {...form.marks, neg: Number(e.target.value)}})} /></div>
                         </div>
+                        <button onClick={() => run('Remixing...', async () => { const r = await generateRemix(form, apiKey); setForm(p => ({...p, text: r.text, options: r.options})); })} className="text-[10px] font-bold text-white bg-gradient-to-r from-purple-500 to-tattvam-500 hover:from-purple-600 hover:to-tattvam-600 px-3 py-1.5 rounded-full flex items-center gap-1 shadow-sm"><Icon name="RefreshCw" className="w-3 h-3" /> Remix</button>
                     </div>
-
-                    {/* MAIN TEXT / PARAGRAPH */}
+                    
                     <div className="grid md:grid-cols-3 gap-6 mb-4">
-                        <div className="md:col-span-2">
-                            <label className="block text-xs font-semibold text-slate-500 mb-1">{form.type === 'COMPREHENSION' ? 'Passage / Paragraph Text' : 'Question Text'}</label>
-                            <textarea value={form.text} onChange={e => setForm({...form, text: e.target.value})} className="w-full p-3 border border-slate-200 rounded-lg focus:ring-2 focus:ring-tattvam-500 outline-none font-mono text-sm h-32" placeholder="Type the main question or passage here..." />
-                        </div>
+                        <div className="md:col-span-2"><label className="block text-xs font-semibold text-slate-500 mb-1">Question Text</label><textarea value={form.text} onChange={e => setForm({...form, text: e.target.value})} className="w-full p-3 border border-slate-200 rounded-lg focus:ring-2 focus:ring-tattvam-500 outline-none font-mono text-sm h-32" /></div>
                         
-                        {/* DIAGRAM (Same logic as before) */}
+                        {/* --- DIAGRAM SECTION --- */}
                         <div>
-                           <div className="flex justify-between items-center mb-1"><label className="block text-xs font-semibold text-slate-500">Diagram</label><div className="flex gap-1"><button onClick={() => setMoleculeMode(true)} className="text-[10px] bg-purple-50 text-purple-600 px-2 py-0.5 rounded hover:bg-purple-100 font-bold flex items-center gap-1 border border-purple-100"><Icon name="Atom" className="w-3 h-3" /> Molecule</button>{form.diagram && <button onClick={() => setShowCropper(true)} className="text-[10px] bg-indigo-50 text-indigo-600 px-2 py-0.5 rounded hover:bg-indigo-100 font-bold flex items-center gap-1 border border-indigo-100"><Icon name="Edit2" className="w-3 h-3" /> Crop</button>}</div></div>
-                           {moleculeMode && <MoleculeStudio onCancel={() => setMoleculeMode(false)} onConfirm={(img) => { setForm({...form, diagram: img}); setMoleculeMode(false); }} />}
-                           <div className="h-32 border-2 border-dashed border-slate-200 rounded-lg flex flex-col items-center justify-center relative overflow-hidden bg-slate-50 group hover:border-tattvam-400 transition-colors">
-                                {form.diagram ? <><img src={form.diagram} className="w-full h-full object-contain" /><button onClick={() => setForm({...form, diagram: null})} className="absolute top-1 right-1 bg-red-500 text-white p-1 rounded-full opacity-0 group-hover:opacity-100 transition-opacity"><Icon name="X" className="w-3 h-3" /></button></> : <label className="cursor-pointer flex flex-col items-center w-full h-full justify-center"><Icon name="Image" className="w-6 h-6 text-slate-300 mb-1" /><span className="text-[10px] text-slate-400 font-medium">Click to upload</span><input type="file" accept="image/*" className="hidden" onChange={handleImageUpload} /></label>}
-                           </div>
+                            <div className="flex justify-between items-center mb-1">
+                                <label className="block text-xs font-semibold text-slate-500">Diagram</label>
+                                <div className="flex gap-1">
+                                    <button onClick={() => setMoleculeMode(true)} className="text-[10px] bg-purple-50 text-purple-600 px-2 py-0.5 rounded hover:bg-purple-100 font-bold flex items-center gap-1 border border-purple-100" title="Draw or Search Chemicals"><Icon name="Atom" className="w-3 h-3" /> Molecule</button>
+                                    {form.diagram && (
+                                        <button onClick={() => setShowCropper(true)} className="text-[10px] bg-indigo-50 text-indigo-600 px-2 py-0.5 rounded hover:bg-indigo-100 font-bold flex items-center gap-1 border border-indigo-100" title="Crop visible area"><Icon name="Edit2" className="w-3 h-3" /> Crop</button>
+                                    )}
+                                </div>
+                            </div>
+
+                            {moleculeMode && <MoleculeStudio onCancel={() => setMoleculeMode(false)} onConfirm={(img) => { setForm({...form, diagram: img}); setMoleculeMode(false); }} />}
+                            {showCropper && form.diagram && <ImageCropper src={form.diagram} onCancel={() => setShowCropper(false)} onConfirm={(newImg) => { setForm({ ...form, diagram: newImg }); setShowCropper(false); }} />}
+
+                            <div className="h-32 border-2 border-dashed border-slate-200 rounded-lg flex flex-col items-center justify-center relative overflow-hidden bg-slate-50 group hover:border-tattvam-400 transition-colors">
+                                {form.diagram ? (
+                                    <>
+                                        <img src={form.diagram} className="w-full h-full object-contain" />
+                                        <button onClick={() => setForm({...form, diagram: null})} className="absolute top-1 right-1 bg-red-500 text-white p-1 rounded-full opacity-0 group-hover:opacity-100 transition-opacity shadow-sm" title="Remove Diagram"><Icon name="X" className="w-3 h-3" /></button>
+                                    </>
+                                ) : (
+                                    <label className="cursor-pointer flex flex-col items-center w-full h-full justify-center">
+                                        <Icon name="Image" className="w-6 h-6 text-slate-300 mb-1" />
+                                        <span className="text-[10px] text-slate-400 font-medium">Click to upload</span>
+                                        <input type="file" accept="image/*" className="hidden" onChange={handleImageUpload} />
+                                    </label>
+                                )}
+                            </div>
                         </div>
                     </div>
 
-                    {/* --- COMPREHENSION EDITOR SECTION --- */}
-                    {form.type === 'COMPREHENSION' ? (
-                        <div className="bg-slate-50 border border-slate-200 rounded-lg p-4 mb-4">
-                            <div className="flex justify-between items-center mb-4">
-                                <h5 className="text-sm font-bold text-slate-700 uppercase">Sub-Questions ({form.subQuestions.length})</h5>
-                                <button onClick={addSubQuestion} className="text-xs bg-indigo-600 text-white px-3 py-1.5 rounded font-bold hover:bg-indigo-700 flex items-center gap-1"><Icon name="Plus" className="w-3 h-3" /> Add Question</button>
-                            </div>
-                            
-                            <div className="space-y-4">
-                                {form.subQuestions.map((sq, idx) => (
-                                    <div key={sq.id} className="bg-white border border-slate-200 rounded-lg p-3 shadow-sm">
-                                        <div className="flex justify-between items-start mb-2">
-                                            <span className="text-xs font-bold text-slate-400">Q{idx + 1}</span>
-                                            <div className="flex gap-2">
-                                                <button onClick={() => deleteSubQuestion(sq.id)} className="text-red-400 hover:text-red-600"><Icon name="Trash2" className="w-3 h-3" /></button>
-                                                <button onClick={() => setActiveSubId(activeSubId === sq.id ? null : sq.id)} className="text-indigo-500 hover:text-indigo-700 text-xs font-bold">{activeSubId === sq.id ? 'Collapse' : 'Edit'}</button>
+                    <div className="mb-4">
+                        <div className="flex justify-between items-center mb-1"><label className="block text-xs font-semibold text-slate-500">Answer Key</label>{(form.type === 'SINGLE' || form.type === 'MULTI') && <button onClick={() => run('Options...', async () => { const o = await generateDistractors(form, apiKey); setForm(p => ({...p, options: [...(p.options||[]), ...o]})); })} className="text-[10px] font-bold text-tattvam-600 bg-tattvam-50 hover:bg-tattvam-100 px-2 py-1 rounded-full flex items-center gap-1"><Icon name="Sparkles" className="w-3 h-3" /> Auto-Fill</button>}</div>
+                        {(form.type === 'SINGLE' || form.type === 'MULTI' || !form.type) && <div className="space-y-2">{form.options?.map((opt, idx) => (<div key={idx} className="flex items-center gap-2"><input type={form.type === 'MULTI' ? 'checkbox' : 'radio'} name="correctAnswer" checked={form.type === 'MULTI' ? form.correctIndices?.includes(idx) : form.correctIndex === idx} onChange={() => { if(form.type === 'MULTI') { const cur = form.correctIndices || []; setForm({...form, correctIndices: cur.includes(idx) ? cur.filter(x=>x!==idx) : [...cur, idx]}); } else { setForm({...form, correctIndex: idx}); } }} className="w-4 h-4 text-tattvam-600" /><input type="text" value={opt} onChange={e => {const n = [...form.options]; n[idx]=e.target.value; setForm({...form, options:n})}} className="flex-1 p-2 border border-slate-200 rounded-md text-sm outline-none focus:border-tattvam-500" /><button onClick={() => {const n=form.options.filter((_,i)=>i!==idx); setForm({...form, options:n})}} className="text-slate-300 hover:text-red-500"><Icon name="X" className="w-4 h-4" /></button></div>))}<button onClick={() => setForm({...form, options: [...(form.options||[]), "New Option"]})} className="text-xs text-tattvam-600 font-medium hover:underline flex items-center gap-1 mt-2"><Icon name="Plus" className="w-3 h-3" /> Add Option</button></div>}
+                        {form.type === 'NUMERICAL' && <div className="flex items-center gap-2 bg-blue-50 p-3 rounded"><span className="text-sm font-bold text-blue-800">Correct Value:</span><input type="text" value={form.correctNum || ''} onChange={e => setForm({...form, correctNum: e.target.value})} className="border p-2 rounded w-32" placeholder="e.g. 5.5" /></div>}
+                        
+                        {/* MATRIX INPUT BLOCK */}
+                        {form.type === 'MATRIX' && (
+                            <div className="col-span-3 bg-slate-50 p-4 rounded-lg border border-slate-200">
+                                <div className="flex gap-4 mb-4">
+                                    <div className="flex-1">
+                                        <h5 className="text-xs font-bold text-indigo-800 uppercase mb-2 border-b border-indigo-100 pb-1">Column I (Rows)</h5>
+                                        {form.matrix?.rows?.map((r, i) => (
+                                            <div key={i} className="flex gap-2 mb-2 items-center">
+                                                <span className="font-bold text-xs text-slate-400 w-4">{String.fromCharCode(65+i)}</span>
+                                                <input value={r} onChange={e => {const nr=[...form.matrix.rows]; nr[i]=e.target.value; setForm({...form, matrix:{...form.matrix, rows: nr}})}} className="flex-1 border p-1.5 rounded text-sm focus:border-indigo-500 outline-none" placeholder={`Row ${String.fromCharCode(65+i)} Text`} />
+                                                <button onClick={() => {const nr=form.matrix.rows.filter((_,idx)=>idx!==i); setForm({...form, matrix:{...form.matrix, rows: nr}})}} className="text-red-400 hover:text-red-600"><Icon name="X" className="w-3 h-3"/></button>
                                             </div>
-                                        </div>
-                                        
-                                        {/* Collapsed View (Preview) */}
-                                        {activeSubId !== sq.id && <div className="text-sm truncate font-medium text-slate-700">{sq.text}</div>}
-
-                                        {/* Expanded Edit View */}
-                                        {activeSubId === sq.id && (
-                                            <div className="space-y-3 mt-2 animate-in slide-in-from-top-2">
-                                                <textarea value={sq.text} onChange={e => updateSubQuestion(sq.id, { text: e.target.value })} className="w-full p-2 border rounded text-sm font-mono h-20" placeholder="Sub-question text..." />
-                                                
-                                                {/* Options Logic for Sub-Question */}
-                                                <div className="space-y-1">
-                                                    {sq.options.map((opt, oIdx) => (
-                                                        <div key={oIdx} className="flex gap-2 items-center">
-                                                            <input type="radio" checked={sq.correctIndex === oIdx} onChange={() => updateSubQuestion(sq.id, { correctIndex: oIdx })} className="w-3 h-3" />
-                                                            <input value={opt} onChange={e => { const newOpts = [...sq.options]; newOpts[oIdx] = e.target.value; updateSubQuestion(sq.id, { options: newOpts }); }} className="flex-1 border p-1 rounded text-xs" />
-                                                        </div>
-                                                    ))}
-                                                </div>
-                                                
-                                                <div className="flex items-center gap-2">
-                                                     <span className="text-[10px] font-bold text-slate-500 uppercase">Marks:</span>
-                                                     <input type="number" className="w-10 border rounded px-1 text-xs" value={sq.marks?.pos || 3} onChange={e => updateSubQuestion(sq.id, { marks: { ...sq.marks, pos: Number(e.target.value) } })} />
-                                                     <span className="text-slate-300">/</span>
-                                                     <input type="number" className="w-10 border rounded px-1 text-xs" value={sq.marks?.neg || 1} onChange={e => updateSubQuestion(sq.id, { marks: { ...sq.marks, neg: Number(e.target.value) } })} />
-                                                </div>
-                                            </div>
-                                        )}
+                                        ))}
+                                        <button onClick={() => setForm({...form, matrix:{...form.matrix, rows:[...(form.matrix.rows||[]), ""]}})} className="text-[10px] font-bold text-indigo-600 hover:underline">+ Add Row</button>
                                     </div>
-                                ))}
-                                {form.subQuestions.length === 0 && <div className="text-center text-xs text-slate-400 py-4 italic">No sub-questions added yet.</div>}
+                                    <div className="flex-1">
+                                        <h5 className="text-xs font-bold text-indigo-800 uppercase mb-2 border-b border-indigo-100 pb-1">Column II (Cols)</h5>
+                                        {form.matrix?.cols?.map((c, i) => (
+                                            <div key={i} className="flex gap-2 mb-2 items-center">
+                                                <span className="font-bold text-xs text-slate-400 w-4">{i+1}</span>
+                                                <input value={c} onChange={e => {const nc=[...form.matrix.cols]; nc[i]=e.target.value; setForm({...form, matrix:{...form.matrix, cols: nc}})}} className="flex-1 border p-1.5 rounded text-sm focus:border-indigo-500 outline-none" placeholder={`Col ${i+1} Text`} />
+                                                <button onClick={() => {const nc=form.matrix.cols.filter((_,idx)=>idx!==i); setForm({...form, matrix:{...form.matrix, cols: nc}})}} className="text-red-400 hover:text-red-600"><Icon name="X" className="w-3 h-3"/></button>
+                                            </div>
+                                        ))}
+                                        <button onClick={() => setForm({...form, matrix:{...form.matrix, cols:[...(form.matrix.cols||[]), ""]}})} className="text-[10px] font-bold text-indigo-600 hover:underline">+ Add Column</button>
+                                    </div>
+                                </div>
+                                
+                                <div className="bg-white p-3 rounded border border-slate-200">
+                                    <h5 className="text-xs font-bold text-slate-600 uppercase mb-2 text-center">Correct Connections</h5>
+                                    <div className="overflow-x-auto">
+                                        <table className="w-full text-center">
+                                            <thead>
+                                                <tr>
+                                                    <th></th>
+                                                    {form.matrix?.cols?.map((_, c) => <th key={c} className="text-xs text-slate-500 pb-1">{c+1}</th>)}
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                {form.matrix?.rows?.map((_, r) => (
+                                                    <tr key={r}>
+                                                        <td className="text-xs font-bold text-slate-500 pr-2">{String.fromCharCode(65+r)}</td>
+                                                        {form.matrix?.cols?.map((_, c) => (
+                                                            <td key={c} className="p-1">
+                                                                <input type="checkbox" checked={form.matrixAns?.[r]?.includes(c)} onChange={() => { const cur = form.matrixAns?.[r] || []; const newAns = cur.includes(c) ? cur.filter(x => x !== c) : [...cur, c]; setForm({ ...form, matrixAns: { ...form.matrixAns, [r]: newAns } }); }} className="w-4 h-4 accent-indigo-600 cursor-pointer" />
+                                                            </td>
+                                                        ))}
+                                                    </tr>
+                                                ))}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
                             </div>
-                        </div>
-                    ) : (
-                        /* --- NORMAL QUESTION OPTIONS (Old Logic) --- */
-                        <div className="mb-4">
-                            <div className="flex justify-between items-center mb-1"><label className="block text-xs font-semibold text-slate-500">Answer Key</label>{(form.type === 'SINGLE' || form.type === 'MULTI') && <button onClick={() => run('Options...', async () => { const o = await generateDistractors(form, apiKey); setForm(p => ({...p, options: [...(p.options||[]), ...o]})); })} className="text-[10px] font-bold text-tattvam-600 bg-tattvam-50 hover:bg-tattvam-100 px-2 py-1 rounded-full flex items-center gap-1"><Icon name="Sparkles" className="w-3 h-3" /> Auto-Fill</button>}</div>
-                            {(form.type === 'SINGLE' || form.type === 'MULTI' || !form.type) && <div className="space-y-2">{form.options?.map((opt, idx) => (<div key={idx} className="flex items-center gap-2"><input type={form.type === 'MULTI' ? 'checkbox' : 'radio'} name="correctAnswer" checked={form.type === 'MULTI' ? form.correctIndices?.includes(idx) : form.correctIndex === idx} onChange={() => { if(form.type === 'MULTI') { const cur = form.correctIndices || []; setForm({...form, correctIndices: cur.includes(idx) ? cur.filter(x=>x!==idx) : [...cur, idx]}); } else { setForm({...form, correctIndex: idx}); } }} className="w-4 h-4 text-tattvam-600" /><input type="text" value={opt} onChange={e => {const n = [...form.options]; n[idx]=e.target.value; setForm({...form, options:n})}} className="flex-1 p-2 border border-slate-200 rounded-md text-sm outline-none focus:border-tattvam-500" /><button onClick={() => {const n=form.options.filter((_,i)=>i!==idx); setForm({...form, options:n})}} className="text-slate-300 hover:text-red-500"><Icon name="X" className="w-4 h-4" /></button></div>))}<button onClick={() => setForm({...form, options: [...(form.options||[]), "New Option"]})} className="text-xs text-tattvam-600 font-medium hover:underline flex items-center gap-1 mt-2"><Icon name="Plus" className="w-3 h-3" /> Add Option</button></div>}
-                            {form.type === 'NUMERICAL' && <div className="flex items-center gap-2 bg-blue-50 p-3 rounded"><span className="text-sm font-bold text-blue-800">Correct Value:</span><input type="text" value={form.correctNum || ''} onChange={e => setForm({...form, correctNum: e.target.value})} className="border p-2 rounded w-32" placeholder="e.g. 5.5" /></div>}
-                            {/* Matrix match logic can stay as is */}
-                        </div>
-                    )}
+                        )}
+                    </div>
 
-                    <div className="mb-6"><div className="flex justify-between items-center mb-1"><label className="block text-xs font-semibold text-slate-500">Explanation</label></div><textarea value={form.explanation || ''} onChange={e => setForm({...form, explanation: e.target.value})} className="w-full p-3 border border-slate-200 rounded-lg focus:ring-2 focus:ring-tattvam-500 outline-none text-sm h-20" /></div>
+                    <div className="mb-6"><div className="flex justify-between items-center mb-1"><label className="block text-xs font-semibold text-slate-500">Explanation</label><button onClick={() => run('Explaining...', async () => { const e = await generateExplanation(form, apiKey); setForm(p => ({...p, explanation: e})); })} className="text-[10px] font-bold text-tattvam-600 bg-tattvam-50 hover:bg-tattvam-100 px-2 py-1 rounded-full flex items-center gap-1"><Icon name="Lightbulb" className="w-3 h-3" /> AI Explain</button></div><textarea value={form.explanation || ''} onChange={e => setForm({...form, explanation: e.target.value})} className="w-full p-3 border border-slate-200 rounded-lg focus:ring-2 focus:ring-tattvam-500 outline-none text-sm h-20" /></div>
                     <div className="flex justify-end gap-3 pt-4 border-t border-slate-100"><button onClick={onCancel} className="px-4 py-2 text-slate-600 hover:bg-slate-100 rounded-lg text-sm">Cancel</button><button onClick={() => onSave(form)} className="px-4 py-2 bg-tattvam-600 text-white rounded-lg hover:bg-tattvam-500 text-sm font-medium flex items-center gap-2"><Icon name="Save" className="w-4 h-4" /> Save</button></div>
                 </div>
             );
-        };const AnalysisNotebook = ({ notebook, onUpdate, onBack, apiKey, onRequestKey }) => {
+        };    
+const AnalysisNotebook = ({ notebook, onUpdate, onBack, apiKey, onRequestKey }) => {
             const [uploading, setUploading] = useState(false);
             const [analyzing, setAnalyzing] = useState(false);
             
@@ -1416,28 +1416,17 @@ const Player = ({ test, duration, onBack, notebooks, onSaveToNotebook }) => {
                 return `${h}:${m<10?'0':''}${m}:${sec<10?'0':''}${sec}`;
             };
 
-            // 2. UPDATED ANSWER HANDLER
-            const handleAns = (val, customKey = null) => {
-                if (isSubmitted) return;
-                
-                // If a customKey is provided (e.g., "q1_sub1"), use it. Otherwise use current question ID.
-                const key = customKey || test.questions[idx].id;
+            const handleAns = (val) => {
+                if(isSubmitted) return;
                 const q = test.questions[idx];
-
-                // Multi-select logic (only applies to standard MULTI questions)
-                if (q.type === 'MULTI' && !customKey) {
-                    const cur = ans[key] || [];
-                    const newAns = cur.includes(val) ? cur.filter(x => x !== val) : [...cur, val];
-                    setAns({ ...ans, [key]: newAns });
-                    setStatus(prev => { const n = [...prev]; n[idx] = newAns.length ? 'answered' : 'not_answered'; return n; });
-                } 
-                else {
-                    // Standard Single/Numerical OR Comprehension Sub-question
-                    setAns({ ...ans, [key]: val });
-                    
-                    // Update status bar to 'answered' if it's the main question
-                    // (For comprehension, we mark "answered" if at least one sub-question is done - simpler logic: just mark answered on interaction)
-                    setStatus(prev => { const n = [...prev]; n[idx] = 'answered'; return n; });
+                if(q.type === 'MULTI') {
+                    const cur = ans[q.id] || [];
+                    const newAns = cur.includes(val) ? cur.filter(x=>x!==val) : [...cur, val];
+                    setAns({...ans, [q.id]: newAns});
+                    setStatus(prev => { const n=[...prev]; n[idx] = newAns.length ? 'answered' : 'not_answered'; return n; });
+                } else {
+                    setAns({...ans, [q.id]: val});
+                    setStatus(prev => { const n=[...prev]; n[idx] = val !== '' ? 'answered' : 'not_answered'; return n; });
                 }
             };
 
@@ -1453,26 +1442,11 @@ const Player = ({ test, duration, onBack, notebooks, onSaveToNotebook }) => {
             };
 
             // Calculate Scores
-            // 1. UPDATED SCORING LOGIC
             const score = test.questions.reduce((acc, q) => {
-                // Handle Comprehension (Deep Grading)
-                if (q.type === 'COMPREHENSION') {
-                    return acc + (q.subQuestions || []).reduce((subAcc, sq) => {
-                        const key = `${q.id}_${sq.id}`;
-                        const userAns = ans[key];
-                        if (userAns === undefined) return subAcc; // Not attempted
-                        
-                        // Check sub-question answer (Single Correct logic usually)
-                        const isCor = userAns === sq.correctIndex;
-                        return subAcc + (isCor ? (sq.marks?.pos || 3) : -(sq.marks?.neg || 1));
-                    }, 0);
-                }
-
-                // Handle Standard Questions
                 const userAns = ans[q.id];
-                if (userAns === undefined || (Array.isArray(userAns) && userAns.length === 0) || userAns === '') return acc;
+                if(userAns === undefined || (Array.isArray(userAns) && userAns.length===0) || userAns === '') return acc;
                 const isCor = checkAns(q, userAns);
-                return acc + (isCor ? (q.marks?.pos || 1) : -(q.marks?.neg || 0));
+                return acc + (isCor ? (q.marks?.pos||1) : -(q.marks?.neg||0));
             }, 0);
             
             const totalMarks = test.questions.reduce((acc, q) => acc + (q.marks?.pos||0), 0);
@@ -1620,84 +1594,18 @@ const Player = ({ test, duration, onBack, notebooks, onSaveToNotebook }) => {
                                     <LatexRenderer content={q.text} />
                                     {q.diagram && <img src={q.diagram} className="mt-4 max-h-64 object-contain rounded-lg border border-slate-200" />}
                                 </div>
-                                {/* UPDATED Interaction Area */}
-                                <div className="space-y-6">
-                                    {q.type === 'COMPREHENSION' ? (
-                                        /* === COMPREHENSION VIEW === */
-                                        <div className="space-y-8 animate-in fade-in">
-                                            {/* Loop through each Sub-Question */}
-                                            {q.subQuestions?.map((sq, sqIdx) => (
-                                                <div key={sq.id} className="border border-slate-200 rounded-xl p-4 bg-slate-50/50">
-                                                    {/* Sub-Question Text */}
-                                                    <div className="font-bold text-slate-800 mb-3 flex items-start gap-2 text-sm">
-                                                        <span className="bg-indigo-100 text-indigo-700 px-2 py-0.5 rounded text-xs flex-shrink-0 mt-0.5">
-                                                            Q{idx+1}.{sqIdx+1}
-                                                        </span>
-                                                        <div className="leading-relaxed"><LatexRenderer content={sq.text} /></div>
-                                                    </div>
-                                                    
-                                                    {/* Sub-Question Options */}
-                                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
-                                                        {sq.options.map((opt, oIdx) => {
-                                                            // Create unique key: "ParentID_SubID"
-                                                            const ansKey = `${q.id}_${sq.id}`;
-                                                            const isSel = ans[ansKey] === oIdx;
-                                                            
-                                                            return (
-                                                                <button 
-                                                                    key={oIdx} 
-                                                                    // Pass BOTH the option index AND the unique key
-                                                                    onClick={() => handleAns(oIdx, ansKey)} 
-                                                                    className={`text-left p-3 rounded-lg border text-sm transition-all flex items-center gap-3 ${isSel ? 'bg-indigo-600 text-white border-indigo-600 shadow-md' : 'bg-white hover:bg-white border-slate-200 hover:border-indigo-300'}`}
-                                                                >
-                                                                    <span className={`w-5 h-5 rounded-full border flex items-center justify-center text-[10px] font-bold ${isSel ? 'border-white bg-white/20' : 'border-slate-300 text-slate-400'}`}>
-                                                                        {String.fromCharCode(65+oIdx)}
-                                                                    </span>
-                                                                    <div className={isSel ? 'text-white' : 'text-slate-700'}>
-                                                                        <LatexRenderer content={opt} />
-                                                                    </div>
-                                                                </button>
-                                                            )
-                                                        })}
-                                                    </div>
-                                                </div>
-                                            ))}
-                                        </div>
-                                    ) : (
-                                        /* === STANDARD VIEW (Single/Multi/Numerical) === */
-                                        <div className="space-y-3">
-                                            {(q.type === 'SINGLE' || q.type === 'MULTI' || !q.type) && q.options?.map((opt, oIdx) => {
-                                                const isSel = q.type === 'MULTI' ? ans[q.id]?.includes(oIdx) : ans[q.id] === oIdx;
-                                                
-                                                return (
-                                                    <div 
-                                                        key={oIdx} 
-                                                        onClick={() => handleAns(oIdx)} 
-                                                        className={`p-4 rounded-xl border-2 cursor-pointer transition-all flex items-center gap-4 group ${isSel ? 'border-indigo-600 bg-indigo-50' : 'border-slate-200 hover:border-indigo-300 hover:bg-slate-50'}`}
-                                                    >
-                                                        <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center text-xs font-bold transition-colors ${isSel ? 'bg-indigo-600 border-indigo-600 text-white' : 'border-slate-300 text-slate-400 group-hover:border-indigo-400'}`}>
-                                                            {String.fromCharCode(65+oIdx)}
-                                                        </div>
-                                                        <div className="text-base text-slate-700">
-                                                            <LatexRenderer content={opt} />
-                                                        </div>
-                                                    </div>
-                                                );
-                                            })}
-
-                                            {q.type === 'NUMERICAL' && (
-                                                <div>
-                                                    <label className="block text-sm font-bold text-slate-500 mb-2">Your Answer</label>
-                                                    <input 
-                                                        type="text" 
-                                                        value={ans[q.id] || ''} 
-                                                        onChange={e => handleAns(e.target.value)} 
-                                                        className="w-full md:w-1/2 p-4 text-xl border-2 border-slate-300 rounded-xl focus:border-indigo-500 outline-none font-mono" 
-                                                        placeholder="Enter numerical value..." 
-                                                    />
-                                                </div>
-                                            )}
-                                        </div>
+                                <div className="space-y-3">
+                                    {(q.type === 'SINGLE' || q.type === 'MULTI' || !q.type) && q.options?.map((opt, oIdx) => {
+                                        const isSel = q.type === 'MULTI' ? ans[q.id]?.includes(oIdx) : ans[q.id] === oIdx;
+                                        return (
+                                            <div key={oIdx} onClick={() => handleAns(oIdx)} className={`p-4 rounded-xl border-2 cursor-pointer transition-all flex items-center gap-4 group ${isSel ? 'border-indigo-600 bg-indigo-50' : 'border-slate-200 hover:border-indigo-300 hover:bg-slate-50'}`}>
+                                                <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center text-xs font-bold transition-colors ${isSel ? 'bg-indigo-600 border-indigo-600 text-white' : 'border-slate-300 text-slate-400 group-hover:border-indigo-400'}`}>{String.fromCharCode(65+oIdx)}</div>
+                                                <div className="text-base text-slate-700"><LatexRenderer content={opt} /></div>
+                                            </div>
+                                        );
+                                    })}
+                                    {q.type === 'NUMERICAL' && (
+                                        <div><label className="block text-sm font-bold text-slate-500 mb-2">Your Answer</label><input type="text" value={ans[q.id] || ''} onChange={e => handleAns(e.target.value)} className="w-full md:w-1/2 p-4 text-xl border-2 border-slate-300 rounded-xl focus:border-indigo-500 outline-none font-mono" placeholder="Enter numerical value..." /></div>
                                     )}
                                 </div>
                                 <div className="flex justify-between mt-10 pt-6 border-t border-slate-100">
@@ -1945,58 +1853,24 @@ const PrintView = ({ test, onBack, apiKey, onRequestKey }) => {
                             </div>
 
                             {/* QUESTIONS */}
-                            {/* QUESTIONS & COMPREHENSIONS */}
                             <div className={`relative z-10 ${cfg.twoCol ? 'print-col-2' : ''}`} style={{ columnGap: '2rem' }}>
                                 {test.questions.map((q, i) => (
                                     <div key={q.id} className="break-inside-avoid mb-0" style={{ marginBottom: `${cfg.gap*2}px` }}>
-                                        {/* COMPREHENSION HANDLING */}
-                                        {q.type === 'COMPREHENSION' ? (
-                                            <div className="border border-slate-300 p-4 rounded-lg bg-slate-50/50">
-                                                <div className="font-bold text-sm uppercase mb-2 border-b border-black/10 pb-1">Passage for Q{i+1} to Q{i + (q.subQuestions?.length || 1)}</div>
-                                                <div className="text-justify mb-4 italic text-[0.95em] leading-relaxed"><LatexRenderer content={q.text} /></div>
-                                                {q.diagram && <img src={q.diagram} className="max-w-full h-auto object-contain my-3 mx-auto" />}
+                                        <div className="flex gap-3">
+                                            <span className="font-bold opacity-70 flex-shrink-0" style={{ minWidth: '1.5em' }}>{i + 1}.</span>
+                                            <div className="flex-1">
+                                                <div className="leading-relaxed text-justify w-full"><LatexRenderer content={q.text} /></div>
+                                                {q.diagram && <img src={q.diagram} className="max-w-[180px] h-auto object-contain my-3 border border-gray-200 rounded" />}
                                                 
-                                                <div className="space-y-4 pl-2 border-l-2 border-slate-200">
-                                                    {q.subQuestions?.map((sq, sqIdx) => (
-                                                        <div key={sq.id}>
-                                                            <div className="flex gap-2 font-bold text-[0.9em] mb-1">
-                                                                <span>{i+1}.{sqIdx+1}</span>
-                                                                <LatexRenderer content={sq.text} />
+                                                {(q.type === 'SINGLE' || q.type === 'MULTI' || !q.type) && (
+                                                    <div className="grid grid-cols-2 gap-x-6 gap-y-1 ml-1 mt-2">
+                                                        {q.options?.map((opt, oIdx) => (
+                                                            <div key={oIdx} className="flex items-start gap-2">
+                                                                <span className="font-bold text-[0.9em] opacity-80 mt-0.5">({String.fromCharCode(97 + oIdx)})</span>
+                                                                <div className=""><LatexRenderer content={opt} /></div>
                                                             </div>
-                                                            <div className="grid grid-cols-2 gap-x-4 gap-y-0.5 ml-6 text-[0.85em]">
-                                                                {sq.options?.map((opt, oIdx) => (
-                                                                    <div key={oIdx} className="flex gap-1"><span className="font-bold">({String.fromCharCode(97+oIdx)})</span> <LatexRenderer content={opt} /></div>
-                                                                ))}
-                                                            </div>
-                                                        </div>
-                                                    ))}
-                                                </div>
-                                            </div>
-                                        ) : (
-                                            /* STANDARD QUESTION HANDLING (Same as before) */
-                                            <div className="flex gap-3">
-                                                <span className="font-bold opacity-70 flex-shrink-0" style={{ minWidth: '1.5em' }}>{i + 1}.</span>
-                                                <div className="flex-1">
-                                                    <div className="leading-relaxed text-justify w-full"><LatexRenderer content={q.text} /></div>
-                                                    {q.diagram && <img src={q.diagram} className="max-w-[180px] h-auto object-contain my-3 border border-gray-200 rounded" />}
-                                                    
-                                                    {(q.type === 'SINGLE' || q.type === 'MULTI' || !q.type) && (
-                                                        <div className="grid grid-cols-2 gap-x-6 gap-y-1 ml-1 mt-2">
-                                                            {q.options?.map((opt, oIdx) => (
-                                                                <div key={oIdx} className="flex items-start gap-2">
-                                                                    <span className="font-bold text-[0.9em] opacity-80 mt-0.5">({String.fromCharCode(97 + oIdx)})</span>
-                                                                    <div className=""><LatexRenderer content={opt} /></div>
-                                                                </div>
-                                                            ))}
-                                                        </div>
-                                                    )}
-                                                    {/* Matrix logic here... */}
-                                                </div>
-                                            </div>
-                                        )}
-                                    </div>
-                                ))}
-                            </div>
+                                                        ))}
+                                                    </div>
                                                 )}
                                                 
                                                 {q.type === 'MATRIX' && (
