@@ -107,7 +107,8 @@
                 ChevronRight: <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className} {...props}><path d="m9 18 6-6-6-6"/></svg>,
                 ChevronLeft: <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className} {...props}><path d="m15 18-6-6 6-6"/></svg>,
                 Download: <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className} {...props}><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" x2="12" y1="15" y2="3"/></svg>,
-                Clipboard: <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className} {...props}><rect width="8" height="4" x="8" y="2" rx="1" ry="1"/><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/></svg>
+                Clipboard: <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className} {...props}><rect width="8" height="4" x="8" y="2" rx="1" ry="1"/><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/></svg>,
+                Target: <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className} {...props}><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>
             };
             return icons[name] || null;
         };
@@ -218,7 +219,33 @@
             return safeParseJSON(data.candidates?.[0]?.content?.parts?.[0]?.text);
         };
 // ... inside the API CALLS section ...
+// ... inside // --- API CALLS ---
 
+const generateMarksMapping = async (questions, userRule, apiKey) => {
+    // We only send metadata to save tokens, not the full text
+    const meta = questions.map(q => ({ id: q.id, type: q.type, difficulty: q.difficulty || 'Medium' }));
+    
+    const prompt = `Act as an Exam Controller.
+    User Instruction: "${userRule}"
+    
+    Task: specific positive (pos) and negative (neg) marks for the following questions based on the user's instruction.
+    
+    Question Metadata: ${JSON.stringify(meta)}
+    
+    Rules:
+    1. If the user mentions "JEE Main", use +4/-1 for everything.
+    2. If "JEE Advanced", usually Multi=+4/-2, Single=+3/-1, Numerical=+3/0 (unless specified otherwise).
+    3. If "NEET", use +4/-1.
+    4. Interpret natural language (e.g., "Make hard questions 5 marks").
+    
+    Output strictly valid JSON mapping Question IDs to marks:
+    {
+        "0.123123": { "pos": 4, "neg": 1 },
+        "0.456456": { "pos": 3, "neg": 0 }
+    }`;
+
+    return await apiCall(apiKey, prompt);
+};
         const analyzeResultImage = async (base64, apiKey) => {
             const prompt = `Analyze this result/scorecard image. Extract data strictly into JSON: 
             {
@@ -1140,6 +1167,60 @@ const Dashboard = ({ tests, notebooks, onCreateTest, onCreateNotebook, onDeleteT
                 </div>
             );
         };
+const MarksDistributor = ({ onClose, onApply, loading }) => {
+            const [prompt, setPrompt] = useState('');
+            
+            const presets = [
+                { label: "JEE Main Standard", val: "All questions +4, -1" },
+                { label: "JEE Adv (Paper 1)", val: "Single Correct +3/-1, Multi Correct +4/-2, Numerical +3/0" },
+                { label: "NEET Pattern", val: "All questions +4, -1" },
+                { label: "Hard Weighted", val: "Hard questions +5/-2, Medium +4/-1, Easy +3/0" },
+                { label: "No Negatives", val: "Keep positive marks same, but set all negative marks to 0" }
+            ];
+
+            return (
+                <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-[100] p-4 animate-in zoom-in-95">
+                    <div className="bg-white rounded-2xl w-full max-w-md shadow-2xl overflow-hidden flex flex-col">
+                        <div className="bg-gradient-to-r from-emerald-600 to-teal-600 p-4 flex justify-between items-center text-white">
+                            <h3 className="font-bold flex items-center gap-2"><Icon name="Sparkles" /> AI Marks Alloter</h3>
+                            <button onClick={onClose} className="hover:bg-white/20 p-1 rounded"><Icon name="X" /></button>
+                        </div>
+                        
+                        <div className="p-6 space-y-4 bg-slate-50">
+                            <div>
+                                <label className="text-xs font-bold text-slate-500 uppercase mb-2 block">Quick Presets</label>
+                                <div className="flex flex-wrap gap-2">
+                                    {presets.map((p, i) => (
+                                        <button key={i} onClick={() => setPrompt(p.val)} className="text-[10px] font-bold bg-white border border-slate-200 px-2 py-1.5 rounded-lg hover:border-emerald-500 hover:text-emerald-700 transition-colors shadow-sm">
+                                            {p.label}
+                                        </button>
+                                    ))}
+                                </div>
+                            </div>
+
+                            <div>
+                                <label className="text-xs font-bold text-slate-500 uppercase mb-2 block">Custom Instruction</label>
+                                <textarea 
+                                    value={prompt} 
+                                    onChange={e => setPrompt(e.target.value)} 
+                                    className="w-full h-32 p-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-emerald-500 outline-none text-sm shadow-inner"
+                                    placeholder="e.g. 'Give 10 marks to Matrix Match questions and 2 marks to everything else' or 'Make negative marking 25% of positive marks for all questions'."
+                                />
+                            </div>
+
+                            <button 
+                                onClick={() => onApply(prompt)} 
+                                disabled={loading || !prompt} 
+                                className="w-full bg-emerald-600 text-white py-3 rounded-xl font-bold hover:bg-emerald-700 disabled:opacity-50 flex justify-center items-center gap-2 shadow-lg hover:shadow-xl transition-all"
+                            >
+                                {loading ? <Icon name="Loader2" className="animate-spin" /> : <Icon name="Wand2" />}
+                                Auto-Assign Marks
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            );
+        };
 const Editor = ({ test, onUpdateTest, onBack, onPlay, onPrint, apiKey, onRequestKey }) => {
             // --- STATE MANAGEMENT ---
             const [proc, setProc] = useState(false);
@@ -1148,9 +1229,36 @@ const Editor = ({ test, onUpdateTest, onBack, onPlay, onPrint, apiKey, onRequest
             const [guide, setGuide] = useState(null);
             const [guideLoad, setGuideLoad] = useState(false);
             const [manvanchit, setManvanchit] = useState(false);
+            const [showMarksModal, setShowMarksModal] = useState(false);
+            const [marksLoad, setMarksLoad] = useState(false);
             
             // Ref for the hidden file input (Answer Key)
             const answerKeyInputRef = useRef(null);
+
+            const handleAIMarks = async (userPrompt) => {
+                if(!apiKey) return onRequestKey();
+                if(!userPrompt.trim()) return;
+                
+                setMarksLoad(true);
+                try {
+                    const mapping = await generateMarksMapping(test.questions, userPrompt, apiKey);
+                    
+                    const updatedQuestions = test.questions.map(q => {
+                        const newMarks = mapping[q.id.toString()] || mapping[q.id]; 
+                        if (newMarks) {
+                            return { ...q, marks: { pos: newMarks.pos, neg: newMarks.neg } };
+                        }
+                        return q;
+                    });
+                    
+                    onUpdateTest({ questions: updatedQuestions });
+                    setShowMarksModal(false);
+                    alert("Marks updated successfully!");
+                } catch (e) {
+                    alert("AI Error: " + e.message);
+                }
+                setMarksLoad(false);
+            };
 
             // --- 1. CLIPBOARD PASTE LISTENER ---
             useEffect(() => {
@@ -1186,11 +1294,8 @@ const Editor = ({ test, onUpdateTest, onBack, onPlay, onPrint, apiKey, onRequest
                     for (let i = 0; i < files.length; i++) {
                         setStep(`Analyzing Image ${i + 1} of ${files.length}...`);
                         const b64 = await fileToBase64(files[i]);
-                        
-                        // Uses the updated strict prompting from transcribeImage
                         const data = await transcribeImage(b64, apiKey); 
                         
-                        // Add IDs and initialize default fields
                         const processed = data.map(q => ({ 
                             ...q, 
                             id: Math.random(), 
@@ -1212,7 +1317,7 @@ const Editor = ({ test, onUpdateTest, onBack, onPlay, onPrint, apiKey, onRequest
             const handleUpload = (e) => {
                 const files = Array.from(e.target.files);
                 if (files.length) processFiles(files);
-                e.target.value = null; // Reset input so same file can be selected again
+                e.target.value = null; 
             };
 
             // --- 4. ANSWER KEY SCANNER ---
@@ -1229,7 +1334,6 @@ const Editor = ({ test, onUpdateTest, onBack, onPlay, onPrint, apiKey, onRequest
 
                 try {
                     const b64 = await fileToBase64(file);
-                    // Prompt AI to extract as JSON
                     const prompt = `Analyze this Answer Key image. Extract question numbers and answers. Output JSON: { "1": "A", "2": ["A","B"], "3": "5.5" }.`;
                     const extractedAnswers = await apiCall(apiKey, prompt, b64);
                     
@@ -1241,7 +1345,6 @@ const Editor = ({ test, onUpdateTest, onBack, onPlay, onPrint, apiKey, onRequest
                         if (!keyVal) return q;
 
                         let updates = {};
-                        // Helper to convert 'A' -> 0
                         const toIdx = (char) => {
                             if (typeof char !== 'string') return -1;
                             const code = char.trim().toUpperCase().charCodeAt(0);
@@ -1279,9 +1382,15 @@ const Editor = ({ test, onUpdateTest, onBack, onPlay, onPrint, apiKey, onRequest
 
             return (
                 <div className="h-screen flex flex-col bg-slate-50">
-                    {/* Modals */}
                     {guide && <StudyGuideModal content={guide} onClose={() => setGuide(null)} />}
                     {manvanchit && <ManvanchitModal onClose={() => setManvanchit(false)} apiKey={apiKey} onImport={(q) => onUpdateTest({ questions: [...test.questions, ...q] })} />}
+                    {showMarksModal && (
+                        <MarksDistributor 
+                            onClose={() => setShowMarksModal(false)} 
+                            onApply={handleAIMarks} 
+                            loading={marksLoad} 
+                        />
+                    )}
                     
                     {/* --- HEADER TOOLBAR --- */}
                     <div className="bg-white border-b border-slate-200 px-6 py-4 flex items-center justify-between sticky top-0 z-30 shadow-sm shrink-0">
@@ -1290,22 +1399,20 @@ const Editor = ({ test, onUpdateTest, onBack, onPlay, onPrint, apiKey, onRequest
                             <input value={test.title} onChange={e => onUpdateTest({ title: e.target.value })} className="text-xl font-bold text-slate-900 border-none focus:ring-0 p-0 w-64 bg-transparent" placeholder="Test Title..." />
                         </div>
                         <div className="flex gap-2">
-                            {/* Hidden Input for Answer Key */}
                             <input type="file" ref={answerKeyInputRef} onChange={handleAnswerKeyUpload} className="hidden" accept="image/*" />
                             
-                            {/* Action Buttons */}
                             <button onClick={() => answerKeyInputRef.current.click()} disabled={!test.questions.length} className="flex items-center gap-2 bg-amber-100 text-amber-800 px-4 py-2 rounded-lg hover:bg-amber-200 font-bold border border-amber-200" title="Upload Answer Key Image"><Icon name="ListChecks" className="w-4 h-4" /> Scan Key</button>
                             <button onClick={() => setManvanchit(true)} className="flex items-center gap-2 bg-tattvam-900 text-white px-4 py-2 rounded-lg hover:bg-tattvam-800 font-medium border border-slate-700 shadow-sm"><Icon name="BrainCircuit" className="w-4 h-4" /> MANVANCHIT</button>
                             <button onClick={makeGuide} disabled={guideLoad || !test.questions.length} className="flex items-center gap-2 bg-indigo-50 text-indigo-700 px-4 py-2 rounded-lg hover:bg-indigo-100 font-medium">{guideLoad ? <Icon name="Loader2" className="w-4 h-4 animate-spin" /> : <Icon name="Sparkles" className="w-4 h-4" />} Guide</button>
+                            <button onClick={() => setShowMarksModal(true)} className="flex items-center gap-2 bg-emerald-50 text-emerald-700 px-4 py-2 rounded-lg hover:bg-emerald-100 font-medium border border-emerald-100"><Icon name="Target" className="w-4 h-4" /> Marks</button>
                             <button onClick={onPrint} className="flex items-center gap-2 bg-slate-100 text-slate-700 px-4 py-2 rounded-lg hover:bg-slate-200 font-medium"><Icon name="Printer" className="w-4 h-4" /> Print</button>
                             <button onClick={onPlay} disabled={!test.questions.length} className="flex items-center gap-2 bg-emerald-600 text-white px-4 py-2 rounded-lg hover:bg-emerald-700 disabled:opacity-50 font-medium"><Icon name="Play" className="w-4 h-4" /> Quiz</button>
                         </div>
                     </div>
 
+
                     {/* --- MAIN WORKSPACE --- */}
                     <div className="flex-1 overflow-y-auto p-4 md:p-8 max-w-4xl mx-auto w-full">
-                        
-                        {/* Loading / Processing Overlay */}
                         {proc && (
                             <div className="fixed inset-0 bg-white/80 backdrop-blur-[2px] z-50 flex flex-col items-center justify-center">
                                 <Icon name="Loader2" className="w-10 h-10 text-tattvam-600 animate-spin mb-3" />
@@ -1313,7 +1420,6 @@ const Editor = ({ test, onUpdateTest, onBack, onPlay, onPrint, apiKey, onRequest
                             </div>
                         )}
 
-                        {/* Upload & Paste Area */}
                         <div className="mb-8">
                             <label className={`flex flex-col items-center justify-center w-full h-32 border-2 border-dashed rounded-xl cursor-pointer transition-all ${proc ? 'bg-indigo-50 border-indigo-300' : 'bg-white border-slate-300 hover:border-indigo-500'}`}>
                                 <Icon name="Upload" className="w-8 h-8 text-slate-400 mb-2" />
@@ -1324,12 +1430,10 @@ const Editor = ({ test, onUpdateTest, onBack, onPlay, onPrint, apiKey, onRequest
                             </label>
                         </div>
 
-                        {/* Question List */}
                         <div className="space-y-6">
                             {test.questions.map((q, idx) => (
                                 <div key={q.id}>
                                     {editId === q.id ? 
-                                        /* Editing Mode (Uses your updated QuestionEditor) */
                                         <QuestionEditor 
                                             question={q} 
                                             onSave={u => { onUpdateTest({ questions: test.questions.map(qt => qt.id === u.id ? u : qt) }); setEditId(null); }} 
@@ -1338,7 +1442,6 @@ const Editor = ({ test, onUpdateTest, onBack, onPlay, onPrint, apiKey, onRequest
                                             onRequestKey={onRequestKey} 
                                         /> 
                                         :
-                                        /* View Mode (Card Display) */
                                         <div className="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden group hover:border-tattvam-200 transition-colors">
                                             <div className="bg-slate-50 px-4 py-2 border-b border-slate-100 flex justify-between items-center">
                                                 <div className="flex items-center gap-2">
@@ -1357,7 +1460,6 @@ const Editor = ({ test, onUpdateTest, onBack, onPlay, onPrint, apiKey, onRequest
                                                 <div className="flex-1">
                                                     <div className="font-medium text-slate-800 mb-4 text-lg"><LatexRenderer content={q.text} /></div>
                                                     
-                                                    {/* Option Rendering */}
                                                     {(q.type === 'SINGLE' || q.type === 'MULTI' || !q.type) && (
                                                         <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
                                                             {q.options?.map((opt, oIdx) => (
