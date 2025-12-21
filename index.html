@@ -1128,13 +1128,17 @@ const AnalysisNotebook = ({ notebook, onUpdate, onBack, apiKey, onRequestKey }) 
                 </div>
             );
         };
-const Dashboard = ({ tests, notebooks, onCreateTest, onCreateNotebook, onDeleteTest, onDeleteNotebook, onSelectTest, onSelectNotebook, onSettings, onImport }) => {
-            const [tab, setTab] = useState('tests'); // tests | analysis
+const Dashboard = ({ tests, notebooks, onCreateTest, onCreateNotebook, onDeleteTest, onDeleteNotebook, onSelectTest, onSelectNotebook, onSettings, onImport, appLogo, setAppLogo }) => {
+            const [tab, setTab] = useState('tests');
             const fileInputRef = useRef(null);
+            const logoInputRef = useRef(null); 
+            const [imgError, setImgError] = useState(false); // Track if logo file is missing
 
-            // 1. EXPORT FULL BACKUP
+            // Reset error state when logo changes (e.g. user uploads a new one)
+            useEffect(() => { setImgError(false); }, [appLogo]);
+
             const handleExportBackup = () => {
-                const data = { tests, notebooks };
+                const data = { tests, notebooks, appLogo }; 
                 const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(data, null, 2));
                 const node = document.createElement('a');
                 node.setAttribute("href", dataStr);
@@ -1144,13 +1148,11 @@ const Dashboard = ({ tests, notebooks, onCreateTest, onCreateNotebook, onDeleteT
                 node.remove();
             };
 
-            // 2. EXPORT SINGLE TEST (New Feature)
             const handleExportSingleTest = (e, test) => {
-                e.stopPropagation(); // Stop opening the editor
+                e.stopPropagation();
                 const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(test, null, 2));
                 const node = document.createElement('a');
                 node.setAttribute("href", dataStr);
-                // Sanitize title for filename
                 const filename = test.title.replace(/[^a-z0-9]/gi, '_').toLowerCase();
                 node.setAttribute("download", `${filename}_test.json`);
                 document.body.appendChild(node);
@@ -1158,7 +1160,6 @@ const Dashboard = ({ tests, notebooks, onCreateTest, onCreateNotebook, onDeleteT
                 node.remove();
             };
 
-            // 3. UNIVERSAL IMPORT (Handles Single & Bulk)
             const onFileChange = (e) => {
                 const file = e.target.files[0];
                 if (!file) return;
@@ -1166,58 +1167,75 @@ const Dashboard = ({ tests, notebooks, onCreateTest, onCreateNotebook, onDeleteT
                 reader.onload = (event) => {
                     try {
                         const imported = JSON.parse(event.target.result);
-                        
-                        // Case A: Full Backup (Has 'tests' or 'notebooks' keys)
                         if (imported.tests || imported.notebooks) {
                             onImport(imported.tests || [], imported.notebooks || []);
-                            alert(`Imported ${imported.tests?.length || 0} tests and ${imported.notebooks?.length || 0} notebooks.`);
-                        } 
-                        // Case B: Single Test Object (Has 'questions' and 'title')
-                        else if (imported.title && Array.isArray(imported.questions)) {
-                            // Assign a new ID to avoid collisions, or keep existing if you prefer
+                            if(imported.appLogo && setAppLogo) setAppLogo(imported.appLogo); 
+                            alert(`Imported Data Successfully.`);
+                        } else if (imported.title && Array.isArray(imported.questions)) {
                             const newTest = { ...imported, id: Date.now().toString() }; 
                             onImport([newTest], []);
                             alert(`Imported single test: "${imported.title}"`);
+                        } else {
+                            alert("Unknown file format.");
                         }
-                        // Case C: Array of Tests (Old format)
-                        else if (Array.isArray(imported)) {
-                            onImport(imported, []);
-                            alert(`Imported ${imported.length} tests.`);
-                        } 
-                        else {
-                            alert("Unknown file format. Please upload a valid Tattvam JSON file.");
-                        }
-                    } catch (err) {
-                        alert("Error parsing file: " + err.message);
-                    }
+                    } catch (err) { alert("Error parsing file: " + err.message); }
                 };
                 reader.readAsText(file);
-                e.target.value = null; // Reset input
+                e.target.value = null;
+            };
+
+            const handleLogoUpload = (e) => {
+                const file = e.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = (ev) => {
+                        setAppLogo(ev.target.result); // Saves to local storage (User Override)
+                        setImgError(false);
+                    };
+                    reader.readAsDataURL(file);
+                }
             };
 
             return (
                 <div className="max-w-6xl mx-auto p-6 animate-in fade-in h-full flex flex-col font-sans">
                     <div className="flex flex-col md:flex-row justify-between items-center mb-8 border-b border-slate-200 pb-6 shrink-0 gap-4">
                         <div>
-                            <h1 className="text-3xl font-bold text-slate-900 flex items-center gap-3"><Icon name="Atom" className="w-8 h-8 text-tattvam-600" /> Tattvam</h1>
-                            <p className="text-slate-500 mt-1">Assessment & Analysis Suite</p>
+                            <h1 className="text-3xl font-bold text-slate-900 flex items-center gap-3">
+                                {/* LOGO AREA */}
+                                <div 
+                                    onClick={() => logoInputRef.current.click()} 
+                                    className="cursor-pointer relative group transition-transform active:scale-95"
+                                    title="Click to Upload Custom Logo (Local Override)"
+                                >
+                                    {!imgError && appLogo ? (
+                                        <img 
+                                            src={appLogo} 
+                                            onError={() => setImgError(true)} 
+                                            className="w-12 h-12 object-contain rounded-lg shadow-sm border border-slate-200 bg-white" 
+                                        />
+                                    ) : (
+                                        <div className="bg-tattvam-100 p-2 rounded-lg group-hover:bg-tattvam-200 transition-colors border border-tattvam-200">
+                                            <Icon name="Atom" className="w-8 h-8 text-tattvam-600" />
+                                        </div>
+                                    )}
+                                    <input type="file" ref={logoInputRef} onChange={handleLogoUpload} className="hidden" accept="image/*" />
+                                </div>
+                                <span className="tracking-tight">Tattvam</span>
+                            </h1>
+                            <p className="text-slate-500 mt-1 text-sm font-medium ml-1">Assessment & Analysis Suite</p>
                         </div>
                         
-                        {/* TAB SWITCHER */}
                         <div className="bg-slate-100 p-1 rounded-lg flex font-bold text-sm">
                             <button onClick={() => setTab('tests')} className={`px-4 py-2 rounded-md transition-all ${tab==='tests' ? 'bg-white shadow text-slate-900' : 'text-slate-500'}`}>My Tests</button>
                             <button onClick={() => setTab('analysis')} className={`px-4 py-2 rounded-md transition-all ${tab==='analysis' ? 'bg-white shadow text-slate-900' : 'text-slate-500'}`}>Analysis Notebooks</button>
                         </div>
 
                         <div className="flex gap-2">
-                            {/* Hidden File Input */}
                             <input type="file" ref={fileInputRef} onChange={onFileChange} className="hidden" accept=".json" />
-                            
-                            <button onClick={() => fileInputRef.current.click()} className="p-2 text-slate-400 hover:text-indigo-600 bg-white border rounded-lg shadow-sm" title="Import Any JSON"><Icon name="Upload" className="w-5 h-5" /></button>
-                            <button onClick={handleExportBackup} className="p-2 text-slate-400 hover:text-indigo-600 bg-white border rounded-lg shadow-sm" title="Export Full Backup"><Icon name="Download" className="w-5 h-5" /></button>
+                            <button onClick={() => fileInputRef.current.click()} className="p-2 text-slate-400 hover:text-indigo-600 bg-white border rounded-lg shadow-sm" title="Import JSON"><Icon name="Upload" className="w-5 h-5" /></button>
+                            <button onClick={handleExportBackup} className="p-2 text-slate-400 hover:text-indigo-600 bg-white border rounded-lg shadow-sm" title="Export Backup"><Icon name="Download" className="w-5 h-5" /></button>
                             <button onClick={onSettings} className="p-2 text-slate-400 hover:text-tattvam-600 hover:bg-tattvam-50 rounded-full"><Icon name="Settings" className="w-6 h-6" /></button>
                             
-                            {/* DYNAMIC CREATE BUTTON */}
                             {tab === 'tests' ? (
                                 <button onClick={onCreateTest} className="flex items-center gap-2 bg-tattvam-600 text-white px-5 py-2.5 rounded-lg hover:bg-tattvam-500 font-medium shadow-sm"><Icon name="Plus" className="w-5 h-5" /> New Test</button>
                             ) : (
@@ -1234,8 +1252,7 @@ const Dashboard = ({ tests, notebooks, onCreateTest, onCreateNotebook, onDeleteT
                                         <div className="flex justify-between items-start mb-4">
                                             <div className="bg-tattvam-50 p-3 rounded-lg"><Icon name="FileText" className="w-6 h-6 text-tattvam-600" /></div>
                                             <div className="flex gap-1">
-                                                {/* NEW: Single Test Export Button */}
-                                                <button onClick={(e) => handleExportSingleTest(e, test)} className="text-slate-300 hover:text-indigo-600 p-2 hover:bg-indigo-50 rounded-lg" title="Export Single Test"><Icon name="Download" className="w-4 h-4" /></button>
+                                                <button onClick={(e) => handleExportSingleTest(e, test)} className="text-slate-300 hover:text-indigo-600 p-2 hover:bg-indigo-50 rounded-lg" title="Export"><Icon name="Download" className="w-4 h-4" /></button>
                                                 <button onClick={(e) => onDeleteTest(e, test.id)} className="text-slate-300 hover:text-red-500 p-2 hover:bg-red-50 rounded-lg" title="Delete"><Icon name="Trash2" className="w-4 h-4" /></button>
                                             </div>
                                         </div>
@@ -1256,7 +1273,7 @@ const Dashboard = ({ tests, notebooks, onCreateTest, onCreateNotebook, onDeleteT
                                         <div className="flex items-center justify-between mt-auto pt-4 border-t border-slate-50"><span className="text-xs font-bold text-indigo-800 bg-indigo-100 px-2 py-1 rounded">{nb.entries?.length || 0} Entries</span><span className="text-indigo-600 text-sm font-semibold flex items-center gap-1 group-hover:translate-x-1 transition-transform">Analyze <Icon name="ArrowLeft" className="w-4 h-4 rotate-180" /></span></div>
                                     </div>
                                 ))}
-                                {notebooks.length === 0 && <div className="col-span-full text-center py-20 text-slate-400 border-2 border-dashed rounded-xl">No notebooks found. Create one to analyze results.</div>}
+                                {notebooks.length === 0 && <div className="col-span-full text-center py-20 text-slate-400 border-2 border-dashed rounded-xl">No notebooks found.</div>}
                             </div>
                         )}
                     </div>
@@ -2160,10 +2177,13 @@ const PrintView = ({ test, onBack, apiKey, onRequestKey }) => {
         };
 const QuizForge = () => {
             const [view, setView] = useState('dashboard');
-            // 1. ADD NOTEBOOKS STATE
             const [tests, setTests] = useState(() => JSON.parse(localStorage.getItem('quizforge_tests') || '[]'));
             const [notebooks, setNotebooks] = useState(() => JSON.parse(localStorage.getItem('quizforge_notebooks') || '[]'));
             
+            // --- FIXED: DEFAULT TO './logo.png' ---
+            // If the user hasn't overridden it locally, try to load 'logo.png' from the server/folder
+            const [appLogo, setAppLogo] = useState(() => localStorage.getItem('tattvam_app_logo') || "./logo.png");
+
             const [activeId, setActiveId] = useState(null);
             const [activeNotebookId, setActiveNotebookId] = useState(null);
             
@@ -2173,15 +2193,18 @@ const QuizForge = () => {
             const [showQuizSetup, setShowQuizSetup] = useState(false);
 
             useEffect(() => { localStorage.setItem('quizforge_tests', JSON.stringify(tests)); }, [tests]);
-            // 2. SAVE NOTEBOOKS TO LOCAL STORAGE
             useEffect(() => { localStorage.setItem('quizforge_notebooks', JSON.stringify(notebooks)); }, [notebooks]);
+            
+            // Save local override only if it's different from default
+            useEffect(() => { 
+                if(appLogo && appLogo !== "./logo.png") localStorage.setItem('tattvam_app_logo', appLogo); 
+            }, [appLogo]);
 
             const activeTest = tests.find(t => t.id === activeId);
             const activeNotebook = notebooks.find(n => n.id === activeNotebookId);
 
             const handleStartQuiz = (mins, shuffle) => {
                 setQuizDuration(mins === '' ? 99999 : Number(mins));
-                // Note: Shuffle logic omitted for brevity, add back if you had it
                 setShowQuizSetup(false);
                 setView('player');
             };
@@ -2191,12 +2214,10 @@ const QuizForge = () => {
                 setNotebooks(prev => [...prev, ...newNotebooks]);
             };
             
-            // 3. HANDLERS FOR NOTEBOOKS
             const handleUpdateNotebook = (u) => {
                 setNotebooks(notebooks.map(n => n.id === activeNotebookId ? u : n));
             };
             
-            // This allows the Player to save result to a notebook
             const handleSaveToNotebook = (nbId, entry) => {
                 setNotebooks(prev => prev.map(nb => nb.id === nbId ? { ...nb, entries: [entry, ...(nb.entries||[])] } : nb));
             };
@@ -2217,13 +2238,14 @@ const QuizForge = () => {
                             onSelectTest={(id) => { setActiveId(id); setView('editor'); }} 
                             onSelectNotebook={(id) => { setActiveNotebookId(id); setView('notebook'); }}
                             onSettings={() => setModal(true)} 
-                            onImport={importData} 
+                            onImport={importData}
+                            appLogo={appLogo}       
+                            setAppLogo={setAppLogo} 
                         />
                     )}
 
                     {view === 'editor' && activeTest && <Editor test={activeTest} onUpdateTest={(u) => setTests(tests.map(t => t.id === activeId ? { ...t, ...u } : t))} onBack={() => setView('dashboard')} onPlay={() => setShowQuizSetup(true)} onPrint={() => setView('print')} apiKey={apiKey} onRequestKey={() => setModal(true)} />}
                     
-                    {/* 4. NEW NOTEBOOK VIEW */}
                     {view === 'notebook' && activeNotebook && (
                         <AnalysisNotebook 
                             notebook={activeNotebook} 
@@ -2234,7 +2256,6 @@ const QuizForge = () => {
                         />
                     )}
 
-                    {/* 5. UPDATED PLAYER PROP PASSING (Pass notebooks and save handler) */}
                     {view === 'player' && activeTest && <Player test={activeTest} duration={quizDuration} onBack={() => setView('editor')} notebooks={notebooks} onSaveToNotebook={handleSaveToNotebook} />}
                     
                     {view === 'print' && activeTest && <PrintView test={activeTest} onBack={() => setView('editor')} apiKey={apiKey} onRequestKey={() => setModal(true)} />}
