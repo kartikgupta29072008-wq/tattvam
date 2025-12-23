@@ -1284,9 +1284,8 @@ const Dashboard = ({ tests, notebooks, onCreateTest, onCreateNotebook, onDeleteT
             const [tab, setTab] = useState('tests');
             const fileInputRef = useRef(null);
             const logoInputRef = useRef(null); 
-            const [imgError, setImgError] = useState(false); // Track if logo file is missing
+            const [imgError, setImgError] = useState(false);
 
-            // Reset error state when logo changes (e.g. user uploads a new one)
             useEffect(() => { setImgError(false); }, [appLogo]);
 
             const handleExportBackup = () => {
@@ -1312,28 +1311,94 @@ const Dashboard = ({ tests, notebooks, onCreateTest, onCreateNotebook, onDeleteT
                 node.remove();
             };
 
+            // --- FIXED: ROBUST IMPORT HANDLER ---
             const onFileChange = (e) => {
                 const file = e.target.files[0];
                 if (!file) return;
+                
                 const reader = new FileReader();
                 reader.onload = (event) => {
                     try {
-                        const imported = JSON.parse(event.target.result);
+                        const raw = event.target.result;
+                        if (!raw) throw new Error("File is empty");
+                        
+                        const imported = JSON.parse(raw);
+                        
+                        // 1. SANITIZATION: Ensure data structure is safe for React
+                        const sanitizeQuestions = (qs) => {
+                            if (!Array.isArray(qs)) return [];
+                            return qs.map(q => ({
+                                ...q,
+                                id: q.id || Math.random().toString(), // Fix missing IDs
+                                type: q.type || 'SINGLE',             // Fix missing Type
+                                options: Array.isArray(q.options) ? q.options : [], // Fix missing Options
+                                text: q.text || "Empty Question"      // Fix missing Text
+                            }));
+                        };
+
+                        const sanitizeTests = (ts) => {
+                            if (!Array.isArray(ts)) return [];
+                            return ts.map(t => ({
+                                ...t,
+                                id: t.id || Math.random().toString(),
+                                title: t.title || "Untitled Test",
+                                questions: sanitizeQuestions(t.questions)
+                            }));
+                        };
+
+                        const sanitizeNotebooks = (nbs) => {
+                            if (!Array.isArray(nbs)) return [];
+                            return nbs.map(n => ({
+                                ...n,
+                                id: n.id || Math.random().toString(),
+                                entries: Array.isArray(n.entries) ? n.entries : []
+                            }));
+                        };
+
+                        // 2. LOGIC: Determine what kind of file this is
+                        
+                        // CASE A: Full Backup (contains 'tests' or 'notebooks' keys)
                         if (imported.tests || imported.notebooks) {
-                            onImport(imported.tests || [], imported.notebooks || []);
+                            const safeTests = sanitizeTests(imported.tests);
+                            const safeNotebooks = sanitizeNotebooks(imported.notebooks);
+                            
+                            onImport(safeTests, safeNotebooks);
                             if(imported.appLogo && setAppLogo) setAppLogo(imported.appLogo); 
-                            alert(`Imported Data Successfully.`);
-                        } else if (imported.title && Array.isArray(imported.questions)) {
-                            const newTest = { ...imported, id: Date.now().toString() }; 
+                            alert(`Success! Imported ${safeTests.length} tests and ${safeNotebooks.length} notebooks.`);
+                        } 
+                        // CASE B: Single Test File (has 'title' and 'questions')
+                        else if (imported.title && (imported.questions || Array.isArray(imported.questions))) {
+                            const newTest = {
+                                ...imported,
+                                id: Date.now().toString(), // Always generate new ID to avoid conflict
+                                questions: sanitizeQuestions(imported.questions)
+                            };
                             onImport([newTest], []);
-                            alert(`Imported single test: "${imported.title}"`);
-                        } else {
-                            alert("Unknown file format.");
+                            alert(`Success! Imported test: "${newTest.title}"`);
+                        } 
+                        // CASE C: Raw Question List (Just an array of objects)
+                        else if (Array.isArray(imported)) {
+                             const newTest = {
+                                id: Date.now().toString(),
+                                title: "Imported Questions " + new Date().toLocaleDateString(),
+                                created: new Date().toISOString(),
+                                questions: sanitizeQuestions(imported)
+                             };
+                             onImport([newTest], []);
+                             alert("Success! Created new test from question list.");
                         }
-                    } catch (err) { alert("Error parsing file: " + err.message); }
+                        else {
+                            throw new Error("Unknown JSON format. File must contain 'tests', 'notebooks', or be a question list.");
+                        }
+
+                    } catch (err) { 
+                        console.error(err);
+                        alert("Import Failed: " + err.message + "\nCheck console for details."); 
+                    }
                 };
+                reader.onerror = () => alert("Failed to read file system.");
                 reader.readAsText(file);
-                e.target.value = null;
+                e.target.value = null; // Reset input to allow re-uploading same file
             };
 
             const handleLogoUpload = (e) => {
@@ -1341,7 +1406,7 @@ const Dashboard = ({ tests, notebooks, onCreateTest, onCreateNotebook, onDeleteT
                 if (file) {
                     const reader = new FileReader();
                     reader.onload = (ev) => {
-                        setAppLogo(ev.target.result); // Saves to local storage (User Override)
+                        setAppLogo(ev.target.result); 
                         setImgError(false);
                     };
                     reader.readAsDataURL(file);
@@ -1383,7 +1448,9 @@ const Dashboard = ({ tests, notebooks, onCreateTest, onCreateNotebook, onDeleteT
                         </div>
 
                         <div className="flex gap-2">
+                            {/* Updated File Input */}
                             <input type="file" ref={fileInputRef} onChange={onFileChange} className="hidden" accept=".json" />
+                            
                             <button onClick={() => fileInputRef.current.click()} className="p-2 text-slate-400 hover:text-indigo-600 bg-white border rounded-lg shadow-sm" title="Import JSON"><Icon name="Upload" className="w-5 h-5" /></button>
                             <button onClick={handleExportBackup} className="p-2 text-slate-400 hover:text-indigo-600 bg-white border rounded-lg shadow-sm" title="Export Backup"><Icon name="Download" className="w-5 h-5" /></button>
                             <button onClick={onSettings} className="p-2 text-slate-400 hover:text-tattvam-600 hover:bg-tattvam-50 rounded-full"><Icon name="Settings" className="w-6 h-6" /></button>
@@ -1410,7 +1477,7 @@ const Dashboard = ({ tests, notebooks, onCreateTest, onCreateNotebook, onDeleteT
                                         </div>
                                         <h3 className="font-bold text-lg text-slate-800 mb-1 truncate">{test.title}</h3>
                                         <p className="text-sm text-slate-400 mb-6">{new Date(test.created).toLocaleDateString()}</p>
-                                        <div className="flex items-center justify-between mt-auto pt-4 border-t border-slate-50"><span className="text-xs font-bold text-slate-500 bg-slate-100 px-2 py-1 rounded">{test.questions.length} Qs</span><span className="text-tattvam-600 text-sm font-semibold flex items-center gap-1 group-hover:translate-x-1 transition-transform">Open <Icon name="ArrowLeft" className="w-4 h-4 rotate-180" /></span></div>
+                                        <div className="flex items-center justify-between mt-auto pt-4 border-t border-slate-50"><span className="text-xs font-bold text-slate-500 bg-slate-100 px-2 py-1 rounded">{test.questions?.length || 0} Qs</span><span className="text-tattvam-600 text-sm font-semibold flex items-center gap-1 group-hover:translate-x-1 transition-transform">Open <Icon name="ArrowLeft" className="w-4 h-4 rotate-180" /></span></div>
                                     </div>
                                 ))}
                                 {tests.length === 0 && <div className="col-span-full text-center py-20 text-slate-400 border-2 border-dashed rounded-xl">No tests found.</div>}
@@ -1431,8 +1498,7 @@ const Dashboard = ({ tests, notebooks, onCreateTest, onCreateNotebook, onDeleteT
                     </div>
                 </div>
             );
-        };
-const MarksDistributor = ({ onClose, onApply, loading }) => {
+        };const MarksDistributor = ({ onClose, onApply, loading }) => {
             const [prompt, setPrompt] = useState('');
             
             const presets = [
