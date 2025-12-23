@@ -1311,7 +1311,7 @@ const Dashboard = ({ tests, notebooks, onCreateTest, onCreateNotebook, onDeleteT
                 node.remove();
             };
 
-            // --- FIXED: ROBUST IMPORT HANDLER ---
+            // --- FIXED & CRASH-PROOF IMPORT HANDLER ---
             const onFileChange = (e) => {
                 const file = e.target.files[0];
                 if (!file) return;
@@ -1324,81 +1324,93 @@ const Dashboard = ({ tests, notebooks, onCreateTest, onCreateNotebook, onDeleteT
                         
                         const imported = JSON.parse(raw);
                         
-                        // 1. SANITIZATION: Ensure data structure is safe for React
+                        // 1. ADVANCED SANITIZER: Filters out nulls to prevent White Screen Crashes
                         const sanitizeQuestions = (qs) => {
                             if (!Array.isArray(qs)) return [];
-                            return qs.map(q => ({
+                            // Filter out null/undefined items first!
+                            return qs.filter(q => q && typeof q === 'object').map((q, idx) => ({
                                 ...q,
-                                id: q.id || Math.random().toString(), // Fix missing IDs
-                                type: q.type || 'SINGLE',             // Fix missing Type
-                                options: Array.isArray(q.options) ? q.options : [], // Fix missing Options
-                                text: q.text || "Empty Question"      // Fix missing Text
+                                // Force NEW Unique ID to prevent key collisions
+                                id: "imported_q_" + Date.now() + "_" + idx + "_" + Math.random().toString(36).slice(2),
+                                type: q.type || 'SINGLE',
+                                options: Array.isArray(q.options) ? q.options.filter(o => o != null).map(String) : [],
+                                text: q.text || "Empty Question Text",
+                                marks: q.marks || { pos: 4, neg: 1 }
                             }));
                         };
 
                         const sanitizeTests = (ts) => {
                             if (!Array.isArray(ts)) return [];
-                            return ts.map(t => ({
+                            return ts.filter(t => t && typeof t === 'object').map((t, idx) => ({
                                 ...t,
-                                id: t.id || Math.random().toString(),
-                                title: t.title || "Untitled Test",
+                                id: "imported_test_" + Date.now() + "_" + idx,
+                                title: t.title || "Untitled Test (Imported)",
+                                created: t.created || new Date().toISOString(),
                                 questions: sanitizeQuestions(t.questions)
                             }));
                         };
 
                         const sanitizeNotebooks = (nbs) => {
                             if (!Array.isArray(nbs)) return [];
-                            return nbs.map(n => ({
+                            return nbs.filter(n => n && typeof n === 'object').map((n, idx) => ({
                                 ...n,
-                                id: n.id || Math.random().toString(),
-                                entries: Array.isArray(n.entries) ? n.entries : []
+                                id: "imported_nb_" + Date.now() + "_" + idx,
+                                title: n.title || "Imported Notebook",
+                                entries: Array.isArray(n.entries) ? n.entries.filter(e => e).map((e, ei) => ({
+                                    ...e,
+                                    id: e.id || ("entry_" + ei + "_" + Math.random())
+                                })) : []
                             }));
                         };
 
-                        // 2. LOGIC: Determine what kind of file this is
-                        
-                        // CASE A: Full Backup (contains 'tests' or 'notebooks' keys)
+                        // 2. PROCESS IMPORT
+                        let countTests = 0;
+                        let countNotebooks = 0;
+
+                        // Case A: Full Backup
                         if (imported.tests || imported.notebooks) {
                             const safeTests = sanitizeTests(imported.tests);
                             const safeNotebooks = sanitizeNotebooks(imported.notebooks);
-                            
                             onImport(safeTests, safeNotebooks);
                             if(imported.appLogo && setAppLogo) setAppLogo(imported.appLogo); 
-                            alert(`Success! Imported ${safeTests.length} tests and ${safeNotebooks.length} notebooks.`);
+                            countTests = safeTests.length;
+                            countNotebooks = safeNotebooks.length;
                         } 
-                        // CASE B: Single Test File (has 'title' and 'questions')
+                        // Case B: Single Test
                         else if (imported.title && (imported.questions || Array.isArray(imported.questions))) {
                             const newTest = {
                                 ...imported,
-                                id: Date.now().toString(), // Always generate new ID to avoid conflict
+                                id: "imported_test_" + Date.now(),
                                 questions: sanitizeQuestions(imported.questions)
                             };
                             onImport([newTest], []);
-                            alert(`Success! Imported test: "${newTest.title}"`);
+                            countTests = 1;
                         } 
-                        // CASE C: Raw Question List (Just an array of objects)
+                        // Case C: Raw List of Questions
                         else if (Array.isArray(imported)) {
                              const newTest = {
-                                id: Date.now().toString(),
-                                title: "Imported Questions " + new Date().toLocaleDateString(),
+                                id: "imported_list_" + Date.now(),
+                                title: "Imported Questions " + new Date().toLocaleTimeString(),
                                 created: new Date().toISOString(),
                                 questions: sanitizeQuestions(imported)
                              };
                              onImport([newTest], []);
-                             alert("Success! Created new test from question list.");
+                             countTests = 1;
                         }
                         else {
-                            throw new Error("Unknown JSON format. File must contain 'tests', 'notebooks', or be a question list.");
+                            throw new Error("Invalid Format. File must contain 'tests', 'notebooks', or a question list.");
                         }
 
+                        alert(`✅ Import Successful!\nLoaded ${countTests} Tests & ${countNotebooks} Notebooks.`);
+
                     } catch (err) { 
-                        console.error(err);
-                        alert("Import Failed: " + err.message + "\nCheck console for details."); 
+                        console.error("Import Error:", err);
+                        alert("❌ Import Failed: " + err.message + "\n\nTip: Check if the JSON file is valid."); 
                     }
                 };
-                reader.onerror = () => alert("Failed to read file system.");
+                reader.onerror = () => alert("Failed to read file.");
                 reader.readAsText(file);
-                e.target.value = null; // Reset input to allow re-uploading same file
+                e.target.value = null; // Reset input
             };
 
             const handleLogoUpload = (e) => {
