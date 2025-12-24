@@ -1609,6 +1609,140 @@ const Dashboard = ({ tests, notebooks, onCreateTest, onCreateNotebook, onDeleteT
                 </div>
             );
         };
+// --- NEW: SMART ANSWER KEY SCANNER MODAL ---
+        const SmartKeyScanner = ({ onClose, onApply, apiKey }) => {
+            const [file, setFile] = useState(null);
+            const [preview, setPreview] = useState(null);
+            const [instructions, setInstructions] = useState("");
+            const [keyStart, setKeyStart] = useState(1);
+            const [targetStart, setTargetStart] = useState(1);
+            const [scanning, setScanning] = useState(false);
+
+            const handleFile = (e) => {
+                const f = e.target.files[0];
+                if (f) {
+                    setFile(f);
+                    setPreview(URL.createObjectURL(f));
+                }
+            };
+
+            const handleScan = async () => {
+                if (!file || !apiKey) return;
+                setScanning(true);
+                try {
+                    const b64 = await fileToBase64(file);
+                    
+                    // 1. Enhanced Prompt with User Instructions
+                    const prompt = `Act as an Answer Key Reader.
+                    Task: Extract question numbers and their correct answers from this image.
+                    
+                    User Special Instructions: "${instructions || "None. Scan all standard columns."}"
+                    
+                    Rules:
+                    1. Identify the Question Number (e.g., "41", "Q.1", "1") and the Answer (e.g., "A", "B", "4", "ABCD").
+                    2. If the answer is numerical, return it as a string (e.g. "5.5").
+                    3. Output a flat JSON object mapping Question Number -> Answer.
+                    
+                    Output JSON Example:
+                    { "1": "A", "31": "C", "32": ["A","B"] }`;
+
+                    const result = await apiCall(apiKey, prompt, b64);
+                    
+                    // 2. Pass result and mapping configuration back to Editor
+                    onApply(result, { keyStart: Number(keyStart), targetStart: Number(targetStart) });
+                    onClose();
+                    
+                } catch (e) {
+                    alert("Scan Failed: " + e.message);
+                }
+                setScanning(false);
+            };
+
+            return (
+                <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-[60] flex items-center justify-center p-4 animate-in fade-in">
+                    <div className="bg-white rounded-2xl w-full max-w-lg shadow-2xl overflow-hidden flex flex-col max-h-[90vh]">
+                        {/* Header */}
+                        <div className="bg-slate-900 p-4 text-white flex justify-between items-center shrink-0">
+                            <h3 className="font-bold flex items-center gap-2"><Icon name="ListChecks" /> Smart Key Scanner</h3>
+                            <button onClick={onClose}><Icon name="X" /></button>
+                        </div>
+
+                        {/* Scrollable Content */}
+                        <div className="p-6 overflow-y-auto space-y-5">
+                            
+                            {/* 1. File Upload */}
+                            <div className="border-2 border-dashed border-slate-300 rounded-xl p-4 text-center hover:bg-slate-50 transition-colors relative">
+                                {preview ? (
+                                    <div className="relative h-48 w-full">
+                                        <img src={preview} className="w-full h-full object-contain rounded-lg" />
+                                        <button onClick={() => { setFile(null); setPreview(null); }} className="absolute top-2 right-2 bg-red-600 text-white p-1 rounded-full shadow-md hover:bg-red-700"><Icon name="X" className="w-4 h-4" /></button>
+                                    </div>
+                                ) : (
+                                    <label className="cursor-pointer block py-8">
+                                        <Icon name="Upload" className="w-10 h-10 text-slate-400 mx-auto mb-2" />
+                                        <span className="text-sm font-bold text-slate-600 block">Click to Upload Answer Key</span>
+                                        <span className="text-xs text-slate-400">Supports JPG, PNG, Screenshots</span>
+                                        <input type="file" className="hidden" accept="image/*" onChange={handleFile} />
+                                    </label>
+                                )}
+                            </div>
+
+                            {/* 2. Instructions */}
+                            <div>
+                                <label className="text-xs font-bold text-slate-500 uppercase mb-1 block">AI Instructions (Optional)</label>
+                                <textarea 
+                                    value={instructions}
+                                    onChange={e => setInstructions(e.target.value)}
+                                    placeholder="e.g. 'Read only the Physics section', 'Ignore questions crossed out', 'Format is 1-A'"
+                                    className="w-full p-3 border rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 outline-none resize-none h-20 bg-slate-50"
+                                />
+                            </div>
+
+                            {/* 3. Mapping Logic */}
+                            <div className="bg-indigo-50 p-4 rounded-xl border border-indigo-100">
+                                <h4 className="text-sm font-bold text-indigo-900 mb-3 flex items-center gap-2"><Icon name="Settings" className="w-4 h-4" /> Offset Mapping</h4>
+                                <div className="flex items-center gap-4">
+                                    <div className="flex-1">
+                                        <label className="text-xs font-bold text-indigo-700 block mb-1">Key Starts At</label>
+                                        <input 
+                                            type="number" 
+                                            value={keyStart} 
+                                            onChange={e => setKeyStart(e.target.value)}
+                                            className="w-full p-2 border border-indigo-200 rounded text-center font-mono font-bold" 
+                                        />
+                                    </div>
+                                    <Icon name="ArrowLeft" className="w-5 h-5 text-indigo-400 rotate-180" />
+                                    <div className="flex-1">
+                                        <label className="text-xs font-bold text-indigo-700 block mb-1">Apply to Q#</label>
+                                        <input 
+                                            type="number" 
+                                            value={targetStart} 
+                                            onChange={e => setTargetStart(e.target.value)}
+                                            className="w-full p-2 border border-indigo-200 rounded text-center font-mono font-bold" 
+                                        />
+                                    </div>
+                                </div>
+                                <p className="text-[10px] text-indigo-600 mt-2 leading-tight">
+                                    Example: If the key image shows <strong>Q.41</strong>, but you want to apply that answer to your <strong>Q.1</strong>, set "Key Starts At" to 41 and "Apply to Q#" to 1.
+                                </p>
+                            </div>
+                        </div>
+
+                        {/* Footer */}
+                        <div className="p-4 border-t bg-slate-50 flex justify-end">
+                            <button 
+                                onClick={handleScan} 
+                                disabled={!file || scanning}
+                                className="bg-tattvam-600 text-white px-6 py-2.5 rounded-lg font-bold hover:bg-tattvam-700 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 shadow-sm"
+                            >
+                                {scanning ? <Icon name="Loader2" className="animate-spin" /> : <Icon name="BrainCircuit" />}
+                                {scanning ? "Analyzing..." : "Scan & Apply"}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            );
+        };
 const Editor = ({ test, onUpdateTest, onBack, onPlay, onPrint, apiKey, onRequestKey }) => {
             // --- STATE MANAGEMENT ---
             const [proc, setProc] = useState(false);
@@ -1619,6 +1753,7 @@ const Editor = ({ test, onUpdateTest, onBack, onPlay, onPrint, apiKey, onRequest
             const [manvanchit, setManvanchit] = useState(false);
             const [showMarksModal, setShowMarksModal] = useState(false);
             const [marksLoad, setMarksLoad] = useState(false);
+const [showKeyScanner, setShowKeyScanner] = useState(false);
             
             // Ref for the hidden file input (Answer Key)
             const answerKeyInputRef = useRef(null);
@@ -1721,57 +1856,54 @@ const Editor = ({ test, onUpdateTest, onBack, onPlay, onPrint, apiKey, onRequest
                 e.target.value = null; 
             };
 
-            // --- 4. ANSWER KEY SCANNER ---
-            const handleAnswerKeyUpload = async (e) => {
-                const file = e.target.files[0];
-                if (!file) return;
-                if (!apiKey) return onRequestKey();
+// --- NEW: LOGIC TO APPLY SMART KEY ---
+        const handleSmartKeyApply = (extractedData, config) => {
+            const { keyStart, targetStart } = config;
 
-                const confirmScan = confirm("This will overwrite existing answers for matching question numbers. Continue?");
-                if (!confirmScan) return;
+            // Calculate Offset: How much to subtract/add to match indices
+            // Example: Key=41, Target=1 (Index 0). KeyNum(41) - KeyStart(41) + TargetStart(1) = 1. Index = 1-1 = 0.
 
-                setStep("Scanning Answer Key...");
-                setProc(true);
+            const updatedQuestions = test.questions.map((q, index) => {
+                // Current Question Index (0-based)
+                // We need to find which Key Number corresponds to this index
 
-                try {
-                    const b64 = await fileToBase64(file);
-                    const prompt = `Analyze this Answer Key image. Extract question numbers and answers. Output JSON: { "1": "A", "2": ["A","B"], "3": "5.5" }.`;
-                    const extractedAnswers = await apiCall(apiKey, prompt, b64);
-                    
-                    if (!extractedAnswers) throw new Error("Could not read answer key.");
+                // Logic: KeyNumber = (Index + 1) - TargetStart + KeyStart
+                // Example: Index 0 (Q1). TargetStart 1. KeyStart 41.
+                // KeyNum = 1 - 1 + 41 = 41. We look for "41" in extractedData.
 
-                    const updatedQuestions = test.questions.map((q, index) => {
-                        const qNum = (index + 1).toString();
-                        const keyVal = extractedAnswers[qNum];
-                        if (!keyVal) return q;
+                const expectedKeyNum = (index + 1) - targetStart + keyStart;
+                const keyString = expectedKeyNum.toString();
 
-                        let updates = {};
-                        const toIdx = (char) => {
-                            if (typeof char !== 'string') return -1;
-                            const code = char.trim().toUpperCase().charCodeAt(0);
-                            return (code >= 65 && code <= 90) ? code - 65 : -1;
-                        };
+                const keyVal = extractedData[keyString]; // Check direct match "41"
 
-                        if (q.type === 'SINGLE') {
-                            const idx = toIdx(Array.isArray(keyVal) ? keyVal[0] : keyVal);
-                            if (idx !== -1) updates.correctIndex = idx;
-                        } else if (q.type === 'MULTI') {
-                            const valArray = Array.isArray(keyVal) ? keyVal : [keyVal];
-                            const indices = valArray.map(toIdx).filter(i => i !== -1);
-                            if (indices.length > 0) updates.correctIndices = indices;
-                        } else if (q.type === 'NUMERICAL') {
-                            updates.correctNum = keyVal.toString();
-                        }
-                        return { ...q, ...updates };
-                    });
+                if (!keyVal) return q; // No answer found for this number
 
-                    onUpdateTest({ questions: updatedQuestions });
-                    alert(`Updated ${Object.keys(extractedAnswers).length} answers.`);
-                } catch (err) { alert("Scan failed: " + err.message); }
-                setProc(false);
-                setStep("");
-                e.target.value = null;
-            };
+                // --- APPLY ANSWER (Same logic as before) ---
+                let updates = {};
+                const toIdx = (char) => {
+                    if (typeof char !== 'string') return -1;
+                    const code = char.trim().toUpperCase().charCodeAt(0);
+                    return (code >= 65 && code <= 90) ? code - 65 : -1;
+                };
+
+                if (q.type === 'SINGLE') {
+                    const idx = toIdx(Array.isArray(keyVal) ? keyVal[0] : keyVal);
+                    if (idx !== -1) updates.correctIndex = idx;
+                } else if (q.type === 'MULTI') {
+                    const valArray = Array.isArray(keyVal) ? keyVal : [keyVal];
+                    const indices = valArray.map(toIdx).filter(i => i !== -1);
+                    if (indices.length > 0) updates.correctIndices = indices;
+                } else if (q.type === 'NUMERICAL') {
+                    updates.correctNum = keyVal.toString();
+                }
+
+                return { ...q, ...updates };
+            });
+
+            const count = updatedQuestions.filter((q, i) => q !== test.questions[i]).length;
+            onUpdateTest({ questions: updatedQuestions });
+            alert(`✅ Smart Update Complete!\nMatched & Updated ${count} questions.`);
+        };
 
             // --- 5. GUIDE GENERATOR ---
             const makeGuide = async () => {
@@ -1785,6 +1917,13 @@ const Editor = ({ test, onUpdateTest, onBack, onPlay, onPrint, apiKey, onRequest
                 <div className="h-screen flex flex-col bg-slate-50">
                     {guide && <StudyGuideModal content={guide} onClose={() => setGuide(null)} />}
                     {manvanchit && <ManvanchitModal onClose={() => setManvanchit(false)} apiKey={apiKey} onImport={(q) => onUpdateTest({ questions: [...test.questions, ...q] })} />}
+{showKeyScanner && (
+    <SmartKeyScanner 
+        apiKey={apiKey} 
+        onClose={() => setShowKeyScanner(false)} 
+        onApply={handleSmartKeyApply} 
+    />
+)}
                     {showMarksModal && (
                         <MarksDistributor 
                             onClose={() => setShowMarksModal(false)} 
@@ -1800,9 +1939,11 @@ const Editor = ({ test, onUpdateTest, onBack, onPlay, onPrint, apiKey, onRequest
                             <input value={test.title} onChange={e => onUpdateTest({ title: e.target.value })} className="text-xl font-bold text-slate-900 border-none focus:ring-0 p-0 w-64 bg-transparent" placeholder="Test Title..." />
                         </div>
                         <div className="flex gap-2">
-                            <input type="file" ref={answerKeyInputRef} onChange={handleAnswerKeyUpload} className="hidden" accept="image/*" />
                             
-                            <button onClick={() => answerKeyInputRef.current.click()} disabled={!test.questions.length} className="flex items-center gap-2 bg-amber-100 text-amber-800 px-4 py-2 rounded-lg hover:bg-amber-200 font-bold border border-amber-200" title="Upload Answer Key Image"><Icon name="ListChecks" className="w-4 h-4" /> Scan Key</button>
+                            
+                            <button onClick={() => setShowKeyScanner(true)} disabled={!test.questions.length} className="flex items-center gap-2 bg-amber-100 text-amber-800 px-4 py-2 rounded-lg hover:bg-amber-200 font-bold border border-amber-200" title="Open Smart Key Scanner">
+    <Icon name="ListChecks" className="w-4 h-4" /> Scan Key
+</button>
                             <button onClick={() => setManvanchit(true)} className="flex items-center gap-2 bg-tattvam-900 text-white px-4 py-2 rounded-lg hover:bg-tattvam-800 font-medium border border-slate-700 shadow-sm"><Icon name="BrainCircuit" className="w-4 h-4" /> MANVANCHIT</button>
                             <button onClick={makeGuide} disabled={guideLoad || !test.questions.length} className="flex items-center gap-2 bg-indigo-50 text-indigo-700 px-4 py-2 rounded-lg hover:bg-indigo-100 font-medium">{guideLoad ? <Icon name="Loader2" className="w-4 h-4 animate-spin" /> : <Icon name="Sparkles" className="w-4 h-4" />} Guide</button>
                             <button onClick={() => setShowMarksModal(true)} className="flex items-center gap-2 bg-emerald-50 text-emerald-700 px-4 py-2 rounded-lg hover:bg-emerald-100 font-medium border border-emerald-100"><Icon name="Target" className="w-4 h-4" /> Marks</button>
