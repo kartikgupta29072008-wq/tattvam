@@ -2211,29 +2211,60 @@ const [showKeyScanner, setShowKeyScanner] = useState(false);
             );
         };
 const Player = ({ test, duration, onBack, notebooks, onSaveToNotebook }) => {
-            const [idx, setIdx] = useState(0);
-            const [ans, setAns] = useState({});
-            const [timeLeft, setTimeLeft] = useState(duration * 60);
+            const storageKey = `tattvam_progress_${test.id}`;
+
+            // --- 1. SMART HYDRATION (LOAD SAVED STATE) ---
+            const { activeQuestions, savedState } = React.useMemo(() => {
+                try {
+                    const saved = JSON.parse(localStorage.getItem(storageKey));
+                    if (saved && saved.order) {
+                        // Reconstruct question order to match saved session
+                        const qMap = new Map(test.questions.map(q => [q.id, q]));
+                        const ordered = saved.order.map(id => qMap.get(id)).filter(q => q);
+                        // Only use saved order if question count matches (integrity check)
+                        if (ordered.length === test.questions.length) {
+                            return { activeQuestions: ordered, savedState: saved };
+                        }
+                    }
+                } catch (e) { console.error("Resume failed:", e); }
+                return { activeQuestions: test.questions, savedState: null };
+            }, [test.id, test.questions]);
+
+            // --- STATE INITIALIZATION ---
+            const [questions, setQuestions] = useState(activeQuestions); // Local questions state (preserves order)
+            const [idx, setIdx] = useState(savedState?.idx || 0);
+            const [ans, setAns] = useState(savedState?.ans || {});
+            const [timeLeft, setTimeLeft] = useState(savedState?.timeLeft ?? duration * 60);
             const [isSubmitted, setIsSubmitted] = useState(false);
             const [showPalette, setShowPalette] = useState(true);
             const [saveModal, setSaveModal] = useState(false);
 
-            // --- ADVANCED PALETTE FEATURES ---
-            const [questionTimes, setQuestionTimes] = useState(new Array(test.questions.length).fill(0));
-            const [marked, setMarked] = useState(new Set());
+            // Analysis States
+            const [questionTimes, setQuestionTimes] = useState(savedState?.questionTimes || new Array(questions.length).fill(0));
+            const [marked, setMarked] = useState(new Set(savedState?.marked || []));
             const [paletteFilter, setPaletteFilter] = useState('all'); 
             const [heatmapMode, setHeatmapMode] = useState(false); 
             const [hoverPreview, setHoverPreview] = useState(null); 
-            
-            // --- NEW: HEATMAP SETTINGS ---
             const [heatConfig, setHeatConfig] = useState({ fast: 30, slow: 90 });
             const [showHeatSettings, setShowHeatSettings] = useState(false);
 
+            // --- 2. AUTO-SAVE SYSTEM ---
+            useEffect(() => {
+                if (!isSubmitted) {
+                    const payload = {
+                        order: questions.map(q => q.id), // Save Order
+                        idx, ans, timeLeft, questionTimes,
+                        marked: Array.from(marked) // Convert Set to Array
+                    };
+                    localStorage.setItem(storageKey, JSON.stringify(payload));
+                }
+            }, [idx, ans, timeLeft, questionTimes, marked, isSubmitted, questions]);
+
+            // Timer Logic
             useEffect(() => {
                 if (isSubmitted) return;
                 if (timeLeft === 0) {
-                    setIsSubmitted(true);
-                    alert("Time is Up! The test has been auto-submitted.");
+                    finishQuiz(true); // Auto-submit on timeout
                     return;
                 }
                 const timer = setInterval(() => {
@@ -2254,7 +2285,7 @@ const Player = ({ test, duration, onBack, notebooks, onSaveToNotebook }) => {
 
             const handleAns = (val) => {
                 if(isSubmitted) return;
-                const q = test.questions[idx];
+                const q = questions[idx];
                 if(q.type === 'MULTI') {
                     const cur = ans[q.id] || [];
                     const newAns = cur.includes(val) ? cur.filter(x=>x!==val) : [...cur, val];
@@ -2271,8 +2302,29 @@ const Player = ({ test, duration, onBack, notebooks, onSaveToNotebook }) => {
                 setMarked(newMarked);
             };
 
+            const handleRestart = () => {
+                if(confirm("Restarting will erase your current progress for this test. Are you sure?")) {
+                    localStorage.removeItem(storageKey);
+                    // Reset all states to default
+                    setAns({});
+                    setTimeLeft(duration * 60);
+                    setQuestionTimes(new Array(questions.length).fill(0));
+                    setMarked(new Set());
+                    setIdx(0);
+                }
+            };
+
+            const finishQuiz = (auto = false) => {
+                if(auto || confirm("Are you sure you want to Submit? This will end the session.")) {
+                    setIsSubmitted(true);
+                    localStorage.removeItem(storageKey); // Clear progress on submit
+                    if(auto) alert("Time is Up! Test auto-submitted.");
+                }
+            };
+
+            // Palette & Analysis Helpers
             const getStatus = (i) => {
-                const qId = test.questions[i].id;
+                const qId = questions[i].id;
                 const hasAns = ans[qId] !== undefined && ans[qId] !== '' && (!Array.isArray(ans[qId]) || ans[qId].length > 0);
                 if (marked.has(i)) return 'marked';
                 if (hasAns) return 'answered';
@@ -2280,7 +2332,6 @@ const Player = ({ test, duration, onBack, notebooks, onSaveToNotebook }) => {
                 return 'not_visited';
             };
 
-            // --- DYNAMIC HEATMAP COLOR ---
             const getHeatColor = (seconds) => {
                 if(seconds < heatConfig.fast) return "bg-green-100 border-green-300 text-green-700"; 
                 if(seconds < heatConfig.slow) return "bg-yellow-100 border-yellow-300 text-yellow-700"; 
@@ -2312,12 +2363,12 @@ const Player = ({ test, duration, onBack, notebooks, onSaveToNotebook }) => {
                 return { score: -neg, status: `Incorrect (-${neg})`, color: 'bg-red-100 text-red-700', rawStatus: 'wrong' };
             };
 
-            const totalScore = test.questions.reduce((acc, q) => acc + calculatePoints(q, ans[q.id]).score, 0);
-            const totalMaxMarks = test.questions.reduce((acc, q) => acc + (q.marks?.pos||0), 0);
-            const accuracy = Math.round((test.questions.filter(q => calculatePoints(q, ans[q.id]).score > 0).length / (Object.keys(ans).filter(k=>ans[k]!=='').length || 1)) * 100);
+            const totalScore = questions.reduce((acc, q) => acc + calculatePoints(q, ans[q.id]).score, 0);
+            const totalMaxMarks = questions.reduce((acc, q) => acc + (q.marks?.pos||0), 0);
+            const accuracy = Math.round((questions.filter(q => calculatePoints(q, ans[q.id]).score > 0).length / (Object.keys(ans).filter(k=>ans[k]!=='').length || 1)) * 100);
 
             const saveResult = (notebookId) => {
-                const questionAnalytics = test.questions.map((q, i) => {
+                const questionAnalytics = questions.map((q, i) => {
                     const { score, rawStatus } = calculatePoints(q, ans[q.id]);
                     return {
                         id: q.id,
@@ -2345,7 +2396,7 @@ const Player = ({ test, duration, onBack, notebooks, onSaveToNotebook }) => {
                 alert("Deep Analysis saved successfully!");
             };
 
-            const q = test.questions[idx];
+            const q = questions[idx];
 
             if (isSubmitted) return (
                 <div className="h-screen flex flex-col bg-slate-50 font-sans">
@@ -2377,11 +2428,11 @@ const Player = ({ test, duration, onBack, notebooks, onSaveToNotebook }) => {
                         <div className="max-w-4xl mx-auto space-y-8">
                             <div className="bg-white p-6 rounded-2xl shadow-sm border flex justify-around text-center">
                                 <div><div className="text-sm text-slate-500 uppercase font-bold">Total Score</div><div className="text-4xl font-black text-indigo-600 mt-2">{totalScore} <span className="text-lg text-slate-300">/ {totalMaxMarks}</span></div></div>
-                                <div><div className="text-sm text-slate-500 uppercase font-bold">Questions</div><div className="text-4xl font-black text-slate-700 mt-2">{test.questions.length}</div></div>
+                                <div><div className="text-sm text-slate-500 uppercase font-bold">Questions</div><div className="text-4xl font-black text-slate-700 mt-2">{questions.length}</div></div>
                                 <div><div className="text-sm text-slate-500 uppercase font-bold">Accuracy</div><div className="text-4xl font-black text-green-600 mt-2">{accuracy}%</div></div>
                             </div>
                             <div className="space-y-6">
-                                {test.questions.map((q, i) => {
+                                {questions.map((q, i) => {
                                     const userAns = ans[q.id];
                                     const result = calculatePoints(q, userAns); 
                                     return (
@@ -2419,13 +2470,18 @@ const Player = ({ test, duration, onBack, notebooks, onSaveToNotebook }) => {
                 <div className="h-screen flex flex-col bg-slate-50">
                     <div className="bg-white border-b px-4 py-2 flex justify-between items-center shadow-sm shrink-0 h-16">
                         <div className="flex items-center gap-4">
+                            {/* UPDATED HEADER: SAVE & EXIT + RESTART */}
+                            <button onClick={onBack} className="flex items-center gap-2 bg-slate-100 hover:bg-slate-200 text-slate-600 px-3 py-1.5 rounded-lg font-bold text-xs" title="Save Progress & Exit">
+                                <Icon name="ArrowLeft" className="w-4 h-4" /> Save & Exit
+                            </button>
                             <h2 className="font-bold text-lg text-slate-800 truncate max-w-xs">{test.title}</h2>
                         </div>
-                        <div className="flex items-center gap-6">
+                        <div className="flex items-center gap-4">
+                            <button onClick={handleRestart} className="text-xs font-bold text-red-400 hover:text-red-600 hover:bg-red-50 px-2 py-1 rounded" title="Discard progress and start over">Restart</button>
                             <div className="flex items-center gap-2 bg-slate-100 px-3 py-1.5 rounded-lg text-slate-700 font-mono font-bold">
                                 <Icon name="Clock" className="w-4 h-4" /> {timeLeft > 36000 ? "∞" : formatTime(timeLeft)}
                             </div>
-                            <button onClick={() => { if(confirm("Submit Test?")) setIsSubmitted(true); }} className="bg-indigo-600 text-white px-6 py-2 rounded-lg font-bold hover:bg-indigo-700 shadow-sm text-sm">Submit Test</button>
+                            <button onClick={() => finishQuiz(false)} className="bg-indigo-600 text-white px-6 py-2 rounded-lg font-bold hover:bg-indigo-700 shadow-sm text-sm">Submit Test</button>
                         </div>
                         <button onClick={() => setShowPalette(!showPalette)} className="md:hidden"><Icon name="Grid" /></button>
                     </div>
@@ -2474,7 +2530,7 @@ const Player = ({ test, duration, onBack, notebooks, onSaveToNotebook }) => {
                                 </div>
                                 <div className="flex justify-between mt-10 pt-6 border-t border-slate-100">
                                     <button onClick={() => idx > 0 && setIdx(idx-1)} disabled={idx===0} className="px-6 py-2 rounded-lg font-bold text-slate-500 hover:bg-slate-100 disabled:opacity-50 flex items-center gap-2"><Icon name="ChevronLeft" /> Previous</button>
-                                    <button onClick={() => idx < test.questions.length-1 && setIdx(idx+1)} disabled={idx===test.questions.length-1} className="bg-slate-900 text-white px-8 py-2 rounded-lg font-bold hover:bg-slate-800 flex items-center gap-2">Next <Icon name="ChevronRight" /></button>
+                                    <button onClick={() => idx < questions.length-1 && setIdx(idx+1)} disabled={idx===questions.length-1} className="bg-slate-900 text-white px-8 py-2 rounded-lg font-bold hover:bg-slate-800 flex items-center gap-2">Next <Icon name="ChevronRight" /></button>
                                 </div>
                             </div>
                         </div>
@@ -2502,7 +2558,6 @@ const Player = ({ test, duration, onBack, notebooks, onSaveToNotebook }) => {
                                     </div>
                                 </div>
 
-                                {/* HEATMAP SETTINGS POPUP */}
                                 {showHeatSettings && (
                                     <div className="absolute top-12 right-2 bg-white border shadow-xl rounded-lg p-3 z-50 w-48 animate-in zoom-in-95">
                                         <h4 className="text-[10px] font-bold uppercase text-slate-500 mb-2">Time Thresholds (Sec)</h4>
@@ -2529,7 +2584,7 @@ const Player = ({ test, duration, onBack, notebooks, onSaveToNotebook }) => {
                             
                             <div className="flex-1 overflow-y-auto p-4">
                                 <div className="grid grid-cols-5 gap-2">
-                                    {test.questions.map((qItem, i) => {
+                                    {questions.map((qItem, i) => {
                                         const st = getStatus(i);
                                         if (paletteFilter === 'left' && (st === 'answered' || st === 'marked')) return null;
                                         if (paletteFilter === 'done' && st !== 'answered') return null;
@@ -2562,7 +2617,7 @@ const Player = ({ test, duration, onBack, notebooks, onSaveToNotebook }) => {
                             
                             <div className="p-3 bg-slate-50 border-t text-[10px] text-slate-500 flex justify-between font-mono">
                                 <span>Done: {Object.keys(ans).filter(k => ans[k] !== '').length}</span>
-                                <span>Left: {test.questions.length - Object.keys(ans).filter(k => ans[k] !== '').length}</span>
+                                <span>Left: {questions.length - Object.keys(ans).filter(k => ans[k] !== '').length}</span>
                                 <span>Marked: {marked.size}</span>
                             </div>
                         </div>
@@ -3039,6 +3094,7 @@ const QuizForge = () => {
     </script>
 </body>
 </html>
+
 
 
 
