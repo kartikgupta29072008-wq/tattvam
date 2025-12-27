@@ -1175,7 +1175,8 @@ const QuestionEditor = ({ question, onSave, onCancel, apiKey, onRequestKey }) =>
 const AnalysisNotebook = ({ notebook, onUpdate, onBack, apiKey, onRequestKey }) => {
             const [uploading, setUploading] = useState(false);
             const [analyzing, setAnalyzing] = useState(false);
-            
+            const [expandedEntry, setExpandedEntry] = useState(null); // NEW: To show detailed report
+
             const handleImageUpload = async (e) => {
                 const file = e.target.files[0];
                 if (!file) return;
@@ -1205,6 +1206,31 @@ const AnalysisNotebook = ({ notebook, onUpdate, onBack, apiKey, onRequestKey }) 
                     onUpdate({ ...notebook, insights });
                 } catch (e) { alert(e.message); }
                 setAnalyzing(false);
+            };
+
+            // --- FEATURE: EXPORT WRONG QUESTIONS AS NEW TEST ---
+            const handleExportMistakes = (entry) => {
+                if (!entry.details) return alert("No detailed data found for this test.");
+                const wrongQuestions = entry.details
+                    .filter(d => d.status === 'wrong')
+                    .map(d => d.qData); // Extract original question objects
+                
+                if (wrongQuestions.length === 0) return alert("Wow! No wrong questions to export.");
+
+                const mistakeTest = {
+                    title: `Mistakes Remix: ${entry.testName}`,
+                    questions: wrongQuestions,
+                    created: new Date().toISOString(),
+                    id: Date.now().toString()
+                };
+
+                const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(mistakeTest, null, 2));
+                const node = document.createElement('a');
+                node.setAttribute("href", dataStr);
+                node.setAttribute("download", `REMIX_${entry.testName.replace(/[^a-z0-9]/gi, '_')}.json`);
+                document.body.appendChild(node);
+                node.click();
+                node.remove();
             };
 
             const Chart = ({ entries }) => {
@@ -1253,18 +1279,8 @@ const AnalysisNotebook = ({ notebook, onUpdate, onBack, apiKey, onRequestKey }) 
                                     <div className="bg-white p-6 rounded-xl shadow-sm border border-purple-100">
                                         <div className="flex items-center gap-2 text-purple-700 font-bold mb-4"><Icon name="Sparkles" /> AI Mentor</div>
                                         <p className="text-sm font-medium text-slate-800 mb-3 italic">"{notebook.insights.summary}"</p>
-                                        <div className="space-y-3">
-                                            <div>
-                                                <span className="text-xs font-bold text-green-600 uppercase">Strengths</span>
-                                                <div className="flex flex-wrap gap-1 mt-1">{notebook.insights.strengths?.map(s=><span key={s} className="text-[10px] bg-green-50 text-green-700 px-2 py-0.5 rounded border border-green-100">{s}</span>)}</div>
-                                            </div>
-                                            <div>
-                                                <span className="text-xs font-bold text-red-500 uppercase">Focus Areas</span>
-                                                <div className="flex flex-wrap gap-1 mt-1">{notebook.insights.weaknesses?.map(w=><span key={w} className="text-[10px] bg-red-50 text-red-700 px-2 py-0.5 rounded border border-red-100">{w}</span>)}</div>
-                                            </div>
-                                            <div className="bg-purple-50 p-3 rounded text-xs text-purple-800 border-l-2 border-purple-400">
-                                                <strong>Advice:</strong> {notebook.insights.advice}
-                                            </div>
+                                        <div className="bg-purple-50 p-3 rounded text-xs text-purple-800 border-l-2 border-purple-400">
+                                            <strong>Advice:</strong> {notebook.insights.advice}
                                         </div>
                                     </div>
                                 )}
@@ -1274,29 +1290,74 @@ const AnalysisNotebook = ({ notebook, onUpdate, onBack, apiKey, onRequestKey }) 
                                 </div>
                             </div>
 
-                            {/* Right: History List */}
+                            {/* Right: History List (With Expand Feature) */}
                             <div className="md:col-span-2 space-y-4">
-                                <h3 className="font-bold text-slate-500 uppercase text-xs tracking-wider">History Log</h3>
+                                <h3 className="font-bold text-slate-500 uppercase text-xs tracking-wider">Attempt History</h3>
                                 {notebook.entries?.map(entry => (
-                                    <div key={entry.id} className="bg-white p-5 rounded-xl border border-slate-200 hover:border-indigo-300 transition-all shadow-sm">
-                                        <div className="flex justify-between items-start mb-3">
+                                    <div key={entry.id} className="bg-white rounded-xl border border-slate-200 hover:border-indigo-300 transition-all shadow-sm overflow-hidden">
+                                        {/* Entry Header */}
+                                        <div onClick={() => setExpandedEntry(expandedEntry === entry.id ? null : entry.id)} className="p-5 cursor-pointer flex justify-between items-start">
                                             <div>
-                                                <h4 className="font-bold text-lg text-slate-800">{entry.testName || "Untitled Test"}</h4>
+                                                <h4 className="font-bold text-lg text-slate-800 flex items-center gap-2">
+                                                    {entry.testName || "Untitled Test"}
+                                                    {expandedEntry === entry.id ? <Icon name="ArrowUp" className="w-4 h-4 text-slate-400" /> : <Icon name="ArrowDown" className="w-4 h-4 text-slate-400" />}
+                                                </h4>
                                                 <p className="text-xs text-slate-400">{new Date(entry.date).toLocaleDateString()} • {entry.type === 'IMAGE_IMPORT' ? 'Scanned' : 'Quiz'}</p>
                                             </div>
                                             <div className="text-right">
                                                 <div className="text-2xl font-black text-indigo-600">{entry.score} <span className="text-sm text-slate-400 font-medium">/ {entry.maxMarks}</span></div>
-                                                {entry.percentile && <div className="text-xs font-bold text-green-600">{entry.percentile}%ile</div>}
                                             </div>
                                         </div>
-                                        {entry.subjects && (
-                                            <div className="flex gap-2 mt-4 pt-4 border-t border-slate-50 overflow-x-auto">
-                                                {Object.entries(entry.subjects).map(([sub, marks]) => (
-                                                    <div key={sub} className="flex-shrink-0 bg-slate-50 px-3 py-1.5 rounded-lg border border-slate-100">
-                                                        <div className="text-[10px] text-slate-500 uppercase font-bold">{sub}</div>
-                                                        <div className="font-mono font-bold text-slate-700">{marks}</div>
+
+                                        {/* EXPANDED "CRAZY" ANALYSIS VIEW */}
+                                        {expandedEntry === entry.id && entry.details && (
+                                            <div className="bg-slate-50 p-5 border-t border-slate-100 animate-in slide-in-from-top-2">
+                                                <div className="flex justify-between items-center mb-4">
+                                                    <h5 className="font-bold text-sm text-slate-700 uppercase">Forensic Report</h5>
+                                                    <button onClick={() => handleExportMistakes(entry)} className="text-[10px] bg-red-100 text-red-700 px-3 py-1.5 rounded-full font-bold hover:bg-red-200 flex items-center gap-1 border border-red-200">
+                                                        <Icon name="RefreshCw" className="w-3 h-3" /> Create Remix Test (Wrong Qs)
+                                                    </button>
+                                                </div>
+
+                                                {/* 1. The "Post-Mortem" Grid */}
+                                                <div className="grid grid-cols-10 gap-1 mb-6">
+                                                    {entry.details.map((d, i) => (
+                                                        <div 
+                                                            key={i} 
+                                                            title={`Q${d.qNum}: ${d.status.toUpperCase()} (${d.timeSpent}s)`}
+                                                            className={`h-6 rounded flex items-center justify-center text-[8px] font-bold text-white cursor-help 
+                                                                ${d.status === 'correct' ? 'bg-green-500' : d.status === 'wrong' ? 'bg-red-500' : d.status === 'partial' ? 'bg-amber-500' : 'bg-slate-300'}`}
+                                                        >
+                                                            {d.qNum}
+                                                        </div>
+                                                    ))}
+                                                </div>
+
+                                                {/* 2. "Time Traps" (Spent > 90s & Wrong) */}
+                                                {entry.details.some(d => d.status === 'wrong' && d.timeSpent > 90) && (
+                                                    <div className="bg-red-50 border border-red-100 p-3 rounded-lg mb-4">
+                                                        <h6 className="text-xs font-bold text-red-800 mb-2 flex items-center gap-1"><Icon name="AlertTriangle" className="w-3 h-3" /> Rank Killers (Wrong & >90s)</h6>
+                                                        <div className="flex flex-wrap gap-2">
+                                                            {entry.details.filter(d => d.status === 'wrong' && d.timeSpent > 90).map((d, i) => (
+                                                                <span key={i} className="text-[10px] bg-white border border-red-200 text-red-600 px-2 py-1 rounded font-mono">
+                                                                    Q{d.qNum} ({d.timeSpent}s)
+                                                                </span>
+                                                            ))}
+                                                        </div>
                                                     </div>
-                                                ))}
+                                                )}
+
+                                                {/* 3. Lost Potential */}
+                                                <div className="flex gap-4 text-xs">
+                                                    <div className="flex-1 bg-white p-2 rounded border border-slate-200">
+                                                        <span className="block text-slate-400">Accuracy</span>
+                                                        <span className="font-bold text-slate-800 text-lg">{Math.round((entry.details.filter(d => d.status === 'correct').length / (entry.details.filter(d => d.status !== 'left').length || 1)) * 100)}%</span>
+                                                    </div>
+                                                    <div className="flex-1 bg-white p-2 rounded border border-slate-200">
+                                                        <span className="block text-slate-400">Negative Marks Lost</span>
+                                                        <span className="font-bold text-red-600 text-lg">{entry.details.reduce((a, b) => b.marks < 0 ? a + b.marks : a, 0)}</span>
+                                                    </div>
+                                                </div>
                                             </div>
                                         )}
                                     </div>
@@ -2905,6 +2966,7 @@ const QuizForge = () => {
     </script>
 </body>
 </html>
+
 
 
 
