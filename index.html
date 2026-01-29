@@ -2213,25 +2213,19 @@ const [showKeyScanner, setShowKeyScanner] = useState(false);
 const Player = ({ test, duration, onBack, notebooks, onSaveToNotebook }) => {
             const storageKey = `tattvam_progress_${test.id}`;
 
-            // --- 1. SMART HYDRATION (LOAD SAVED STATE) ---
             const { activeQuestions, savedState } = React.useMemo(() => {
                 try {
                     const saved = JSON.parse(localStorage.getItem(storageKey));
                     if (saved && saved.order) {
-                        // Reconstruct question order to match saved session
                         const qMap = new Map(test.questions.map(q => [q.id, q]));
                         const ordered = saved.order.map(id => qMap.get(id)).filter(q => q);
-                        // Only use saved order if question count matches (integrity check)
-                        if (ordered.length === test.questions.length) {
-                            return { activeQuestions: ordered, savedState: saved };
-                        }
+                        if (ordered.length === test.questions.length) return { activeQuestions: ordered, savedState: saved };
                     }
                 } catch (e) { console.error("Resume failed:", e); }
                 return { activeQuestions: test.questions, savedState: null };
             }, [test.id, test.questions]);
 
-            // --- STATE INITIALIZATION ---
-            const [questions, setQuestions] = useState(activeQuestions); // Local questions state (preserves order)
+            const [questions, setQuestions] = useState(activeQuestions);
             const [idx, setIdx] = useState(savedState?.idx || 0);
             const [ans, setAns] = useState(savedState?.ans || {});
             const [timeLeft, setTimeLeft] = useState(savedState?.timeLeft ?? duration * 60);
@@ -2239,7 +2233,6 @@ const Player = ({ test, duration, onBack, notebooks, onSaveToNotebook }) => {
             const [showPalette, setShowPalette] = useState(true);
             const [saveModal, setSaveModal] = useState(false);
 
-            // Analysis States
             const [questionTimes, setQuestionTimes] = useState(savedState?.questionTimes || new Array(questions.length).fill(0));
             const [marked, setMarked] = useState(new Set(savedState?.marked || []));
             const [paletteFilter, setPaletteFilter] = useState('all'); 
@@ -2248,23 +2241,21 @@ const Player = ({ test, duration, onBack, notebooks, onSaveToNotebook }) => {
             const [heatConfig, setHeatConfig] = useState({ fast: 30, slow: 90 });
             const [showHeatSettings, setShowHeatSettings] = useState(false);
 
-            // --- 2. AUTO-SAVE SYSTEM ---
             useEffect(() => {
                 if (!isSubmitted) {
                     const payload = {
-                        order: questions.map(q => q.id), // Save Order
+                        order: questions.map(q => q.id),
                         idx, ans, timeLeft, questionTimes,
-                        marked: Array.from(marked) // Convert Set to Array
+                        marked: Array.from(marked)
                     };
                     localStorage.setItem(storageKey, JSON.stringify(payload));
                 }
             }, [idx, ans, timeLeft, questionTimes, marked, isSubmitted, questions]);
 
-            // Timer Logic
             useEffect(() => {
                 if (isSubmitted) return;
                 if (timeLeft === 0) {
-                    finishQuiz(true); // Auto-submit on timeout
+                    finishQuiz(true);
                     return;
                 }
                 const timer = setInterval(() => {
@@ -2278,10 +2269,7 @@ const Player = ({ test, duration, onBack, notebooks, onSaveToNotebook }) => {
                 return () => clearInterval(timer);
             }, [isSubmitted, timeLeft, idx]);
 
-            const formatTime = (s) => {
-                const h = Math.floor(s/3600), m = Math.floor((s%3600)/60), sec = s%60;
-                return `${h}:${m<10?'0':''}${m}:${sec<10?'0':''}${sec}`;
-            };
+            const formatTime = (s) => `${Math.floor(s/3600)}:${String(Math.floor((s%3600)/60)).padStart(2,'0')}:${String(s%60).padStart(2,'0')}`;
 
             const handleAns = (val) => {
                 if(isSubmitted) return;
@@ -2302,27 +2290,14 @@ const Player = ({ test, duration, onBack, notebooks, onSaveToNotebook }) => {
                 setMarked(newMarked);
             };
 
-            const handleRestart = () => {
-                if(confirm("Restarting will erase your current progress for this test. Are you sure?")) {
-                    localStorage.removeItem(storageKey);
-                    // Reset all states to default
-                    setAns({});
-                    setTimeLeft(duration * 60);
-                    setQuestionTimes(new Array(questions.length).fill(0));
-                    setMarked(new Set());
-                    setIdx(0);
-                }
-            };
-
             const finishQuiz = (auto = false) => {
-                if(auto || confirm("Are you sure you want to Submit? This will end the session.")) {
+                if(auto || confirm("Submit Test?")) {
                     setIsSubmitted(true);
-                    localStorage.removeItem(storageKey); // Clear progress on submit
-                    if(auto) alert("Time is Up! Test auto-submitted.");
+                    localStorage.removeItem(storageKey);
+                    if(auto) alert("Time Up! Submitted.");
                 }
             };
 
-            // Palette & Analysis Helpers
             const getStatus = (i) => {
                 const qId = questions[i].id;
                 const hasAns = ans[qId] !== undefined && ans[qId] !== '' && (!Array.isArray(ans[qId]) || ans[qId].length > 0);
@@ -2375,9 +2350,10 @@ const Player = ({ test, duration, onBack, notebooks, onSaveToNotebook }) => {
                         qNum: i + 1,
                         text: q.text,
                         status: rawStatus,
-                        timeSpent: questionTimes[i] || 0,
+                        timeSpent: questionTimes[i] || 0, // Saving Time
                         marks: score,
                         userAns: ans[q.id],
+                        isMarked: marked.has(i), // Saving Flags
                         qData: q
                     };
                 });
@@ -2470,14 +2446,13 @@ const Player = ({ test, duration, onBack, notebooks, onSaveToNotebook }) => {
                 <div className="h-screen flex flex-col bg-slate-50">
                     <div className="bg-white border-b px-4 py-2 flex justify-between items-center shadow-sm shrink-0 h-16">
                         <div className="flex items-center gap-4">
-                            {/* UPDATED HEADER: SAVE & EXIT + RESTART */}
                             <button onClick={onBack} className="flex items-center gap-2 bg-slate-100 hover:bg-slate-200 text-slate-600 px-3 py-1.5 rounded-lg font-bold text-xs" title="Save Progress & Exit">
                                 <Icon name="ArrowLeft" className="w-4 h-4" /> Save & Exit
                             </button>
                             <h2 className="font-bold text-lg text-slate-800 truncate max-w-xs">{test.title}</h2>
                         </div>
                         <div className="flex items-center gap-4">
-                            <button onClick={handleRestart} className="text-xs font-bold text-red-400 hover:text-red-600 hover:bg-red-50 px-2 py-1 rounded" title="Discard progress and start over">Restart</button>
+                            <button onClick={() => { if(confirm("Restarting will erase current progress. Sure?")) { localStorage.removeItem(storageKey); setAns({}); setTimeLeft(duration*60); setQuestionTimes(new Array(questions.length).fill(0)); setMarked(new Set()); setIdx(0); } }} className="text-xs font-bold text-red-400 hover:text-red-600 hover:bg-red-50 px-2 py-1 rounded">Restart</button>
                             <div className="flex items-center gap-2 bg-slate-100 px-3 py-1.5 rounded-lg text-slate-700 font-mono font-bold">
                                 <Icon name="Clock" className="w-4 h-4" /> {timeLeft > 36000 ? "∞" : formatTime(timeLeft)}
                             </div>
@@ -2535,7 +2510,7 @@ const Player = ({ test, duration, onBack, notebooks, onSaveToNotebook }) => {
                             </div>
                         </div>
 
-                        {/* --- CRAZY ENHANCED PALETTE --- */}
+                        {/* --- PALETTE --- */}
                         <div className={`${showPalette ? 'w-80' : 'w-0'} bg-white border-l transition-all duration-300 flex flex-col shrink-0 overflow-hidden`}>
                             <div className="p-4 border-b bg-slate-50 relative">
                                 <div className="flex justify-between items-center mb-4">
@@ -3080,6 +3055,7 @@ const QuizForge = () => {
     </script>
 </body>
 </html>
+
 
 
 
