@@ -2082,7 +2082,7 @@ const Editor = ({ test, onUpdateTest, onBack, onPlay, onPrint, apiKey, onRequest
                 </div>
             );
         };
-        const Player = ({ test, duration, onBack, notebooks, onSaveToNotebook }) => {
+       const Player = ({ test, duration, onBack, notebooks, onSaveToNotebook }) => {
             const storageKey = `tattvam_progress_${test.id}`;
 
             const { activeQuestions, savedState } = React.useMemo(() => {
@@ -2142,6 +2142,12 @@ const Editor = ({ test, onUpdateTest, onBack, onPlay, onPrint, apiKey, onRequest
             }, [isSubmitted, timeLeft, idx]);
 
             const formatTime = (s) => `${Math.floor(s/3600)}:${String(Math.floor((s%3600)/60)).padStart(2,'0')}:${String(s%60).padStart(2,'0')}`;
+            
+            // New Helper for "1m 30s" format
+            const formatDuration = (s) => {
+                if (s < 60) return `${s}s`;
+                return `${Math.floor(s/60)}m ${s%60}s`;
+            };
 
             const handleAns = (val) => {
                 if(isSubmitted) return;
@@ -2222,10 +2228,10 @@ const Editor = ({ test, onUpdateTest, onBack, onPlay, onPrint, apiKey, onRequest
                         qNum: i + 1,
                         text: q.text,
                         status: rawStatus,
-                        timeSpent: questionTimes[i] || 0, // Saving Time
+                        timeSpent: questionTimes[i] || 0,
                         marks: score,
                         userAns: ans[q.id],
-                        isMarked: marked.has(i), // Saving Flags
+                        isMarked: marked.has(i),
                         qData: q
                     };
                 });
@@ -2246,6 +2252,7 @@ const Editor = ({ test, onUpdateTest, onBack, onPlay, onPrint, apiKey, onRequest
 
             const q = questions[idx];
 
+            // --- RESULT SCREEN ---
             if (isSubmitted) return (
                 <div className="h-screen flex flex-col bg-slate-50 font-sans">
                      {saveModal && (
@@ -2283,10 +2290,20 @@ const Editor = ({ test, onUpdateTest, onBack, onPlay, onPrint, apiKey, onRequest
                                 {questions.map((q, i) => {
                                     const userAns = ans[q.id];
                                     const result = calculatePoints(q, userAns); 
+                                    const timeSpent = questionTimes[i] || 0;
+                                    // Use heatmap color for time display if it was slow
+                                    const timeColor = timeSpent > heatConfig.slow ? "text-red-600 font-bold" : "text-slate-500";
+
                                     return (
                                         <div key={q.id} className={`bg-white p-6 rounded-xl border-l-4 shadow-sm ${result.status==='Unattempted' ? 'border-slate-300' : result.score > 0 ? 'border-green-500' : 'border-red-500'}`}>
                                             <div className="flex justify-between mb-4">
-                                                <span className="font-bold text-slate-700">Question {i+1}</span>
+                                                <div className="flex items-center gap-3">
+                                                    <span className="font-bold text-slate-700">Question {i+1}</span>
+                                                    {/* NEW: Result Screen Time Display */}
+                                                    <span className={`text-xs flex items-center gap-1 ${timeColor}`}>
+                                                        <Icon name="Clock" className="w-3 h-3" /> {formatDuration(timeSpent)}
+                                                    </span>
+                                                </div>
                                                 <span className={`text-xs font-bold px-2 py-1 rounded ${result.color}`}>{result.status}</span>
                                             </div>
                                             <div className="mb-4 text-slate-800"><LatexRenderer content={q.text} /></div>
@@ -2346,6 +2363,13 @@ const Editor = ({ test, onUpdateTest, onBack, onPlay, onPrint, apiKey, onRequest
                                 <div className="flex justify-between items-start mb-6">
                                     <div className="flex items-center gap-3">
                                         <span className="text-xl font-bold text-slate-400">Q{idx+1}</span>
+                                        
+                                        {/* NEW: LIVE PER-QUESTION TIMER */}
+                                        <span className={`text-xs font-bold font-mono px-2 py-1 rounded flex items-center gap-1 ${questionTimes[idx] > heatConfig.slow ? 'bg-red-100 text-red-600 animate-pulse' : 'bg-slate-100 text-slate-500'}`}>
+                                            <Icon name="Clock" className="w-3 h-3" />
+                                            {formatDuration(questionTimes[idx] || 0)}
+                                        </span>
+
                                         <span className="text-xs font-bold bg-slate-200 text-slate-600 px-2 py-1 rounded uppercase tracking-wider">{q.type}</span>
                                         <span className="text-xs font-bold text-slate-400">+{q.marks?.pos} / -{q.marks?.neg}</span>
                                     </div>
@@ -2382,7 +2406,7 @@ const Editor = ({ test, onUpdateTest, onBack, onPlay, onPrint, apiKey, onRequest
                             </div>
                         </div>
 
-                        {/* --- PALETTE --- */}
+                        {/* --- CRAZY ENHANCED PALETTE --- */}
                         <div className={`${showPalette ? 'w-80' : 'w-0'} bg-white border-l transition-all duration-300 flex flex-col shrink-0 overflow-hidden`}>
                             <div className="p-4 border-b bg-slate-50 relative">
                                 <div className="flex justify-between items-center mb-4">
@@ -2927,6 +2951,7 @@ const QuizForge = () => {
     </script>
 </body>
 </html>
+
 
 
 
