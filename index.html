@@ -2434,78 +2434,82 @@ const Editor = ({ test, onUpdateTest, onBack, onPlay, onPrint, apiKey, onRequest
                 </div>
             );
         };
-       const Player = ({ test, duration, onBack, notebooks, onSaveToNotebook }) => {
-            // Unique ID for saving progress in LocalStorage
-            const storageKey = `tattvam_progress_${test.id}`;
+      // --- FIXED PLAYER COMPONENT (No Crash) ---
+        const Player = ({ test, duration, onBack, notebooks, onSaveToNotebook }) => {
+            const storageKey = `tattvam_progress_${test?.id}`;
 
-            // --- 1. RESUME LOGIC (Smart Hydration) ---
+            // --- 1. SMART HYDRATION (Hooks must run first) ---
             const { activeQuestions, savedState } = React.useMemo(() => {
+                if (!test || !test.questions) return { activeQuestions: [], savedState: null };
                 try {
                     const saved = JSON.parse(localStorage.getItem(storageKey));
-                    // We check if saved order matches current questions to prevent data corruption
                     if (saved && saved.order && saved.order.length === test.questions.length) {
                         const qMap = new Map(test.questions.map(q => [q.id, q]));
                         const ordered = saved.order.map(id => qMap.get(id)).filter(q => q);
-                        return { activeQuestions: ordered, savedState: saved };
+                        if (ordered.length === test.questions.length) return { activeQuestions: ordered, savedState: saved };
                     }
                 } catch (e) {}
                 return { activeQuestions: test.questions, savedState: null };
-            }, [test.id, test.questions]);
+            }, [test?.id, test?.questions]);
 
-            // --- STATE DEFINITIONS ---
+            // --- 2. STATE DEFINITIONS ---
             const [questions, setQuestions] = useState(activeQuestions);
-            const [idx, setIdx] = useState(savedState?.idx || 0);
+            
+            // Safe Index Initialization (Prevents crash if saved index > question count)
+            const [idx, setIdx] = useState(() => {
+                if (savedState?.idx && savedState.idx < activeQuestions.length) return savedState.idx;
+                return 0;
+            });
+
             const [ans, setAns] = useState(savedState?.ans || {});
             const [timeLeft, setTimeLeft] = useState(savedState?.timeLeft ?? duration * 60);
             const [isSubmitted, setIsSubmitted] = useState(false);
             const [showPalette, setShowPalette] = useState(true);
+            const [saveModal, setSaveModal] = useState(false);
 
-            // Analysis Data (Time & Flags)
+            // Analysis
             const [questionTimes, setQuestionTimes] = useState(savedState?.questionTimes || new Array(questions.length).fill(0));
             const [marked, setMarked] = useState(new Set(savedState?.marked || []));
-            
-            // Visual Settings
             const [heatmapMode, setHeatmapMode] = useState(false); 
             const [heatConfig, setHeatConfig] = useState({ fast: 30, slow: 90 });
             const [showHeatSettings, setShowHeatSettings] = useState(false);
-            const [hoverPreview, setHoverPreview] = useState(null);
+            const [hoverPreview, setHoverPreview] = useState(null); 
             const [paletteFilter, setPaletteFilter] = useState('all');
 
-            // --- 2. AUTO-SAVE EFFECT ---
-            // Every time you click an answer or the timer ticks, this saves to browser storage
+            // --- 3. SAFETY GUARD (Now placed correctly AFTER hooks) ---
+            if (!test || !test.questions || questions.length === 0) {
+                return (
+                    <div className="flex h-screen flex-col items-center justify-center text-slate-400">
+                        <Icon name="Loader2" className="animate-spin w-10 h-10 mb-2" />
+                        <p>Loading Quiz...</p>
+                    </div>
+                );
+            }
+
+            // --- 4. LOGIC & EFFECTS ---
+            // Auto-Save
             useEffect(() => {
                 if (!isSubmitted) {
-                    const payload = { 
-                        order: questions.map(q => q.id), 
-                        idx, ans, timeLeft, questionTimes, 
-                        marked: Array.from(marked) 
+                    const payload = {
+                        order: questions.map(q => q.id),
+                        idx, ans, timeLeft, questionTimes,
+                        marked: Array.from(marked)
                     };
                     localStorage.setItem(storageKey, JSON.stringify(payload));
                 }
             }, [idx, ans, timeLeft, questionTimes, marked, isSubmitted]);
 
-            // --- 3. DUAL TIMER LOGIC ---
+            // Timer
             useEffect(() => {
                 if (isSubmitted) return;
-                
-                // Auto-Submit if global time runs out
                 if (timeLeft === 0) { finishQuiz(true); return; }
-
                 const timer = setInterval(() => {
-                    // Decrease Global Timer
                     setTimeLeft(p => p - 1);
-                    
-                    // Increase Per-Question Timer (The "Analysis" Clock)
-                    setQuestionTimes(p => { 
-                        const n = [...p]; 
-                        n[idx] = (n[idx] || 0) + 1; 
-                        return n; 
-                    });
+                    setQuestionTimes(p => { const n = [...p]; n[idx] = (n[idx] || 0) + 1; return n; });
                 }, 1000);
                 return () => clearInterval(timer);
             }, [isSubmitted, timeLeft, idx]);
 
-            // Helpers
             const formatDuration = (s) => (s < 60 ? `${s}s` : `${Math.floor(s/60)}m ${s%60}s`);
             const formatTime = (s) => `${Math.floor(s/3600)}:${String(Math.floor((s%3600)/60)).padStart(2,'0')}:${String(s%60).padStart(2,'0')}`;
 
@@ -2519,16 +2523,10 @@ const Editor = ({ test, onUpdateTest, onBack, onPlay, onPrint, apiKey, onRequest
             };
 
             const toggleMark = () => { const n = new Set(marked); if(n.has(idx)) n.delete(idx); else n.add(idx); setMarked(n); };
-            
             const finishQuiz = (auto) => { 
-                if(auto || confirm("Are you sure you want to Submit?")) { 
-                    setIsSubmitted(true); 
-                    localStorage.removeItem(storageKey); // Clear temporary save on submit
-                    if(auto) alert("Time Up! Test Auto-Submitted."); 
-                } 
+                if(auto || confirm("Submit Test?")) { setIsSubmitted(true); localStorage.removeItem(storageKey); if(auto) alert("Time Up!"); } 
             };
 
-            // Scoring Engine
             const calculatePoints = (q, userAns) => {
                 if (userAns === undefined || userAns === '' || (Array.isArray(userAns) && userAns.length === 0)) return { score: 0, status: 'Unattempted', color: 'bg-slate-100 text-slate-500', rawStatus: 'left' };
                 const pos = q.marks?.pos || 4; const neg = q.marks?.neg || 1;
@@ -2544,59 +2542,39 @@ const Editor = ({ test, onUpdateTest, onBack, onPlay, onPrint, apiKey, onRequest
                 return isCorrect ? { score: pos, status: `Correct (+${pos})`, color: 'bg-green-100 text-green-700', rawStatus: 'correct' } : { score: -neg, status: `Incorrect (-${neg})`, color: 'bg-red-100 text-red-700', rawStatus: 'wrong' };
             };
 
-            // Calculate Final Stats
             const totalScore = questions.reduce((acc, q) => acc + calculatePoints(q, ans[q.id]).score, 0);
             const totalMaxMarks = questions.reduce((acc, q) => acc + (q.marks?.pos||0), 0);
-            
-            // --- 4. PREPARE DATA FOR DASHBOARD ---
+
             const getResultEntry = () => {
                 const details = questions.map((q, i) => {
                     const { score, rawStatus } = calculatePoints(q, ans[q.id]);
-                    return { 
-                        id: q.id, 
-                        qNum: i + 1, 
-                        text: q.text, 
-                        status: rawStatus, 
-                        timeSpent: questionTimes[i] || 0, // This passes the tracked time
-                        marks: score, 
-                        userAns: ans[q.id], 
-                        isMarked: marked.has(i), // This passes the flag
-                        qData: q 
-                    };
+                    return { id: q.id, qNum: i + 1, text: q.text, status: rawStatus, timeSpent: questionTimes[i] || 0, marks: score, userAns: ans[q.id], isMarked: marked.has(i), qData: q };
                 });
-                return {
-                    id: Date.now().toString(), date: new Date().toISOString(),
-                    testName: test.title, score: totalScore, maxMarks: totalMaxMarks,
-                    details, type: 'QUIZ_ATTEMPT'
-                };
+                return { id: Date.now().toString(), date: new Date().toISOString(), testName: test.title, score: totalScore, maxMarks: totalMaxMarks, details, type: 'QUIZ_ATTEMPT' };
             };
 
+            // Safeguard against missing question data at current index
             const q = questions[idx];
+            if (!q) return <div>Error: Question Index Out of Bounds. Please Restart.</div>;
 
-            // --- 5. RENDER THE NEW RESULT DASHBOARD ON SUBMIT ---
+            // Render Dashboard on Submit
             if (isSubmitted) {
                 const resultEntry = getResultEntry();
+                // Ensure ResultDashboard is defined before Player in your file!
                 return (
                     <ResultDashboard 
                         entry={resultEntry} 
                         onBack={onBack} 
-                        // Note: Direct Remix from here requires passing prop up, 
-                        // for now we alert to save first.
-                        onRemix={(newTest) => alert("Please save this analysis first, then open it from 'Notebooks' to use Remix features.")}
+                        onRemix={(newTest) => alert("Please save analysis first, then use Remix from Notebook.")}
                         onSave={() => {
-                            // Save to first notebook by default or let user choose (simplified for UX)
-                            if(notebooks.length > 0) {
-                                onSaveToNotebook(notebooks[0].id, resultEntry);
-                                alert("Saved to " + notebooks[0].title);
-                            } else {
-                                alert("Please create a notebook in dashboard first!");
-                            }
+                            if(notebooks.length === 0) return alert("Please create a notebook first!");
+                            onSaveToNotebook(notebooks[0].id, resultEntry);
+                            alert("Saved to " + notebooks[0].title);
                         }}
                     />
                 );
             }
 
-            // --- 6. QUIZ INTERFACE (The Normal View) ---
             return (
                 <div className="h-screen flex flex-col bg-slate-50">
                     <div className="bg-white border-b px-4 py-2 flex justify-between items-center shadow-sm shrink-0 h-16">
@@ -2629,11 +2607,7 @@ const Editor = ({ test, onUpdateTest, onBack, onPlay, onPrint, apiKey, onRequest
                                 <div className="flex justify-between items-start mb-6">
                                     <div className="flex items-center gap-3">
                                         <span className="text-xl font-bold text-slate-400">Q{idx+1}</span>
-                                        {/* NEW: LIVE PER-QUESTION TIMER */}
-                                        <span className={`text-xs font-bold font-mono px-2 py-1 rounded flex items-center gap-1 ${questionTimes[idx] > heatConfig.slow ? 'bg-red-100 text-red-600 animate-pulse' : 'bg-slate-100 text-slate-500'}`}>
-                                            <Icon name="Clock" className="w-3 h-3" />
-                                            {formatDuration(questionTimes[idx] || 0)}
-                                        </span>
+                                        <span className={`text-xs font-bold font-mono px-2 py-1 rounded flex items-center gap-1 ${questionTimes[idx] > heatConfig.slow ? 'bg-red-100 text-red-600 animate-pulse' : 'bg-slate-100 text-slate-500'}`}><Icon name="Clock" className="w-3 h-3" />{formatDuration(questionTimes[idx] || 0)}</span>
                                         <span className="text-xs font-bold bg-slate-200 text-slate-600 px-2 py-1 rounded uppercase tracking-wider">{q.type}</span>
                                         <span className="text-xs font-bold text-slate-400">+{q.marks?.pos} / -{q.marks?.neg}</span>
                                     </div>
@@ -2676,16 +2650,16 @@ const Editor = ({ test, onUpdateTest, onBack, onPlay, onPrint, apiKey, onRequest
                                 <div className="flex justify-between items-center mb-4">
                                     <h3 className="font-bold text-sm uppercase text-slate-700 flex items-center gap-2"><Icon name="Grid" /> Palette</h3>
                                     <div className="flex gap-1">
-                                        <button onClick={() => setShowHeatSettings(!showHeatSettings)} className="p-1.5 rounded-lg bg-slate-100 text-slate-500 hover:bg-slate-200"><Icon name="Settings" className="w-4 h-4" /></button>
-                                        <button onClick={() => setHeatmapMode(!heatmapMode)} className={`p-1.5 rounded-lg transition-colors ${heatmapMode ? 'bg-orange-100 text-orange-600' : 'bg-slate-200 text-slate-400'}`}><Icon name="BarChart" className="w-4 h-4" /></button>
+                                        <button onClick={() => setShowHeatSettings(!showHeatSettings)} className="p-1.5 rounded-lg bg-slate-100 text-slate-500 hover:bg-slate-200" title="Heatmap Settings"><Icon name="Settings" className="w-4 h-4" /></button>
+                                        <button onClick={() => setHeatmapMode(!heatmapMode)} className={`p-1.5 rounded-lg transition-colors ${heatmapMode ? 'bg-orange-100 text-orange-600' : 'bg-slate-200 text-slate-400'}`} title="Toggle Time-Stress Heatmap"><Icon name="BarChart" className="w-4 h-4" /></button>
                                     </div>
                                 </div>
                                 {showHeatSettings && (
                                     <div className="absolute top-12 right-2 bg-white border shadow-xl rounded-lg p-3 z-50 w-48 animate-in zoom-in-95">
                                         <h4 className="text-[10px] font-bold uppercase text-slate-500 mb-2">Time Thresholds (Sec)</h4>
                                         <div className="space-y-2">
-                                            <div><label className="text-xs text-green-600 font-bold block">Fast</label><input type="number" value={heatConfig.fast} onChange={e=>setHeatConfig({...heatConfig, fast: Number(e.target.value)})} className="w-full p-1 border rounded text-xs" /></div>
-                                            <div><label className="text-xs text-red-600 font-bold block">Slow</label><input type="number" value={heatConfig.slow} onChange={e=>setHeatConfig({...heatConfig, slow: Number(e.target.value)})} className="w-full p-1 border rounded text-xs" /></div>
+                                            <div><label className="text-xs text-green-600 font-bold block">Fast (Green)</label><input type="number" value={heatConfig.fast} onChange={e=>setHeatConfig({...heatConfig, fast: Number(e.target.value)})} className="w-full p-1 border rounded text-xs" /></div>
+                                            <div><label className="text-xs text-red-600 font-bold block">Slow (Red)</label><input type="number" value={heatConfig.slow} onChange={e=>setHeatConfig({...heatConfig, slow: Number(e.target.value)})} className="w-full p-1 border rounded text-xs" /></div>
                                         </div>
                                         <button onClick={() => setShowHeatSettings(false)} className="w-full mt-2 bg-indigo-50 text-indigo-700 text-xs font-bold py-1 rounded">Close</button>
                                     </div>
@@ -2697,7 +2671,6 @@ const Editor = ({ test, onUpdateTest, onBack, onPlay, onPrint, apiKey, onRequest
                             <div className="flex-1 overflow-y-auto p-4">
                                 <div className="grid grid-cols-5 gap-2">
                                     {questions.map((qItem, i) => {
-                                        // Logic to filter the grid
                                         const st = getStatus(i);
                                         if (paletteFilter === 'left' && (st === 'answered' || st === 'marked')) return null;
                                         if (paletteFilter === 'done' && st !== 'answered') return null;
@@ -2705,20 +2678,23 @@ const Editor = ({ test, onUpdateTest, onBack, onPlay, onPrint, apiKey, onRequest
 
                                         let baseStyle = "bg-slate-100 text-slate-500 border-slate-200";
                                         if (heatmapMode) {
-                                            // Apply Heatmap Colors
                                             const sec = questionTimes[i] || 0;
                                             if(sec < heatConfig.fast) baseStyle = "bg-green-100 border-green-300 text-green-700";
                                             else if(sec < heatConfig.slow) baseStyle = "bg-yellow-100 border-yellow-300 text-yellow-700";
                                             else baseStyle = "bg-red-100 border-red-300 text-red-700 font-bold animate-pulse";
                                         } else {
-                                            // Apply Normal Status Colors
                                             if (st === 'marked') baseStyle = "bg-amber-100 text-amber-700 border-amber-300";
                                             else if (st === 'answered') baseStyle = "bg-green-100 text-green-700 border-green-300";
-                                            else if (st === 'current') baseStyle = "ring-2 ring-indigo-500 border-indigo-300 bg-white text-indigo-700";
+                                            else if (st === 'current') baseStyle = "ring-2 ring-indigo-500 ring-offset-2 border-indigo-300 bg-white text-indigo-700";
                                         }
                                         return <button key={i} onClick={() => setIdx(i)} className={`h-10 w-full rounded-lg border font-bold text-sm flex items-center justify-center transition-all relative ${baseStyle}`}>{i+1}{marked.has(i) && !heatmapMode && <div className="absolute top-0 right-0 w-2 h-2 bg-amber-500 rounded-full -mr-1 -mt-1 ring-2 ring-white"></div>}</button>;
                                     })}
                                 </div>
+                            </div>
+                            <div className="p-3 bg-slate-50 border-t text-[10px] text-slate-500 flex justify-between font-mono">
+                                <span>Done: {Object.keys(ans).filter(k => ans[k] !== '').length}</span>
+                                <span>Left: {questions.length - Object.keys(ans).filter(k => ans[k] !== '').length}</span>
+                                <span>Marked: {marked.size}</span>
                             </div>
                         </div>
                     </div>
@@ -3183,6 +3159,7 @@ const QuizForge = () => {
     </script>
 </body>
 </html>
+
 
 
 
