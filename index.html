@@ -2436,26 +2436,33 @@ const Editor = ({ test, onUpdateTest, onBack, onPlay, onPrint, apiKey, onRequest
         };
       // --- FIXED PLAYER COMPONENT (No Crash) ---
       // --- 2. PLAYER COMPONENT (Defined AFTER ResultDashboard) ---
+      // --- FIXED PLAYER COMPONENT (Crash-Proof) ---
         const Player = ({ test, duration, onBack, notebooks, onSaveToNotebook }) => {
-            // Safety Guard: Prevent white screen if test is missing
-            if (!test || !test.questions) return <div className="flex h-screen items-center justify-center flex-col text-slate-400"><Icon name="Loader2" className="animate-spin w-10 h-10 mb-2" /><p>Loading Quiz...</p></div>;
+            const storageKey = `tattvam_progress_${test?.id}`;
 
-            const storageKey = `tattvam_progress_${test.id}`;
-
+            // --- 1. SMART HYDRATION (Hooks must run first) ---
             const { activeQuestions, savedState } = React.useMemo(() => {
+                if (!test || !test.questions) return { activeQuestions: [], savedState: null };
                 try {
                     const saved = JSON.parse(localStorage.getItem(storageKey));
                     if (saved && saved.order && saved.order.length === test.questions.length) {
                         const qMap = new Map(test.questions.map(q => [q.id, q]));
                         const ordered = saved.order.map(id => qMap.get(id)).filter(q => q);
-                        return { activeQuestions: ordered, savedState: saved };
+                        if (ordered.length === test.questions.length) return { activeQuestions: ordered, savedState: saved };
                     }
                 } catch (e) {}
                 return { activeQuestions: test.questions, savedState: null };
-            }, [test.id, test.questions]);
+            }, [test?.id, test?.questions]);
 
+            // --- 2. STATE DEFINITIONS ---
             const [questions, setQuestions] = useState(activeQuestions);
-            const [idx, setIdx] = useState(savedState?.idx || 0);
+            
+            // Safe Index Initialization
+            const [idx, setIdx] = useState(() => {
+                if (savedState?.idx && savedState.idx < activeQuestions.length) return savedState.idx;
+                return 0;
+            });
+
             const [ans, setAns] = useState(savedState?.ans || {});
             const [timeLeft, setTimeLeft] = useState(savedState?.timeLeft ?? duration * 60);
             const [isSubmitted, setIsSubmitted] = useState(false);
@@ -2471,7 +2478,19 @@ const Editor = ({ test, onUpdateTest, onBack, onPlay, onPrint, apiKey, onRequest
             const [hoverPreview, setHoverPreview] = useState(null); 
             const [paletteFilter, setPaletteFilter] = useState('all');
 
-            // Save Progress
+            // --- 3. SAFETY GUARD (Now placed correctly AFTER hooks) ---
+            if (!test || !test.questions || questions.length === 0) {
+                return (
+                    <div className="flex h-screen flex-col items-center justify-center text-slate-400">
+                        <Icon name="Loader2" className="animate-spin w-10 h-10 mb-2" />
+                        <p>Loading Quiz...</p>
+                        <button onClick={onBack} className="mt-4 text-xs underline hover:text-slate-600">Back to Dashboard</button>
+                    </div>
+                );
+            }
+
+            // --- 4. LOGIC & EFFECTS ---
+            // Auto-Save
             useEffect(() => {
                 if (!isSubmitted) {
                     const payload = {
@@ -2538,9 +2557,14 @@ const Editor = ({ test, onUpdateTest, onBack, onPlay, onPrint, apiKey, onRequest
             };
 
             const q = questions[idx];
+            if (!q) return <div>Error: Index out of bounds.</div>;
 
+            // Render Dashboard on Submit
             if (isSubmitted) {
                 const resultEntry = getResultEntry();
+                // Check if ResultDashboard exists
+                if (typeof ResultDashboard === 'undefined') return <div className="p-10 text-red-600">Error: ResultDashboard component missing. Ensure it is defined ABOVE Player.</div>;
+                
                 return (
                     <ResultDashboard 
                         entry={resultEntry} 
@@ -2569,7 +2593,7 @@ const Editor = ({ test, onUpdateTest, onBack, onPlay, onPrint, apiKey, onRequest
                             <div className="flex items-center gap-2 bg-slate-100 px-3 py-1.5 rounded-lg text-slate-700 font-mono font-bold">
                                 <Icon name="Clock" className="w-4 h-4" /> {formatTime(timeLeft)}
                             </div>
-                            <button onClick={() => finishQuiz(false)} className="bg-indigo-600 text-white px-6 py-2 rounded-lg font-bold hover:bg-indigo-700 shadow-sm text-sm">Submit</button>
+                            <button onClick={() => finishQuiz(false)} className="bg-indigo-600 text-white px-6 py-2 rounded-lg font-bold hover:bg-indigo-700 shadow-sm text-sm">Submit Test</button>
                         </div>
                         <button onClick={() => setShowPalette(!showPalette)} className="md:hidden"><Icon name="Grid" /></button>
                     </div>
@@ -3096,6 +3120,7 @@ const QuizForge = () => {
     </script>
 </body>
 </html>
+
 
 
 
