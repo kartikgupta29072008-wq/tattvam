@@ -2976,10 +2976,7 @@ const QuizForge = () => {
                 try {
                     const item = localStorage.getItem(key);
                     return item ? JSON.parse(item) : fallback;
-                } catch (e) {
-                    console.error(`Failed to load ${key}`, e);
-                    return fallback;
-                }
+                } catch (e) { console.error(`Failed to load ${key}`, e); return fallback; }
             };
 
             const [tests, setTests] = useState(() => safeLoad('quizforge_tests', []));
@@ -2989,12 +2986,7 @@ const QuizForge = () => {
             const [keyContext, setKeyContext] = useState(() => {
                 const stored = localStorage.getItem('tattvam_key_context');
                 if (stored) return JSON.parse(stored);
-                const oldArr = localStorage.getItem('tattvam_api_keys');
-                const oldSingle = localStorage.getItem('gemini_api_key');
-                let keys = [];
-                if (oldArr) keys = JSON.parse(oldArr);
-                else if (oldSingle) keys = [oldSingle];
-                return { keys: keys, currentIndex: 0 };
+                return { keys: [], currentIndex: 0 };
             });
             
             const [userNotes, setUserNotes] = useState(() => localStorage.getItem('tattvam_user_notes') || '');
@@ -3008,15 +3000,7 @@ const QuizForge = () => {
             const [showQuizSetup, setShowQuizSetup] = useState(false);
             const [storageWarning, setStorageWarning] = useState(false);
 
-            useEffect(() => { 
-                try {
-                    localStorage.setItem('quizforge_tests', JSON.stringify(tests));
-                    setStorageWarning(false);
-                } catch (e) {
-                    setStorageWarning(true);
-                }
-            }, [tests]);
-
+            useEffect(() => { try { localStorage.setItem('quizforge_tests', JSON.stringify(tests)); setStorageWarning(false); } catch (e) { setStorageWarning(true); } }, [tests]);
             useEffect(() => { try { localStorage.setItem('quizforge_notebooks', JSON.stringify(notebooks)); } catch(e) {} }, [notebooks]);
             useEffect(() => { try { localStorage.setItem('tattvam_key_context', JSON.stringify(keyContext)); } catch(e) {} }, [keyContext]);
             useEffect(() => { localStorage.setItem('tattvam_user_notes', userNotes); }, [userNotes]);
@@ -3025,10 +3009,24 @@ const QuizForge = () => {
             const activeTest = tests.find(t => t.id === activeId);
             const activeNotebook = notebooks.find(n => n.id === activeNotebookId);
 
+            // --- FIXED: SAFE START HANDLER ---
             const handleStartQuiz = (mins, shuffle) => {
+                if (!activeTest) {
+                    alert("Error: No test selected. Please go back to dashboard and select a test.");
+                    return;
+                }
                 setQuizDuration(mins === '' ? 99999 : Number(mins));
-                let testToPlay = JSON.parse(JSON.stringify(activeTest));
-                if (shuffle) {
+                
+                // Safe Deep Copy
+                let testToPlay;
+                try {
+                    testToPlay = JSON.parse(JSON.stringify(activeTest));
+                } catch(e) {
+                    alert("Failed to prepare test: " + e.message);
+                    return;
+                }
+
+                if (shuffle && testToPlay.questions && testToPlay.questions.length > 0) {
                     for (let i = testToPlay.questions.length - 1; i > 0; i--) {
                         const j = Math.floor(Math.random() * (i + 1));
                         [testToPlay.questions[i], testToPlay.questions[j]] = [testToPlay.questions[j], testToPlay.questions[i]];
@@ -3039,12 +3037,10 @@ const QuizForge = () => {
                 setView('player');
             };
 
-            // --- NEW: DIRECT REMIX HANDLER ---
             const handleDirectRemix = (newTest) => {
                 setTests(prev => [newTest, ...prev]);
                 setActiveId(newTest.id);
                 setView('editor');
-                // Small delay to ensure render updates before alert
                 setTimeout(() => alert(`⚡ Remix "${newTest.title}" Created & Opened!`), 100);
             };
 
@@ -3058,61 +3054,23 @@ const QuizForge = () => {
 
             return (
                 <div className="font-sans h-screen flex flex-col relative">
-                    {storageWarning && (
-                        <div className="bg-red-600 text-white px-4 py-2 text-sm font-bold flex justify-between items-center shadow-md shrink-0 z-50">
-                            <div className="flex items-center gap-2"><Icon name="AlertTriangle" className="w-5 h-5" /><span>STORAGE FULL! Data cannot be saved permanently. Export Backup & Delete old tests.</span></div>
-                        </div>
-                    )}
-
+                    {storageWarning && <div className="bg-red-600 text-white px-4 py-2 text-sm font-bold flex justify-between items-center shadow-md shrink-0 z-50"><div className="flex items-center gap-2"><Icon name="AlertTriangle" className="w-5 h-5" /><span>STORAGE FULL! Export Backup & Delete old tests.</span></div></div>}
                     {modal && <SettingsVault context={keyContext} setContext={setKeyContext} notes={userNotes} setNotes={setUserNotes} onClose={() => setModal(false)} />}
                     {showQuizSetup && <QuizSetupModal onClose={() => setShowQuizSetup(false)} onStart={handleStartQuiz} />}
                     
-                    {view === 'dashboard' && (
-                        <Dashboard 
-                            tests={tests} notebooks={notebooks} 
-                            onCreateTest={() => { const n = { id: Date.now().toString(), title: 'Untitled', created: new Date().toISOString(), questions: [] }; setTests([n, ...tests]); setActiveId(n.id); setView('editor'); }} 
-                            onCreateNotebook={() => { const n = { id: Date.now().toString(), title: 'New Analysis Notebook', updated: new Date().toISOString(), entries: [] }; setNotebooks([n, ...notebooks]); setActiveNotebookId(n.id); setView('notebook'); }}
-                            onDeleteTest={(e, id) => { e.stopPropagation(); if(confirm("Delete?")) setTests(tests.filter(t => t.id !== id)); }} 
-                            onDeleteNotebook={(e, id) => { e.stopPropagation(); if(confirm("Delete?")) setNotebooks(notebooks.filter(n => n.id !== id)); }}
-                            onSelectTest={(id) => { setActiveId(id); setView('editor'); }} onSelectNotebook={(id) => { setActiveNotebookId(id); setView('notebook'); }}
-                            onSettings={() => setModal(true)} onImport={importData} appLogo={appLogo} setAppLogo={setAppLogo} 
-                        />
-                    )}
-
-                    {view === 'editor' && activeTest && (
-                        <Editor 
-                            test={activeTest} 
-                            onUpdateTest={(u) => setTests(tests.map(t => t.id === activeId ? { ...t, ...u } : t))} 
-                            onBack={() => setView('dashboard')} 
-                            onPlay={() => setShowQuizSetup(true)} 
-                            onPrint={() => setView('print')} 
-                            apiKey={keyContext} 
-                            onRequestKey={() => setModal(true)}
-                            onRemix={handleDirectRemix} // Passed to Editor
-                        />
-                    )}
-                    
-                    {view === 'notebook' && activeNotebook && (
-                        <AnalysisNotebook 
-                            notebook={activeNotebook} 
-                            onUpdate={handleUpdateNotebook} 
-                            onBack={() => setView('dashboard')} 
-                            apiKey={keyContext} 
-                            onRequestKey={() => setModal(true)}
-                            onRemix={handleDirectRemix} // Passed to Notebook
-                        />
-                    )}
-
+                    {view === 'dashboard' && <Dashboard tests={tests} notebooks={notebooks} onCreateTest={() => { const n = { id: Date.now().toString(), title: 'Untitled', created: new Date().toISOString(), questions: [] }; setTests([n, ...tests]); setActiveId(n.id); setView('editor'); }} onCreateNotebook={() => { const n = { id: Date.now().toString(), title: 'New Analysis Notebook', updated: new Date().toISOString(), entries: [] }; setNotebooks([n, ...notebooks]); setActiveNotebookId(n.id); setView('notebook'); }} onDeleteTest={(e, id) => { e.stopPropagation(); if(confirm("Delete?")) setTests(tests.filter(t => t.id !== id)); }} onDeleteNotebook={(e, id) => { e.stopPropagation(); if(confirm("Delete?")) setNotebooks(notebooks.filter(n => n.id !== id)); }} onSelectTest={(id) => { setActiveId(id); setView('editor'); }} onSelectNotebook={(id) => { setActiveNotebookId(id); setView('notebook'); }} onSettings={() => setModal(true)} onImport={importData} appLogo={appLogo} setAppLogo={setAppLogo} />}
+                    {view === 'editor' && activeTest && <Editor test={activeTest} onUpdateTest={(u) => setTests(tests.map(t => t.id === activeId ? { ...t, ...u } : t))} onBack={() => setView('dashboard')} onPlay={() => setShowQuizSetup(true)} onPrint={() => setView('print')} apiKey={keyContext} onRequestKey={() => setModal(true)} onRemix={handleDirectRemix} />}
+                    {view === 'notebook' && activeNotebook && <AnalysisNotebook notebook={activeNotebook} onUpdate={handleUpdateNotebook} onBack={() => setView('dashboard')} apiKey={keyContext} onRequestKey={() => setModal(true)} onRemix={handleDirectRemix} />}
                     {view === 'player' && playingTest && <Player test={playingTest} duration={quizDuration} onBack={() => setView('editor')} notebooks={notebooks} onSaveToNotebook={handleSaveToNotebook} />}
-                    
                     {view === 'print' && activeTest && <PrintView test={activeTest} onBack={() => setView('editor')} apiKey={keyContext} onRequestKey={() => setModal(true)} />}
                 </div>
             );
-        };   const root = ReactDOM.createRoot(document.getElementById('root'));
+        };  const root = ReactDOM.createRoot(document.getElementById('root'));
         root.render(<QuizForge />);
     </script>
 </body>
 </html>
+
 
 
 
