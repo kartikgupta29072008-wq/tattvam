@@ -1176,7 +1176,8 @@ const AnalysisNotebook = ({ notebook, onUpdate, onBack, apiKey, onRequestKey, on
             const [uploading, setUploading] = useState(false);
             const [analyzing, setAnalyzing] = useState(false);
             const [expandedEntry, setExpandedEntry] = useState(null);
-            const [remixEntry, setRemixEntry] = useState(null); 
+            const [remixEntry, setRemixEntry] = useState(null);
+    const [viewEntry, setViewEntry] = useState(null);
             const [remixSelection, setRemixSelection] = useState(new Set()); 
 
             const handleImageUpload = async (e) => {
@@ -1269,6 +1270,19 @@ const AnalysisNotebook = ({ notebook, onUpdate, onBack, apiKey, onRequestKey, on
                     </div>
                 );
             };
+    // IF VIEWING AN ENTRY -> SHOW DASHBOARD
+            if (viewEntry) {
+                return (
+                    <ResultDashboard 
+                        entry={viewEntry} 
+                        onBack={() => setViewEntry(null)} 
+                        onRemix={(test) => {
+                            onRemix(test); // Direct Remix works here!
+                            setViewEntry(null);
+                        }} 
+                    />
+                );
+            }
 
             return (
                 <div className="h-full flex flex-col bg-slate-50 relative">
@@ -1353,6 +1367,11 @@ const AnalysisNotebook = ({ notebook, onUpdate, onBack, apiKey, onRequestKey, on
                                     <Chart entries={notebook.entries} />
                                 </div>
                             </div>
+                            <div key={entry.id} className="...">
+                     <div onClick={() => setViewEntry(entry)} className="p-5 cursor-pointer ...">
+                        {/* Entry content... */}
+                     </div>
+                </div>
 
                             <div className="md:col-span-2 space-y-4">
                                 <h3 className="font-bold text-slate-500 uppercase text-xs tracking-wider">Attempt History</h3>
@@ -3109,6 +3128,7 @@ const QuizForge = () => {
     </script>
 </body>
 </html>
+
 
 
 
