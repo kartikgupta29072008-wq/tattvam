@@ -2456,52 +2456,37 @@ const Editor = ({ test, onUpdateTest, onBack, onPlay, onPrint, apiKey, onRequest
       // --- FIXED PLAYER COMPONENT (No Crash) ---
       // --- 2. PLAYER COMPONENT (Defined AFTER ResultDashboard) ---
      // --- FIXED PLAYER COMPONENT (CRASH PROOF) ---
-        const Player = ({ test, duration, onBack, notebooks, onSaveToNotebook }) => {
-            const storageKey = `tattvam_progress_${test?.id}`;
+     const Player = ({ test, duration, onBack, notebooks, onSaveToNotebook }) => {
+            const storageKey = `tattvam_progress_${test.id}`;
 
-            // --- 1. DEFINE HOOKS FIRST (Before any return statement) ---
             const { activeQuestions, savedState } = React.useMemo(() => {
-                if (!test || !test.questions) return { activeQuestions: [], savedState: null };
                 try {
                     const saved = JSON.parse(localStorage.getItem(storageKey));
-                    if (saved && saved.order && saved.order.length === test.questions.length) {
+                    if (saved && saved.order) {
                         const qMap = new Map(test.questions.map(q => [q.id, q]));
                         const ordered = saved.order.map(id => qMap.get(id)).filter(q => q);
                         if (ordered.length === test.questions.length) return { activeQuestions: ordered, savedState: saved };
                     }
-                } catch (e) { console.warn("Resume data invalid"); }
+                } catch (e) { console.error("Resume failed:", e); }
                 return { activeQuestions: test.questions, savedState: null };
-            }, [test?.id, test?.questions]);
+            }, [test.id, test.questions]);
 
             const [questions, setQuestions] = useState(activeQuestions);
-            const [idx, setIdx] = useState(() => (savedState?.idx < (activeQuestions?.length || 0) ? savedState.idx : 0));
+            const [idx, setIdx] = useState(savedState?.idx || 0);
             const [ans, setAns] = useState(savedState?.ans || {});
-            const [timeLeft, setTimeLeft] = useState(savedState?.timeLeft ?? (duration ? duration * 60 : 180 * 60));
+            const [timeLeft, setTimeLeft] = useState(savedState?.timeLeft ?? duration * 60);
             const [isSubmitted, setIsSubmitted] = useState(false);
             const [showPalette, setShowPalette] = useState(true);
             const [saveModal, setSaveModal] = useState(false);
 
-            // Analysis State
-            const [questionTimes, setQuestionTimes] = useState(savedState?.questionTimes || new Array(questions?.length || 0).fill(0));
+            const [questionTimes, setQuestionTimes] = useState(savedState?.questionTimes || new Array(questions.length).fill(0));
             const [marked, setMarked] = useState(new Set(savedState?.marked || []));
+            const [paletteFilter, setPaletteFilter] = useState('all'); 
             const [heatmapMode, setHeatmapMode] = useState(false); 
+            const [hoverPreview, setHoverPreview] = useState(null); 
             const [heatConfig, setHeatConfig] = useState({ fast: 30, slow: 90 });
             const [showHeatSettings, setShowHeatSettings] = useState(false);
-            const [hoverPreview, setHoverPreview] = useState(null); 
-            const [paletteFilter, setPaletteFilter] = useState('all');
 
-            // --- 2. SAFETY CHECK (Now placed AFTER hooks to prevent crash) ---
-            if (!test || !test.questions || !Array.isArray(test.questions) || questions.length === 0) {
-                return (
-                    <div className="h-screen flex flex-col items-center justify-center text-slate-400 bg-slate-50">
-                        <Icon name="Loader2" className="animate-spin w-10 h-10 mb-4" />
-                        <p className="font-bold">Loading Assessment...</p>
-                        <button onClick={onBack} className="mt-4 text-xs underline hover:text-slate-600">Back to Dashboard</button>
-                    </div>
-                );
-            }
-
-            // --- 3. EFFECTS & LOGIC ---
             useEffect(() => {
                 if (!isSubmitted) {
                     const payload = {
@@ -2511,87 +2496,215 @@ const Editor = ({ test, onUpdateTest, onBack, onPlay, onPrint, apiKey, onRequest
                     };
                     localStorage.setItem(storageKey, JSON.stringify(payload));
                 }
-            }, [idx, ans, timeLeft, questionTimes, marked, isSubmitted]);
+            }, [idx, ans, timeLeft, questionTimes, marked, isSubmitted, questions]);
 
             useEffect(() => {
                 if (isSubmitted) return;
-                if (timeLeft === 0) { finishQuiz(true); return; }
+                if (timeLeft === 0) {
+                    finishQuiz(true);
+                    return;
+                }
                 const timer = setInterval(() => {
-                    setTimeLeft(p => p - 1);
-                    setQuestionTimes(p => { 
-                        const n = [...p]; 
-                        if(n[idx] !== undefined) n[idx] = n[idx] + 1; 
-                        return n; 
+                    setTimeLeft(prev => prev - 1);
+                    setQuestionTimes(prev => {
+                        const n = [...prev];
+                        n[idx] = (n[idx] || 0) + 1;
+                        return n;
                     });
                 }, 1000);
                 return () => clearInterval(timer);
             }, [isSubmitted, timeLeft, idx]);
 
-            const formatDuration = (s) => (s < 60 ? `${s}s` : `${Math.floor(s/60)}m ${s%60}s`);
             const formatTime = (s) => `${Math.floor(s/3600)}:${String(Math.floor((s%3600)/60)).padStart(2,'0')}:${String(s%60).padStart(2,'0')}`;
+            
+            // New Helper for "1m 30s" format
+            const formatDuration = (s) => {
+                if (s < 60) return `${s}s`;
+                return `${Math.floor(s/60)}m ${s%60}s`;
+            };
 
             const handleAns = (val) => {
                 if(isSubmitted) return;
                 const q = questions[idx];
-                if (!q) return;
                 if(q.type === 'MULTI') {
                     const cur = ans[q.id] || [];
-                    setAns({...ans, [q.id]: cur.includes(val) ? cur.filter(x=>x!==val) : [...cur, val]});
-                } else setAns({...ans, [q.id]: val});
+                    const newAns = cur.includes(val) ? cur.filter(x=>x!==val) : [...cur, val];
+                    setAns({...ans, [q.id]: newAns});
+                } else {
+                    setAns({...ans, [q.id]: val});
+                }
             };
 
-            const toggleMark = () => { const n = new Set(marked); if(n.has(idx)) n.delete(idx); else n.add(idx); setMarked(n); };
-            
-            const finishQuiz = (auto) => { 
-                if(auto || confirm("Submit Test?")) { setIsSubmitted(true); localStorage.removeItem(storageKey); if(auto) alert("Time Up!"); } 
+            const toggleMark = () => {
+                const newMarked = new Set(marked);
+                if(newMarked.has(idx)) newMarked.delete(idx);
+                else newMarked.add(idx);
+                setMarked(newMarked);
+            };
+
+            const finishQuiz = (auto = false) => {
+                if(auto || confirm("Submit Test?")) {
+                    setIsSubmitted(true);
+                    localStorage.removeItem(storageKey);
+                    if(auto) alert("Time Up! Submitted.");
+                }
+            };
+
+            const getStatus = (i) => {
+                const qId = questions[i].id;
+                const hasAns = ans[qId] !== undefined && ans[qId] !== '' && (!Array.isArray(ans[qId]) || ans[qId].length > 0);
+                if (marked.has(i)) return 'marked';
+                if (hasAns) return 'answered';
+                if (i === idx) return 'current';
+                return 'not_visited';
+            };
+
+            const getHeatColor = (seconds) => {
+                if(seconds < heatConfig.fast) return "bg-green-100 border-green-300 text-green-700"; 
+                if(seconds < heatConfig.slow) return "bg-yellow-100 border-yellow-300 text-yellow-700"; 
+                return "bg-red-100 border-red-300 text-red-700 font-bold animate-pulse"; 
             };
 
             const calculatePoints = (q, userAns) => {
-                if (userAns === undefined || userAns === '' || (Array.isArray(userAns) && userAns.length === 0)) return { score: 0, status: 'Unattempted', color: 'bg-slate-100 text-slate-500', rawStatus: 'left' };
-                const pos = q.marks?.pos || 4; const neg = q.marks?.neg || 1;
-                let isCorrect = false;
-                if (q.type === 'MULTI') {
-                    const correct = q.correctIndices || []; const selected = userAns || [];
-                    if (selected.some(s => !correct.includes(s))) return { score: -neg, status: `Incorrect (-${neg})`, color: 'bg-red-100 text-red-700', rawStatus: 'wrong' };
-                    if (selected.length === correct.length) return { score: pos, status: `Correct (+${pos})`, color: 'bg-green-100 text-green-700', rawStatus: 'correct' };
-                    return { score: 1 * selected.length, status: `Partial (+${selected.length})`, color: 'bg-amber-100 text-amber-700', rawStatus: 'partial' };
+                if (userAns === undefined || userAns === '' || (Array.isArray(userAns) && userAns.length === 0)) {
+                    return { score: 0, status: 'Unattempted', color: 'bg-slate-100 text-slate-500', rawStatus: 'left' };
                 }
+                const pos = q.marks?.pos || 4;
+                const neg = q.marks?.neg || 1;
+
+                if (q.type === 'MULTI') {
+                    const correct = q.correctIndices || [];
+                    const selected = userAns || [];
+                    const hasWrong = selected.some(s => !correct.includes(s));
+                    if (hasWrong) return { score: -neg, status: `Incorrect (-${neg})`, color: 'bg-red-100 text-red-700', rawStatus: 'wrong' };
+                    if (selected.length === correct.length) return { score: pos, status: `Correct (+${pos})`, color: 'bg-green-100 text-green-700', rawStatus: 'correct' };
+                    const partial = 1 * selected.length;
+                    return { score: partial, status: `Partial (+${partial})`, color: 'bg-amber-100 text-amber-700', rawStatus: 'partial' };
+                }
+
+                let isCorrect = false;
                 if (q.type === 'NUMERICAL') isCorrect = String(userAns).trim() === String(q.correctNum).trim();
                 else if (q.type === 'SINGLE') isCorrect = userAns === q.correctIndex;
-                return isCorrect ? { score: pos, status: `Correct (+${pos})`, color: 'bg-green-100 text-green-700', rawStatus: 'correct' } : { score: -neg, status: `Incorrect (-${neg})`, color: 'bg-red-100 text-red-700', rawStatus: 'wrong' };
+                
+                if (isCorrect) return { score: pos, status: `Correct (+${pos})`, color: 'bg-green-100 text-green-700', rawStatus: 'correct' };
+                return { score: -neg, status: `Incorrect (-${neg})`, color: 'bg-red-100 text-red-700', rawStatus: 'wrong' };
             };
 
             const totalScore = questions.reduce((acc, q) => acc + calculatePoints(q, ans[q.id]).score, 0);
             const totalMaxMarks = questions.reduce((acc, q) => acc + (q.marks?.pos||0), 0);
+            const accuracy = Math.round((questions.filter(q => calculatePoints(q, ans[q.id]).score > 0).length / (Object.keys(ans).filter(k=>ans[k]!=='').length || 1)) * 100);
 
-            const getResultEntry = () => {
-                const details = questions.map((q, i) => {
+            const saveResult = (notebookId) => {
+                const questionAnalytics = questions.map((q, i) => {
                     const { score, rawStatus } = calculatePoints(q, ans[q.id]);
-                    return { id: q.id, qNum: i + 1, text: q.text, status: rawStatus, timeSpent: questionTimes[i] || 0, marks: score, userAns: ans[q.id], isMarked: marked.has(i), qData: q };
+                    return {
+                        id: q.id,
+                        qNum: i + 1,
+                        text: q.text,
+                        status: rawStatus,
+                        timeSpent: questionTimes[i] || 0,
+                        marks: score,
+                        userAns: ans[q.id],
+                        isMarked: marked.has(i),
+                        qData: q
+                    };
                 });
-                return { id: Date.now().toString(), date: new Date().toISOString(), testName: test.title, score: totalScore, maxMarks: totalMaxMarks, details, type: 'QUIZ_ATTEMPT' };
+
+                const entry = {
+                    id: Date.now().toString(),
+                    date: new Date().toISOString(),
+                    testName: test.title,
+                    score: totalScore,
+                    maxMarks: totalMaxMarks,
+                    details: questionAnalytics,
+                    type: 'QUIZ_ATTEMPT'
+                };
+                onSaveToNotebook(notebookId, entry);
+                setSaveModal(false);
+                alert("Deep Analysis saved successfully!");
             };
 
             const q = questions[idx];
 
-            // Render Dashboard on Submit
-            if (isSubmitted) {
-                const resultEntry = getResultEntry();
-                // Ensure ResultDashboard is defined ABOVE Player in the file
-                return typeof ResultDashboard !== 'undefined' ? (
-                    <ResultDashboard 
-                        entry={resultEntry} 
-                        onBack={onBack} 
-                        onRemix={(newTest) => alert("Please save analysis first, then use Remix from Notebook.")}
-                        onSave={() => {
-                            if(notebooks.length === 0) return alert("Please create a notebook first!");
-                            onSaveToNotebook(notebooks[0].id, resultEntry);
-                            alert("Saved to " + notebooks[0].title);
-                        }}
-                    />
-                ) : <div className="p-10 text-red-600">Error: ResultDashboard component missing.</div>;
-            }
+            // --- RESULT SCREEN ---
+            if (isSubmitted) return (
+                <div className="h-screen flex flex-col bg-slate-50 font-sans">
+                     {saveModal && (
+                        <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-[100] p-4 backdrop-blur-sm animate-in fade-in">
+                            <div className="bg-white rounded-xl p-6 w-full max-w-sm shadow-2xl">
+                                <h3 className="font-bold text-lg mb-2 text-slate-800">Save to Notebook</h3>
+                                <div className="space-y-2 max-h-60 overflow-y-auto mb-4">
+                                    {notebooks && notebooks.map(nb => (
+                                        <button key={nb.id} onClick={() => saveResult(nb.id)} className="w-full text-left p-3 rounded-lg hover:bg-indigo-50 border border-slate-100 font-medium text-slate-700 flex items-center gap-2 group transition-colors">
+                                            <Icon name="BookMarked" className="w-4 h-4 text-slate-400 group-hover:text-indigo-600" />
+                                            {nb.title}
+                                        </button>
+                                    ))}
+                                    {(!notebooks || notebooks.length === 0) && <div className="text-center py-4 bg-slate-50 rounded-lg border border-dashed text-xs text-slate-500">No notebooks found.</div>}
+                                </div>
+                                <button onClick={() => setSaveModal(false)} className="w-full py-2.5 bg-slate-100 rounded-lg text-slate-600 font-bold hover:bg-slate-200 transition-colors">Cancel</button>
+                            </div>
+                        </div>
+                    )}
+                    <div className="bg-white border-b px-6 py-4 flex justify-between items-center shadow-sm shrink-0">
+                        <h2 className="text-xl font-bold text-slate-800">Result Analysis</h2>
+                        <div className="flex gap-2">
+                             <button onClick={() => setSaveModal(true)} className="flex items-center gap-2 bg-indigo-600 text-white px-4 py-2 rounded-lg font-bold hover:bg-indigo-700 shadow-sm transition-transform active:scale-95"><Icon name="BookMarked" className="w-4 h-4" /> Save Analysis</button>
+                            <button onClick={onBack} className="text-slate-500 hover:text-slate-700 font-medium px-4">Exit</button>
+                        </div>
+                    </div>
+                    <div className="flex-1 overflow-y-auto p-8">
+                        <div className="max-w-4xl mx-auto space-y-8">
+                            <div className="bg-white p-6 rounded-2xl shadow-sm border flex justify-around text-center">
+                                <div><div className="text-sm text-slate-500 uppercase font-bold">Total Score</div><div className="text-4xl font-black text-indigo-600 mt-2">{totalScore} <span className="text-lg text-slate-300">/ {totalMaxMarks}</span></div></div>
+                                <div><div className="text-sm text-slate-500 uppercase font-bold">Questions</div><div className="text-4xl font-black text-slate-700 mt-2">{questions.length}</div></div>
+                                <div><div className="text-sm text-slate-500 uppercase font-bold">Accuracy</div><div className="text-4xl font-black text-green-600 mt-2">{accuracy}%</div></div>
+                            </div>
+                            <div className="space-y-6">
+                                {questions.map((q, i) => {
+                                    const userAns = ans[q.id];
+                                    const result = calculatePoints(q, userAns); 
+                                    const timeSpent = questionTimes[i] || 0;
+                                    // Use heatmap color for time display if it was slow
+                                    const timeColor = timeSpent > heatConfig.slow ? "text-red-600 font-bold" : "text-slate-500";
 
+                                    return (
+                                        <div key={q.id} className={`bg-white p-6 rounded-xl border-l-4 shadow-sm ${result.status==='Unattempted' ? 'border-slate-300' : result.score > 0 ? 'border-green-500' : 'border-red-500'}`}>
+                                            <div className="flex justify-between mb-4">
+                                                <div className="flex items-center gap-3">
+                                                    <span className="font-bold text-slate-700">Question {i+1}</span>
+                                                    {/* NEW: Result Screen Time Display */}
+                                                    <span className={`text-xs flex items-center gap-1 ${timeColor}`}>
+                                                        <Icon name="Clock" className="w-3 h-3" /> {formatDuration(timeSpent)}
+                                                    </span>
+                                                </div>
+                                                <span className={`text-xs font-bold px-2 py-1 rounded ${result.color}`}>{result.status}</span>
+                                            </div>
+                                            <div className="mb-4 text-slate-800"><LatexRenderer content={q.text} /></div>
+                                            {q.diagram && <img src={q.diagram} className="max-w-xs max-h-48 object-contain mb-4 rounded border" />}
+                                            {(q.type === 'SINGLE' || q.type === 'MULTI') && (
+                                                <div className="grid grid-cols-2 gap-2 mb-4">
+                                                    {q.options?.map((opt, oIdx) => {
+                                                        const isUserSel = q.type === 'MULTI' ? userAns?.includes(oIdx) : userAns === oIdx;
+                                                        const isRight = q.type === 'MULTI' ? q.correctIndices?.includes(oIdx) : q.correctIndex === oIdx;
+                                                        let bg = "bg-slate-50 border-slate-200";
+                                                        if (isRight) bg = "bg-green-50 border-green-500 text-green-800";
+                                                        else if (isUserSel && !isRight) bg = "bg-red-50 border-red-500 text-red-800";
+                                                        return <div key={oIdx} className={`p-3 rounded-lg border flex items-center gap-2 text-sm ${bg}`}><span className="font-bold">{String.fromCharCode(65+oIdx)}</span> <LatexRenderer content={opt} />{isUserSel && <span className="ml-auto text-[10px] font-bold uppercase">Your Ans</span>}</div>;
+                                                    })}
+                                                </div>
+                                            )}
+                                            <div className="bg-slate-50 p-4 rounded-lg text-sm text-slate-700"><strong className="block text-indigo-600 mb-1">Explanation:</strong><LatexRenderer content={q.explanation || "No explanation provided."} /></div>
+                                        </div>
+                                    );
+                                })}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            );
+
+            // --- QUIZ TAKING SCREEN ---
             return (
                 <div className="h-screen flex flex-col bg-slate-50">
                     <div className="bg-white border-b px-4 py-2 flex justify-between items-center shadow-sm shrink-0 h-16">
@@ -2604,9 +2717,9 @@ const Editor = ({ test, onUpdateTest, onBack, onPlay, onPrint, apiKey, onRequest
                         <div className="flex items-center gap-4">
                             <button onClick={() => { if(confirm("Restarting will erase current progress. Sure?")) { localStorage.removeItem(storageKey); setAns({}); setTimeLeft(duration*60); setQuestionTimes(new Array(questions.length).fill(0)); setMarked(new Set()); setIdx(0); } }} className="text-xs font-bold text-red-400 hover:text-red-600 hover:bg-red-50 px-2 py-1 rounded">Restart</button>
                             <div className="flex items-center gap-2 bg-slate-100 px-3 py-1.5 rounded-lg text-slate-700 font-mono font-bold">
-                                <Icon name="Clock" className="w-4 h-4" /> {formatTime(timeLeft)}
+                                <Icon name="Clock" className="w-4 h-4" /> {timeLeft > 36000 ? "∞" : formatTime(timeLeft)}
                             </div>
-                            <button onClick={() => finishQuiz(false)} className="bg-indigo-600 text-white px-6 py-2 rounded-lg font-bold hover:bg-indigo-700 shadow-sm text-sm">Submit</button>
+                            <button onClick={() => finishQuiz(false)} className="bg-indigo-600 text-white px-6 py-2 rounded-lg font-bold hover:bg-indigo-700 shadow-sm text-sm">Submit Test</button>
                         </div>
                         <button onClick={() => setShowPalette(!showPalette)} className="md:hidden"><Icon name="Grid" /></button>
                     </div>
@@ -2624,19 +2737,30 @@ const Editor = ({ test, onUpdateTest, onBack, onPlay, onPrint, apiKey, onRequest
                                 <div className="flex justify-between items-start mb-6">
                                     <div className="flex items-center gap-3">
                                         <span className="text-xl font-bold text-slate-400">Q{idx+1}</span>
-                                        <span className={`text-xs font-bold font-mono px-2 py-1 rounded flex items-center gap-1 ${questionTimes[idx] > heatConfig.slow ? 'bg-red-100 text-red-600 animate-pulse' : 'bg-slate-100 text-slate-500'}`}><Icon name="Clock" className="w-3 h-3" />{formatDuration(questionTimes[idx] || 0)}</span>
-                                        <span className="text-xs font-bold bg-slate-200 text-slate-600 px-2 py-1 rounded uppercase tracking-wider">{q?.type}</span>
-                                        <span className="text-xs font-bold text-slate-400">+{q?.marks?.pos} / -{q?.marks?.neg}</span>
+                                        
+                                        {/* NEW: LIVE PER-QUESTION TIMER */}
+                                        <span className={`text-xs font-bold font-mono px-2 py-1 rounded flex items-center gap-1 ${questionTimes[idx] > heatConfig.slow ? 'bg-red-100 text-red-600 animate-pulse' : 'bg-slate-100 text-slate-500'}`}>
+                                            <Icon name="Clock" className="w-3 h-3" />
+                                            {formatDuration(questionTimes[idx] || 0)}
+                                        </span>
+
+                                        <span className="text-xs font-bold bg-slate-200 text-slate-600 px-2 py-1 rounded uppercase tracking-wider">{q.type}</span>
+                                        <span className="text-xs font-bold text-slate-400">+{q.marks?.pos} / -{q.marks?.neg}</span>
                                     </div>
                                     <div className="flex gap-2">
-                                        <button onClick={toggleMark} className={`flex items-center gap-2 px-3 py-1.5 rounded-lg font-bold text-sm transition-all ${marked.has(idx) ? 'bg-amber-100 text-amber-700 border border-amber-300' : 'bg-white border border-slate-200 text-slate-500 hover:bg-slate-50'}`}><Icon name="Flag" className={`w-4 h-4 ${marked.has(idx) ? 'fill-current' : ''}`} />{marked.has(idx) ? 'Marked' : 'Mark'}</button>
-                                        <button onClick={() => handleAns('')} className="px-3 py-1.5 text-sm text-red-500 hover:bg-red-50 rounded-lg border hover:border-red-100">Clear</button>
+                                        <button onClick={toggleMark} className={`flex items-center gap-2 px-3 py-1.5 rounded-lg font-bold text-sm transition-all ${marked.has(idx) ? 'bg-amber-100 text-amber-700 border border-amber-300' : 'bg-white border border-slate-200 text-slate-500 hover:bg-slate-50'}`}>
+                                            <Icon name="Flag" className={`w-4 h-4 ${marked.has(idx) ? 'fill-current' : ''}`} />
+                                            {marked.has(idx) ? 'Marked' : 'Mark for Review'}
+                                        </button>
+                                        <button onClick={() => handleAns('')} className="px-3 py-1.5 text-sm text-red-500 hover:bg-red-50 rounded-lg font-medium border border-transparent hover:border-red-100">Clear</button>
                                     </div>
                                 </div>
-                                <div className="text-lg text-slate-800 leading-relaxed mb-8"><LatexRenderer content={q?.text || ""} /></div>
-                                {q?.diagram && <img src={q.diagram} className="mt-4 max-h-64 object-contain rounded-lg border border-slate-200" />}
+                                <div className="text-lg text-slate-800 leading-relaxed mb-8">
+                                    <LatexRenderer content={q.text} />
+                                    {q.diagram && <img src={q.diagram} className="mt-4 max-h-64 object-contain rounded-lg border border-slate-200" />}
+                                </div>
                                 <div className="space-y-3">
-                                    {(q?.type === 'SINGLE' || q?.type === 'MULTI' || !q?.type) && q?.options?.map((opt, oIdx) => {
+                                    {(q.type === 'SINGLE' || q.type === 'MULTI' || !q.type) && q.options?.map((opt, oIdx) => {
                                         const isSel = q.type === 'MULTI' ? ans[q.id]?.includes(oIdx) : ans[q.id] === oIdx;
                                         return (
                                             <div key={oIdx} onClick={() => handleAns(oIdx)} className={`p-4 rounded-xl border-2 cursor-pointer transition-all flex items-center gap-4 group ${isSel ? 'border-indigo-600 bg-indigo-50' : 'border-slate-200 hover:border-indigo-300 hover:bg-slate-50'}`}>
@@ -2645,8 +2769,8 @@ const Editor = ({ test, onUpdateTest, onBack, onPlay, onPrint, apiKey, onRequest
                                             </div>
                                         );
                                     })}
-                                    {q?.type === 'NUMERICAL' && (
-                                        <div><label className="block text-sm font-bold text-slate-500 mb-2">Your Answer</label><input type="text" value={ans[q?.id] || ''} onChange={e => handleAns(e.target.value)} className="w-full md:w-1/2 p-4 text-xl border-2 border-slate-300 rounded-xl focus:border-indigo-500 outline-none font-mono" placeholder="Enter numerical value..." /></div>
+                                    {q.type === 'NUMERICAL' && (
+                                        <div><label className="block text-sm font-bold text-slate-500 mb-2">Your Answer</label><input type="text" value={ans[q.id] || ''} onChange={e => handleAns(e.target.value)} className="w-full md:w-1/2 p-4 text-xl border-2 border-slate-300 rounded-xl focus:border-indigo-500 outline-none font-mono" placeholder="Enter numerical value..." /></div>
                                     )}
                                 </div>
                                 <div className="flex justify-between mt-10 pt-6 border-t border-slate-100">
@@ -2656,16 +2780,29 @@ const Editor = ({ test, onUpdateTest, onBack, onPlay, onPrint, apiKey, onRequest
                             </div>
                         </div>
 
-                        {/* Palette & Settings */}
+                        {/* --- CRAZY ENHANCED PALETTE --- */}
                         <div className={`${showPalette ? 'w-80' : 'w-0'} bg-white border-l transition-all duration-300 flex flex-col shrink-0 overflow-hidden`}>
                             <div className="p-4 border-b bg-slate-50 relative">
                                 <div className="flex justify-between items-center mb-4">
                                     <h3 className="font-bold text-sm uppercase text-slate-700 flex items-center gap-2"><Icon name="Grid" /> Palette</h3>
                                     <div className="flex gap-1">
-                                        <button onClick={() => setShowHeatSettings(!showHeatSettings)} className="p-1.5 rounded-lg bg-slate-100 text-slate-500 hover:bg-slate-200" title="Heatmap Settings"><Icon name="Settings" className="w-4 h-4" /></button>
-                                        <button onClick={() => setHeatmapMode(!heatmapMode)} className={`p-1.5 rounded-lg transition-colors ${heatmapMode ? 'bg-orange-100 text-orange-600' : 'bg-slate-200 text-slate-400'}`} title="Toggle Time-Stress Heatmap"><Icon name="BarChart" className="w-4 h-4" /></button>
+                                        <button 
+                                            onClick={() => setShowHeatSettings(!showHeatSettings)} 
+                                            className="p-1.5 rounded-lg bg-slate-100 text-slate-500 hover:bg-slate-200"
+                                            title="Heatmap Settings"
+                                        >
+                                            <Icon name="Settings" className="w-4 h-4" />
+                                        </button>
+                                        <button 
+                                            onClick={() => setHeatmapMode(!heatmapMode)} 
+                                            className={`p-1.5 rounded-lg transition-colors ${heatmapMode ? 'bg-orange-100 text-orange-600' : 'bg-slate-200 text-slate-400'}`}
+                                            title="Toggle Time-Stress Heatmap"
+                                        >
+                                            <Icon name="BarChart" className="w-4 h-4" />
+                                        </button>
                                     </div>
                                 </div>
+
                                 {showHeatSettings && (
                                     <div className="absolute top-12 right-2 bg-white border shadow-xl rounded-lg p-3 z-50 w-48 animate-in zoom-in-95">
                                         <h4 className="text-[10px] font-bold uppercase text-slate-500 mb-2">Time Thresholds (Sec)</h4>
@@ -2676,10 +2813,20 @@ const Editor = ({ test, onUpdateTest, onBack, onPlay, onPrint, apiKey, onRequest
                                         <button onClick={() => setShowHeatSettings(false)} className="w-full mt-2 bg-indigo-50 text-indigo-700 text-xs font-bold py-1 rounded">Close</button>
                                     </div>
                                 )}
+
                                 <div className="flex bg-slate-200 p-1 rounded-lg">
-                                    {['all', 'left', 'done', 'marked'].map(f => <button key={f} onClick={() => setPaletteFilter(f)} className={`flex-1 py-1 text-[10px] font-bold uppercase rounded-md transition-all ${paletteFilter === f ? 'bg-white text-indigo-700 shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}>{f}</button>)}
+                                    {['all', 'left', 'done', 'marked'].map(f => (
+                                        <button 
+                                            key={f} 
+                                            onClick={() => setPaletteFilter(f)}
+                                            className={`flex-1 py-1 text-[10px] font-bold uppercase rounded-md transition-all ${paletteFilter === f ? 'bg-white text-indigo-700 shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}
+                                        >
+                                            {f}
+                                        </button>
+                                    ))}
                                 </div>
                             </div>
+                            
                             <div className="flex-1 overflow-y-auto p-4">
                                 <div className="grid grid-cols-5 gap-2">
                                     {questions.map((qItem, i) => {
@@ -2690,19 +2837,29 @@ const Editor = ({ test, onUpdateTest, onBack, onPlay, onPrint, apiKey, onRequest
 
                                         let baseStyle = "bg-slate-100 text-slate-500 border-slate-200";
                                         if (heatmapMode) {
-                                            const sec = questionTimes[i] || 0;
-                                            if(sec < heatConfig.fast) baseStyle = "bg-green-100 border-green-300 text-green-700";
-                                            else if(sec < heatConfig.slow) baseStyle = "bg-yellow-100 border-yellow-300 text-yellow-700";
-                                            else baseStyle = "bg-red-100 border-red-300 text-red-700 font-bold animate-pulse";
+                                            baseStyle = getHeatColor(questionTimes[i]);
                                         } else {
                                             if (st === 'marked') baseStyle = "bg-amber-100 text-amber-700 border-amber-300";
                                             else if (st === 'answered') baseStyle = "bg-green-100 text-green-700 border-green-300";
                                             else if (st === 'current') baseStyle = "ring-2 ring-indigo-500 ring-offset-2 border-indigo-300 bg-white text-indigo-700";
                                         }
-                                        return <button key={i} onClick={() => setIdx(i)} className={`h-10 w-full rounded-lg border font-bold text-sm flex items-center justify-center transition-all relative ${baseStyle}`}>{i+1}{marked.has(i) && !heatmapMode && <div className="absolute top-0 right-0 w-2 h-2 bg-amber-500 rounded-full -mr-1 -mt-1 ring-2 ring-white"></div>}</button>;
+
+                                        return (
+                                            <button 
+                                                key={i} 
+                                                onClick={() => setIdx(i)} 
+                                                onMouseEnter={(e) => setHoverPreview({ x: e.clientX, y: e.clientY, text: qItem.text.substring(0, 100) + "..." })}
+                                                onMouseLeave={() => setHoverPreview(null)}
+                                                className={`h-10 w-full rounded-lg border font-bold text-sm flex items-center justify-center transition-all relative ${baseStyle} ${idx===i && !heatmapMode ? 'ring-2 ring-indigo-500 ring-offset-2' : ''}`}
+                                            >
+                                                {i+1}
+                                                {marked.has(i) && !heatmapMode && <div className="absolute top-0 right-0 w-2 h-2 bg-amber-500 rounded-full -mr-1 -mt-1 ring-2 ring-white"></div>}
+                                            </button>
+                                        );
                                     })}
                                 </div>
                             </div>
+                            
                             <div className="p-3 bg-slate-50 border-t text-[10px] text-slate-500 flex justify-between font-mono">
                                 <span>Done: {Object.keys(ans).filter(k => ans[k] !== '').length}</span>
                                 <span>Left: {questions.length - Object.keys(ans).filter(k => ans[k] !== '').length}</span>
@@ -3128,6 +3285,7 @@ const QuizForge = () => {
     </script>
 </body>
 </html>
+
 
 
 
