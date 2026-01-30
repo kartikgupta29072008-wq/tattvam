@@ -2436,11 +2436,11 @@ const Editor = ({ test, onUpdateTest, onBack, onPlay, onPrint, apiKey, onRequest
         };
       // --- FIXED PLAYER COMPONENT (No Crash) ---
       // --- 2. PLAYER COMPONENT (Defined AFTER ResultDashboard) ---
-      // --- FIXED PLAYER COMPONENT (Crash-Proof) ---
+     // --- FIXED PLAYER COMPONENT (CRASH PROOF) ---
         const Player = ({ test, duration, onBack, notebooks, onSaveToNotebook }) => {
             const storageKey = `tattvam_progress_${test?.id}`;
 
-            // --- 1. SMART HYDRATION (Hooks must run first) ---
+            // --- 1. DEFINE HOOKS FIRST (Before any return statement) ---
             const { activeQuestions, savedState } = React.useMemo(() => {
                 if (!test || !test.questions) return { activeQuestions: [], savedState: null };
                 try {
@@ -2450,27 +2450,20 @@ const Editor = ({ test, onUpdateTest, onBack, onPlay, onPrint, apiKey, onRequest
                         const ordered = saved.order.map(id => qMap.get(id)).filter(q => q);
                         if (ordered.length === test.questions.length) return { activeQuestions: ordered, savedState: saved };
                     }
-                } catch (e) {}
+                } catch (e) { console.warn("Resume data invalid"); }
                 return { activeQuestions: test.questions, savedState: null };
             }, [test?.id, test?.questions]);
 
-            // --- 2. STATE DEFINITIONS ---
             const [questions, setQuestions] = useState(activeQuestions);
-            
-            // Safe Index Initialization
-            const [idx, setIdx] = useState(() => {
-                if (savedState?.idx && savedState.idx < activeQuestions.length) return savedState.idx;
-                return 0;
-            });
-
+            const [idx, setIdx] = useState(() => (savedState?.idx < (activeQuestions?.length || 0) ? savedState.idx : 0));
             const [ans, setAns] = useState(savedState?.ans || {});
-            const [timeLeft, setTimeLeft] = useState(savedState?.timeLeft ?? duration * 60);
+            const [timeLeft, setTimeLeft] = useState(savedState?.timeLeft ?? (duration ? duration * 60 : 180 * 60));
             const [isSubmitted, setIsSubmitted] = useState(false);
             const [showPalette, setShowPalette] = useState(true);
             const [saveModal, setSaveModal] = useState(false);
 
-            // Analysis
-            const [questionTimes, setQuestionTimes] = useState(savedState?.questionTimes || new Array(questions.length).fill(0));
+            // Analysis State
+            const [questionTimes, setQuestionTimes] = useState(savedState?.questionTimes || new Array(questions?.length || 0).fill(0));
             const [marked, setMarked] = useState(new Set(savedState?.marked || []));
             const [heatmapMode, setHeatmapMode] = useState(false); 
             const [heatConfig, setHeatConfig] = useState({ fast: 30, slow: 90 });
@@ -2478,19 +2471,18 @@ const Editor = ({ test, onUpdateTest, onBack, onPlay, onPrint, apiKey, onRequest
             const [hoverPreview, setHoverPreview] = useState(null); 
             const [paletteFilter, setPaletteFilter] = useState('all');
 
-            // --- 3. SAFETY GUARD (Now placed correctly AFTER hooks) ---
-            if (!test || !test.questions || questions.length === 0) {
+            // --- 2. SAFETY CHECK (Now placed AFTER hooks to prevent crash) ---
+            if (!test || !test.questions || !Array.isArray(test.questions) || questions.length === 0) {
                 return (
-                    <div className="flex h-screen flex-col items-center justify-center text-slate-400">
-                        <Icon name="Loader2" className="animate-spin w-10 h-10 mb-2" />
-                        <p>Loading Quiz...</p>
+                    <div className="h-screen flex flex-col items-center justify-center text-slate-400 bg-slate-50">
+                        <Icon name="Loader2" className="animate-spin w-10 h-10 mb-4" />
+                        <p className="font-bold">Loading Assessment...</p>
                         <button onClick={onBack} className="mt-4 text-xs underline hover:text-slate-600">Back to Dashboard</button>
                     </div>
                 );
             }
 
-            // --- 4. LOGIC & EFFECTS ---
-            // Auto-Save
+            // --- 3. EFFECTS & LOGIC ---
             useEffect(() => {
                 if (!isSubmitted) {
                     const payload = {
@@ -2502,13 +2494,16 @@ const Editor = ({ test, onUpdateTest, onBack, onPlay, onPrint, apiKey, onRequest
                 }
             }, [idx, ans, timeLeft, questionTimes, marked, isSubmitted]);
 
-            // Timer
             useEffect(() => {
                 if (isSubmitted) return;
                 if (timeLeft === 0) { finishQuiz(true); return; }
                 const timer = setInterval(() => {
                     setTimeLeft(p => p - 1);
-                    setQuestionTimes(p => { const n = [...p]; n[idx] = (n[idx] || 0) + 1; return n; });
+                    setQuestionTimes(p => { 
+                        const n = [...p]; 
+                        if(n[idx] !== undefined) n[idx] = n[idx] + 1; 
+                        return n; 
+                    });
                 }, 1000);
                 return () => clearInterval(timer);
             }, [isSubmitted, timeLeft, idx]);
@@ -2519,6 +2514,7 @@ const Editor = ({ test, onUpdateTest, onBack, onPlay, onPrint, apiKey, onRequest
             const handleAns = (val) => {
                 if(isSubmitted) return;
                 const q = questions[idx];
+                if (!q) return;
                 if(q.type === 'MULTI') {
                     const cur = ans[q.id] || [];
                     setAns({...ans, [q.id]: cur.includes(val) ? cur.filter(x=>x!==val) : [...cur, val]});
@@ -2526,6 +2522,7 @@ const Editor = ({ test, onUpdateTest, onBack, onPlay, onPrint, apiKey, onRequest
             };
 
             const toggleMark = () => { const n = new Set(marked); if(n.has(idx)) n.delete(idx); else n.add(idx); setMarked(n); };
+            
             const finishQuiz = (auto) => { 
                 if(auto || confirm("Submit Test?")) { setIsSubmitted(true); localStorage.removeItem(storageKey); if(auto) alert("Time Up!"); } 
             };
@@ -2557,15 +2554,12 @@ const Editor = ({ test, onUpdateTest, onBack, onPlay, onPrint, apiKey, onRequest
             };
 
             const q = questions[idx];
-            if (!q) return <div>Error: Index out of bounds.</div>;
 
             // Render Dashboard on Submit
             if (isSubmitted) {
                 const resultEntry = getResultEntry();
-                // Check if ResultDashboard exists
-                if (typeof ResultDashboard === 'undefined') return <div className="p-10 text-red-600">Error: ResultDashboard component missing. Ensure it is defined ABOVE Player.</div>;
-                
-                return (
+                // Ensure ResultDashboard is defined ABOVE Player in the file
+                return typeof ResultDashboard !== 'undefined' ? (
                     <ResultDashboard 
                         entry={resultEntry} 
                         onBack={onBack} 
@@ -2576,7 +2570,7 @@ const Editor = ({ test, onUpdateTest, onBack, onPlay, onPrint, apiKey, onRequest
                             alert("Saved to " + notebooks[0].title);
                         }}
                     />
-                );
+                ) : <div className="p-10 text-red-600">Error: ResultDashboard component missing.</div>;
             }
 
             return (
@@ -2593,7 +2587,7 @@ const Editor = ({ test, onUpdateTest, onBack, onPlay, onPrint, apiKey, onRequest
                             <div className="flex items-center gap-2 bg-slate-100 px-3 py-1.5 rounded-lg text-slate-700 font-mono font-bold">
                                 <Icon name="Clock" className="w-4 h-4" /> {formatTime(timeLeft)}
                             </div>
-                            <button onClick={() => finishQuiz(false)} className="bg-indigo-600 text-white px-6 py-2 rounded-lg font-bold hover:bg-indigo-700 shadow-sm text-sm">Submit Test</button>
+                            <button onClick={() => finishQuiz(false)} className="bg-indigo-600 text-white px-6 py-2 rounded-lg font-bold hover:bg-indigo-700 shadow-sm text-sm">Submit</button>
                         </div>
                         <button onClick={() => setShowPalette(!showPalette)} className="md:hidden"><Icon name="Grid" /></button>
                     </div>
@@ -2612,23 +2606,18 @@ const Editor = ({ test, onUpdateTest, onBack, onPlay, onPrint, apiKey, onRequest
                                     <div className="flex items-center gap-3">
                                         <span className="text-xl font-bold text-slate-400">Q{idx+1}</span>
                                         <span className={`text-xs font-bold font-mono px-2 py-1 rounded flex items-center gap-1 ${questionTimes[idx] > heatConfig.slow ? 'bg-red-100 text-red-600 animate-pulse' : 'bg-slate-100 text-slate-500'}`}><Icon name="Clock" className="w-3 h-3" />{formatDuration(questionTimes[idx] || 0)}</span>
-                                        <span className="text-xs font-bold bg-slate-200 text-slate-600 px-2 py-1 rounded uppercase tracking-wider">{q.type}</span>
-                                        <span className="text-xs font-bold text-slate-400">+{q.marks?.pos} / -{q.marks?.neg}</span>
+                                        <span className="text-xs font-bold bg-slate-200 text-slate-600 px-2 py-1 rounded uppercase tracking-wider">{q?.type}</span>
+                                        <span className="text-xs font-bold text-slate-400">+{q?.marks?.pos} / -{q?.marks?.neg}</span>
                                     </div>
                                     <div className="flex gap-2">
-                                        <button onClick={toggleMark} className={`flex items-center gap-2 px-3 py-1.5 rounded-lg font-bold text-sm transition-all ${marked.has(idx) ? 'bg-amber-100 text-amber-700 border border-amber-300' : 'bg-white border border-slate-200 text-slate-500 hover:bg-slate-50'}`}>
-                                            <Icon name="Flag" className={`w-4 h-4 ${marked.has(idx) ? 'fill-current' : ''}`} />
-                                            {marked.has(idx) ? 'Marked' : 'Mark for Review'}
-                                        </button>
+                                        <button onClick={toggleMark} className={`flex items-center gap-2 px-3 py-1.5 rounded-lg font-bold text-sm transition-all ${marked.has(idx) ? 'bg-amber-100 text-amber-700 border border-amber-300' : 'bg-white border border-slate-200 text-slate-500 hover:bg-slate-50'}`}><Icon name="Flag" className={`w-4 h-4 ${marked.has(idx) ? 'fill-current' : ''}`} />{marked.has(idx) ? 'Marked' : 'Mark'}</button>
                                         <button onClick={() => handleAns('')} className="px-3 py-1.5 text-sm text-red-500 hover:bg-red-50 rounded-lg border hover:border-red-100">Clear</button>
                                     </div>
                                 </div>
-                                <div className="text-lg text-slate-800 leading-relaxed mb-8">
-                                    <LatexRenderer content={q.text} />
-                                    {q.diagram && <img src={q.diagram} className="mt-4 max-h-64 object-contain rounded-lg border border-slate-200" />}
-                                </div>
+                                <div className="text-lg text-slate-800 leading-relaxed mb-8"><LatexRenderer content={q?.text || ""} /></div>
+                                {q?.diagram && <img src={q.diagram} className="mt-4 max-h-64 object-contain rounded-lg border border-slate-200" />}
                                 <div className="space-y-3">
-                                    {(q.type === 'SINGLE' || q.type === 'MULTI' || !q.type) && q.options?.map((opt, oIdx) => {
+                                    {(q?.type === 'SINGLE' || q?.type === 'MULTI' || !q?.type) && q?.options?.map((opt, oIdx) => {
                                         const isSel = q.type === 'MULTI' ? ans[q.id]?.includes(oIdx) : ans[q.id] === oIdx;
                                         return (
                                             <div key={oIdx} onClick={() => handleAns(oIdx)} className={`p-4 rounded-xl border-2 cursor-pointer transition-all flex items-center gap-4 group ${isSel ? 'border-indigo-600 bg-indigo-50' : 'border-slate-200 hover:border-indigo-300 hover:bg-slate-50'}`}>
@@ -2637,8 +2626,8 @@ const Editor = ({ test, onUpdateTest, onBack, onPlay, onPrint, apiKey, onRequest
                                             </div>
                                         );
                                     })}
-                                    {q.type === 'NUMERICAL' && (
-                                        <div><label className="block text-sm font-bold text-slate-500 mb-2">Your Answer</label><input type="text" value={ans[q.id] || ''} onChange={e => handleAns(e.target.value)} className="w-full md:w-1/2 p-4 text-xl border-2 border-slate-300 rounded-xl focus:border-indigo-500 outline-none font-mono" placeholder="Enter numerical value..." /></div>
+                                    {q?.type === 'NUMERICAL' && (
+                                        <div><label className="block text-sm font-bold text-slate-500 mb-2">Your Answer</label><input type="text" value={ans[q?.id] || ''} onChange={e => handleAns(e.target.value)} className="w-full md:w-1/2 p-4 text-xl border-2 border-slate-300 rounded-xl focus:border-indigo-500 outline-none font-mono" placeholder="Enter numerical value..." /></div>
                                     )}
                                 </div>
                                 <div className="flex justify-between mt-10 pt-6 border-t border-slate-100">
@@ -3120,6 +3109,7 @@ const QuizForge = () => {
     </script>
 </body>
 </html>
+
 
 
 
