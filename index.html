@@ -1175,7 +1175,7 @@ const QuestionEditor = ({ question, onSave, onCancel, apiKey, onRequestKey }) =>
 // --- UPDATED ANALYSIS NOTEBOOK (LAUNCHES DASHBOARD) ---
 // --- UPDATED ANALYSIS NOTEBOOK (With Entry Deletion) ---
 // --- UPDATED ANALYSIS NOTEBOOK (With Persistence Support) ---
-const AnalysisNotebook = ({ notebook, onUpdate, onBack, apiKey, onRequestKey, onRemix }) => {
+const AnalysisNotebook = ({ notebook, onUpdate, onBack, apiKey, onRequestKey, onRemix, tests }) => {
     const [uploading, setUploading] = useState(false);
     const [analyzing, setAnalyzing] = useState(false);
     
@@ -1254,6 +1254,7 @@ const AnalysisNotebook = ({ notebook, onUpdate, onBack, apiKey, onRequestKey, on
                 entry={viewingEntry} 
                 onBack={() => setViewingEntry(null)}
                 onUpdateEntry={handleEntryUpdate} // PASSING THE UPDATE HANDLER
+allTests={tests}
             />
         );
     }
@@ -2143,25 +2144,29 @@ const Editor = ({ test, onUpdateTest, onBack, onPlay, onPrint, apiKey, onRequest
      // --- NEW: ADVANCED RESULT DASHBOARD (UNIFIED) ---
 // --- UPDATED RESULT DASHBOARD (With Inline Notebook Creation) ---
 // --- UPDATED RESULT DASHBOARD (With Answer Key Fixing) ---
-const ResultDashboard = ({ entry, onBack, onSave, savedNotebooks, onCreateNotebook, onUpdateEntry }) => {
-    // We use local state so updates (fixes) reflect immediately
+// --- COMPLETE & UPDATED RESULT DASHBOARD ---
+// --- COMPLETE & UPDATED RESULT DASHBOARD (Fixes Text Sync Issue) ---
+const ResultDashboard = ({ entry, onBack, onSave, savedNotebooks, onCreateNotebook, onUpdateEntry, allTests }) => {
+    // Local state to handle immediate updates (Fix Key / Sync)
     const [localEntry, setLocalEntry] = useState(entry);
     
     // UI States
     const [tab, setTab] = useState('overview'); 
     const [filter, setFilter] = useState('all'); 
     const [saveModal, setSaveModal] = useState(false);
+    
+    // Notebook Creation States
     const [isCreating, setIsCreating] = useState(false);
     const [newNbTitle, setNewNbTitle] = useState("");
 
-    // Correction Modal State
-    const [fixingQ, setFixingQ] = useState(null); // { id, type, current }
+    // Fix Key Modal States
+    const [fixingQ, setFixingQ] = useState(null); 
     const [fixValue, setFixValue] = useState("");
 
-    // --- RE-SYNC IF PROP CHANGES ---
+    // Re-sync local state if prop changes
     useEffect(() => { setLocalEntry(entry); }, [entry]);
 
-    // --- METRICS CALCULATION (Derived from localEntry) ---
+    // --- METRICS CALCULATION ---
     const totalQ = localEntry.details.length;
     const correctCount = localEntry.details.filter(d => d.status === 'correct').length;
     const wrongCount = localEntry.details.filter(d => d.status === 'wrong').length;
@@ -2182,95 +2187,120 @@ const ResultDashboard = ({ entry, onBack, onSave, savedNotebooks, onCreateNotebo
         return acc;
     }, {});
 
-    // --- KEY FIXING LOGIC ---
-    const handleSaveFix = () => {
-        if (!fixingQ) return;
+    // --- LOGIC 1: SYNC WITH MASTER TEST (FIXED) ---
+    const masterTest = allTests ? allTests.find(t => t.id === localEntry.testId) : null;
+    
+    const handleSyncWithMaster = () => {
+        if (!masterTest) return;
+        if (!confirm(`Update this result using the latest data from "${masterTest.title}"?\n\nThis will update question text, options, and re-calculate scores.`)) return;
 
         const updatedDetails = localEntry.details.map(d => {
-            if (d.id !== fixingQ.id) return d;
+            // Find live question
+            const liveQ = masterTest.questions.find(mq => mq.id === d.qData.id);
+            if (!liveQ) return d; // If deleted from master, keep existing
 
-            // 1. Update the Question Data with new Correct Answer
+            // Recalculate Score
+            let newStatus = 'left';
+            let newScore = 0;
+            const pos = liveQ.marks?.pos || 4;
+            const neg = liveQ.marks?.neg || 1;
+            const userAns = d.userAns;
+
+            // Helper to check if answered
+            const isAnswered = userAns !== undefined && userAns !== "" && (!Array.isArray(userAns) || userAns.length > 0);
+
+            if (isAnswered) {
+                if (liveQ.type === 'NUMERICAL') {
+                    if (String(userAns).trim() === String(liveQ.correctNum).trim()) { newStatus = 'correct'; newScore = pos; }
+                    else { newStatus = 'wrong'; newScore = -neg; }
+                } 
+                else if (liveQ.type === 'MULTI') {
+                    const correctIndices = liveQ.correctIndices || [];
+                    const selected = userAns || [];
+                    const hasWrong = selected.some(s => !correctIndices.includes(s));
+                    if (hasWrong) { newStatus = 'wrong'; newScore = -neg; }
+                    else if (selected.length === correctIndices.length) { newStatus = 'correct'; newScore = pos; }
+                    else { newStatus = 'partial'; newScore = selected.length; }
+                }
+                else { // SINGLE
+                    if (userAns === liveQ.correctIndex) { newStatus = 'correct'; newScore = pos; }
+                    else { newStatus = 'wrong'; newScore = -neg; }
+                }
+            }
+
+            return {
+                ...d,
+                text: liveQ.text, // <--- FIXED: Updates the visible question text
+                qData: liveQ,     // Updates options, diagrams, answer key
+                status: newStatus,
+                marks: newScore
+            };
+        });
+
+        // Recalculate Totals
+        const newTotal = updatedDetails.reduce((acc, d) => acc + d.marks, 0);
+        const newMax = updatedDetails.reduce((acc, d) => acc + (d.qData.marks?.pos || 0), 0);
+
+        const newEntry = {
+            ...localEntry,
+            testName: masterTest.title,
+            score: newTotal,
+            maxMarks: newMax,
+            details: updatedDetails
+        };
+
+        setLocalEntry(newEntry);
+        if (onUpdateEntry) onUpdateEntry(newEntry);
+        alert("✅ Result & Questions Synchronized!");
+    };
+
+    // --- LOGIC 2: MANUAL FIX KEY ---
+    const handleSaveFix = () => {
+        if (!fixingQ) return;
+        const updatedDetails = localEntry.details.map(d => {
+            if (d.id !== fixingQ.id) return d;
+            
             const newQData = { ...d.qData };
             let newStatus = 'left';
             let newScore = 0;
             const pos = newQData.marks?.pos || 4;
             const neg = newQData.marks?.neg || 1;
 
-            // Update Key & Recalculate
             if (fixingQ.type === 'NUMERICAL') {
                 newQData.correctNum = fixValue;
-                // Grading
-                if (!d.userAns) { newStatus = 'left'; newScore = 0; }
-                else if (String(d.userAns).trim() === String(fixValue).trim()) { newStatus = 'correct'; newScore = pos; }
-                else { newStatus = 'wrong'; newScore = -neg; }
+                if (d.userAns && String(d.userAns).trim() === String(fixValue).trim()) { newStatus = 'correct'; newScore = pos; }
+                else if (d.userAns) { newStatus = 'wrong'; newScore = -neg; }
             } 
             else if (fixingQ.type === 'SINGLE') {
                 const idx = parseInt(fixValue);
                 newQData.correctIndex = idx;
-                // Grading
-                if (d.userAns === undefined || d.userAns === null) { newStatus = 'left'; newScore = 0; }
-                else if (d.userAns === idx) { newStatus = 'correct'; newScore = pos; }
-                else { newStatus = 'wrong'; newScore = -neg; }
+                if (d.userAns === idx) { newStatus = 'correct'; newScore = pos; }
+                else if (d.userAns !== undefined) { newStatus = 'wrong'; newScore = -neg; }
             }
             else if (fixingQ.type === 'MULTI') {
-                // Expect comma separated indices for input
                 const indices = fixValue.split(',').map(s => parseInt(s.trim())).filter(n => !isNaN(n));
                 newQData.correctIndices = indices;
-                // Grading (Simple exact match for now)
                 const userSel = d.userAns || [];
-                if (userSel.length === 0) { newStatus = 'left'; newScore = 0; }
-                else {
-                    const hasWrong = userSel.some(s => !indices.includes(s));
-                    if (hasWrong) { newStatus = 'wrong'; newScore = -neg; }
-                    else if (userSel.length === indices.length) { newStatus = 'correct'; newScore = pos; }
-                    else { newStatus = 'partial'; newScore = userSel.length; } // Partial credit assumption
+                if (userSel.length > 0) {
+                     const hasWrong = userSel.some(s => !indices.includes(s));
+                     if (hasWrong) { newStatus = 'wrong'; newScore = -neg; }
+                     else if (userSel.length === indices.length) { newStatus = 'correct'; newScore = pos; }
+                     else { newStatus = 'partial'; newScore = userSel.length; }
                 }
             }
 
-            return {
-                ...d,
-                qData: newQData,
-                status: newStatus,
-                marks: newScore
-            };
+            return { ...d, qData: newQData, status: newStatus, marks: newScore };
         });
 
-        // 2. Recalculate Total Score
-        const newTotalScore = updatedDetails.reduce((acc, d) => acc + d.marks, 0);
-
-        const newEntry = {
-            ...localEntry,
-            score: newTotalScore,
-            details: updatedDetails
-        };
-
-        setLocalEntry(newEntry);
-        if (onUpdateEntry) onUpdateEntry(newEntry); // Persist changes up
-        setFixingQ(null);
-        setFixValue("");
-    };
-
-    const openFixModal = (d) => {
-        let val = "";
-        if (d.qData.type === 'NUMERICAL') val = d.qData.correctNum || "";
-        else if (d.qData.type === 'SINGLE') val = d.qData.correctIndex;
-        else if (d.qData.type === 'MULTI') val = (d.qData.correctIndices || []).join(',');
+        const newTotal = updatedDetails.reduce((acc, d) => acc + d.marks, 0);
+        const newEntry = { ...localEntry, score: newTotal, details: updatedDetails };
         
-        setFixValue(String(val));
-        setFixingQ({ id: d.id, type: d.qData.type || 'SINGLE', qNum: d.qNum });
+        setLocalEntry(newEntry);
+        if (onUpdateEntry) onUpdateEntry(newEntry);
+        setFixingQ(null);
     };
 
-    // --- HELPERS ---
-    const getStatusColor = (status) => {
-        switch(status) {
-            case 'correct': return 'bg-emerald-500 border-emerald-600 text-white';
-            case 'wrong': return 'bg-red-500 border-red-600 text-white';
-            case 'partial': return 'bg-amber-500 border-amber-600 text-white';
-            default: return 'bg-slate-200 border-slate-300 text-slate-500';
-        }
-    };
-    const formatTime = (s) => (s < 60 ? `${s}s` : `${Math.floor(s/60)}m ${s%60}s`);
-
+    // --- LOGIC 3: INLINE CREATE & SAVE ---
     const handleCreateAndSave = () => {
         if (!newNbTitle.trim()) return alert("Enter a title");
         if (onCreateNotebook) {
@@ -2282,6 +2312,16 @@ const ResultDashboard = ({ entry, onBack, onSave, savedNotebooks, onCreateNotebo
         }
     };
 
+    const getStatusColor = (status) => {
+        switch(status) {
+            case 'correct': return 'bg-emerald-500 border-emerald-600 text-white';
+            case 'wrong': return 'bg-red-500 border-red-600 text-white';
+            case 'partial': return 'bg-amber-500 border-amber-600 text-white';
+            default: return 'bg-slate-200 border-slate-300 text-slate-500';
+        }
+    };
+    const formatTime = (s) => (s < 60 ? `${s}s` : `${Math.floor(s/60)}m ${s%60}s`);
+
     return (
         <div className="h-full flex flex-col bg-slate-50 animate-in fade-in relative">
             
@@ -2290,24 +2330,17 @@ const ResultDashboard = ({ entry, onBack, onSave, savedNotebooks, onCreateNotebo
                 <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-[110] p-4 backdrop-blur-sm animate-in zoom-in-95">
                     <div className="bg-white rounded-xl p-6 w-full max-w-sm shadow-2xl">
                         <h3 className="font-bold text-lg text-slate-800 mb-2">Fix Answer Key (Q{fixingQ.qNum})</h3>
-                        <p className="text-xs text-slate-500 mb-4">Enter the correct answer. The score will update instantly.</p>
-                        
-                        <div className="mb-4">
-                            <label className="text-xs font-bold text-indigo-600 uppercase block mb-1">
-                                Correct {fixingQ.type === 'SINGLE' ? 'Option Index (0=A, 1=B...)' : fixingQ.type === 'MULTI' ? 'Indices (0,1 for A,B)' : 'Value'}
-                            </label>
-                            <input 
-                                autoFocus
-                                value={fixValue} 
-                                onChange={e => setFixValue(e.target.value)} 
-                                className="w-full p-3 border-2 border-indigo-100 rounded-lg font-mono text-lg focus:border-indigo-500 outline-none"
-                            />
-                            {fixingQ.type === 'SINGLE' && <p className="text-[10px] text-slate-400 mt-1">Example: Enter 0 for A, 1 for B.</p>}
-                        </div>
-
+                        <p className="text-xs text-slate-500 mb-4">Enter correct answer. Score updates instantly.</p>
+                        <input 
+                            autoFocus 
+                            value={fixValue} 
+                            onChange={e => setFixValue(e.target.value)} 
+                            className="w-full p-3 border-2 border-indigo-100 rounded-lg font-mono text-lg mb-4 focus:border-indigo-500 outline-none"
+                            placeholder={fixingQ.type === 'SINGLE' ? '0 for A, 1 for B...' : 'Value'} 
+                        />
                         <div className="flex gap-2">
-                            <button onClick={() => setFixingQ(null)} className="flex-1 py-3 text-slate-500 font-bold hover:bg-slate-100 rounded-lg">Cancel</button>
-                            <button onClick={handleSaveFix} className="flex-1 py-3 bg-indigo-600 text-white font-bold rounded-lg hover:bg-indigo-700 shadow-md">Update & Recalculate</button>
+                            <button onClick={() => setFixingQ(null)} className="flex-1 py-3 text-slate-500 font-bold bg-slate-100 rounded-lg hover:bg-slate-200">Cancel</button>
+                            <button onClick={handleSaveFix} className="flex-1 py-3 bg-indigo-600 text-white font-bold rounded-lg hover:bg-indigo-700 shadow-md">Update</button>
                         </div>
                     </div>
                 </div>
@@ -2355,6 +2388,11 @@ const ResultDashboard = ({ entry, onBack, onSave, savedNotebooks, onCreateNotebo
                     <p className="text-xs text-slate-500 font-medium">{localEntry.testName} • {new Date(localEntry.date).toLocaleDateString()}</p>
                 </div>
                 <div className="flex gap-3">
+                    {masterTest && (
+                        <button onClick={handleSyncWithMaster} className="flex items-center gap-2 bg-emerald-50 text-emerald-700 px-4 py-2 rounded-lg font-bold hover:bg-emerald-100 border border-emerald-200 transition-all animate-in slide-in-from-top-2">
+                            <Icon name="RefreshCw" className="w-4 h-4" /> Sync with Original
+                        </button>
+                    )}
                     {onSave && <button onClick={() => setSaveModal(true)} className="flex items-center gap-2 bg-indigo-50 text-indigo-700 px-4 py-2 rounded-lg font-bold hover:bg-indigo-100 border border-indigo-200 transition-all"><Icon name="BookMarked" className="w-4 h-4" /> Save</button>}
                     <button onClick={onBack} className="flex items-center gap-2 bg-slate-800 text-white px-5 py-2 rounded-lg font-bold hover:bg-slate-700 shadow-lg hover:shadow-xl transition-all">Exit <Icon name="X" className="w-4 h-4" /></button>
                 </div>
@@ -2397,7 +2435,7 @@ const ResultDashboard = ({ entry, onBack, onSave, savedNotebooks, onCreateNotebo
                                     <div className="text-3xl font-black text-slate-700">{avgTime}s</div>
                                 </div>
                             </div>
-                            {/* Charts */}
+
                             <div className="grid md:grid-cols-3 gap-6">
                                 <div className="md:col-span-2 bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
                                     <h4 className="font-bold text-slate-700 mb-4 flex items-center gap-2"><Icon name="Target" /> Attempt Distribution</h4>
@@ -2412,6 +2450,7 @@ const ResultDashboard = ({ entry, onBack, onSave, savedNotebooks, onCreateNotebo
                                         <div className="flex items-center gap-2"><div className="w-3 h-3 rounded-full bg-slate-300"></div> Left ({leftCount})</div>
                                     </div>
                                 </div>
+
                                 <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
                                     <h4 className="font-bold text-slate-700 mb-4 flex items-center gap-2"><Icon name="BrainCircuit" /> By Type</h4>
                                     <div className="space-y-3">
@@ -2426,7 +2465,7 @@ const ResultDashboard = ({ entry, onBack, onSave, savedNotebooks, onCreateNotebo
                             </div>
                         </div>
                     )}
-                    
+
                     {/* === SOLUTIONS TAB === */}
                     {tab === 'solutions' && (
                         <div className="animate-in slide-in-from-bottom-4">
@@ -2436,7 +2475,7 @@ const ResultDashboard = ({ entry, onBack, onSave, savedNotebooks, onCreateNotebo
                                 ))}
                             </div>
                             <div className="space-y-6">
-                                {localEntry.details.map((d, i) => {
+                                {localEntry.details.map((d) => {
                                     if (filter !== 'all') { if (filter === 'left' && d.status !== 'left' && d.status !== 'not_visited' && d.status !== 'Unattempted') return null; if (filter !== 'left' && d.status !== filter) return null; }
                                     return (
                                         <div key={d.id} className={`bg-white rounded-xl border-l-4 shadow-sm overflow-hidden ${d.status === 'correct' ? 'border-emerald-500' : d.status === 'wrong' ? 'border-red-500' : 'border-slate-300'}`}>
@@ -2452,7 +2491,6 @@ const ResultDashboard = ({ entry, onBack, onSave, savedNotebooks, onCreateNotebo
                                                 <div className="mb-4 text-slate-800 leading-relaxed font-medium"><LatexRenderer content={d.text} /></div>
                                                 {d.qData?.diagram && <img src={d.qData.diagram} className="max-h-48 rounded border border-slate-200 mb-4" />}
                                                 
-                                                {/* Options Logic */}
                                                 {(d.qData?.type === 'SINGLE' || d.qData?.type === 'MULTI') && (
                                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mb-4">
                                                         {d.qData.options?.map((opt, oIdx) => {
@@ -2466,7 +2504,7 @@ const ResultDashboard = ({ entry, onBack, onSave, savedNotebooks, onCreateNotebo
                                                     </div>
                                                 )}
 
-                                                {/* Numerical Answer - FIXED to always show */}
+                                                {/* Numerical Answer */}
                                                 {d.qData?.type === 'NUMERICAL' && (
                                                     <div className="flex gap-4 mb-4 text-sm">
                                                         <div className="bg-slate-100 px-3 py-2 rounded">
@@ -2482,7 +2520,14 @@ const ResultDashboard = ({ entry, onBack, onSave, savedNotebooks, onCreateNotebo
 
                                                 {/* FIX BUTTON */}
                                                 <div className="mt-2 mb-4">
-                                                    <button onClick={() => openFixModal(d)} className="text-[10px] font-bold text-indigo-600 hover:text-indigo-800 hover:bg-indigo-50 px-2 py-1 rounded flex items-center gap-1 transition-colors">
+                                                    <button onClick={() => {
+                                                        let val = "";
+                                                        if(d.qData.type==='NUMERICAL') val=d.qData.correctNum;
+                                                        else if(d.qData.type==='SINGLE') val=d.qData.correctIndex;
+                                                        else if(d.qData.type==='MULTI') val=(d.qData.correctIndices||[]).join(',');
+                                                        setFixValue(val);
+                                                        setFixingQ({id:d.id, type:d.qData.type, qNum:d.qNum});
+                                                    }} className="text-[10px] font-bold text-indigo-600 hover:text-indigo-800 hover:bg-indigo-50 px-2 py-1 rounded flex items-center gap-1 transition-colors">
                                                         <Icon name="Edit2" className="w-3 h-3" /> Fix Answer Key
                                                     </button>
                                                 </div>
@@ -2515,7 +2560,8 @@ const ResultDashboard = ({ entry, onBack, onSave, savedNotebooks, onCreateNotebo
             </div>
         </div>
     );
-};     const Player = ({ test, duration, onBack, notebooks, onSaveToNotebook, onCreateNotebook }) => {
+};
+ const Player = ({ test, duration, onBack, notebooks, onSaveToNotebook, onCreateNotebook }) => {
             const storageKey = `tattvam_progress_${test.id}`;
 
             const { activeQuestions, savedState } = React.useMemo(() => {
@@ -2649,6 +2695,7 @@ const ResultDashboard = ({ entry, onBack, onSave, savedNotebooks, onCreateNotebo
 
                     setFinalResultEntry({
                         id: Date.now().toString(),
+testId: test.id,
                         date: new Date().toISOString(),
                         testName: test.title,
                         score: totalScore,
@@ -3341,6 +3388,7 @@ const QuizForge = () => {
                     apiKey={keyContext} 
                     onRequestKey={() => setModal(true)} 
                     onRemix={handleDirectRemix} 
+tests={tests}
                 />
             )}
 
@@ -3372,4 +3420,27 @@ const QuizForge = () => {
     </script>
 </body>
 </html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
