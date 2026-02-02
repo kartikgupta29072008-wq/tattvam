@@ -1347,10 +1347,10 @@ allTests={tests}
             </div>
         </div>
     );
-};        const Dashboard = ({ tests, notebooks, onCreateTest, onCreateNotebook, onDeleteTest, onDeleteNotebook, onSelectTest, onSelectNotebook, onSettings, onImport, appLogo, setAppLogo }) => {
+};       const Dashboard = ({ tests, notebooks, onCreateTest, onCreateNotebook, onDeleteTest, onDeleteNotebook, onSelectTest, onSelectNotebook, onSettings, onImport, appLogo, setAppLogo }) => {
             const [tab, setTab] = useState('tests');
-            const [page, setPage] = useState(0); // NEW: Pagination State
-            const ITEMS_PER_PAGE = 6;           // NEW: Limit items to prevent crash
+            const [page, setPage] = useState(0); 
+            const ITEMS_PER_PAGE = 6;           
             
             const [importing, setImporting] = useState(false);
             const fileInputRef = useRef(null);
@@ -1358,8 +1358,6 @@ allTests={tests}
             const [imgError, setImgError] = useState(false);
 
             useEffect(() => { setImgError(false); }, [appLogo]);
-            
-            // Reset page when tab changes
             useEffect(() => { setPage(0); }, [tab]);
 
             const currentList = tab === 'tests' ? tests : notebooks;
@@ -1405,9 +1403,11 @@ allTests={tests}
                             let imported;
                             try { imported = JSON.parse(raw); } catch(e) { throw new Error("Invalid JSON syntax"); }
                             
-                            // Safe Helpers
+                            // --- FIX APPLIED HERE ---
+                            // Old buggy version: (val && typeof val === 'number' ...) -> This killed '0'
+                            // New corrected version: Checks type strictly so 0 is allowed
                             const safeStr = (val, fallback) => (val && typeof val === 'string') ? val : fallback;
-                            const safeNum = (val, fallback) => (val && typeof val === 'number' && !isNaN(val)) ? val : fallback;
+                            const safeNum = (val, fallback) => (typeof val === 'number' && !isNaN(val)) ? val : fallback;
                             const uuid = () => Math.random().toString(36).substring(2, 9) + Date.now().toString(36);
 
                             // 1. Sanitizers
@@ -1418,7 +1418,7 @@ allTests={tests}
                                     text: safeStr(q.text, "Corrupted Text"),
                                     type: ['SINGLE', 'MULTI', 'NUMERICAL', 'MATRIX'].includes(q.type) ? q.type : 'SINGLE',
                                     options: Array.isArray(q.options) ? q.options.filter(o => o).map(String) : [],
-                                    correctIndex: safeNum(q.correctIndex, -1),
+                                    correctIndex: safeNum(q.correctIndex, -1), // Now correctly accepts 0
                                     correctIndices: Array.isArray(q.correctIndices) ? q.correctIndices : [],
                                     correctNum: safeStr(q.correctNum, ""),
                                     marks: (q.marks && typeof q.marks === 'object') ? { pos: safeNum(q.marks.pos, 4), neg: safeNum(q.marks.neg, 1) } : { pos: 4, neg: 1 },
@@ -3420,6 +3420,7 @@ tests={tests}
     </script>
 </body>
 </html>
+
 
 
 
