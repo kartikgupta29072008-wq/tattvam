@@ -1237,6 +1237,9 @@ const EntryEditorModal = ({ entry, onSave, onClose }) => {
 // --- UPDATED ANALYSIS NOTEBOOK (With Persistence Support) ---
 // --- UPDATED ANALYSIS NOTEBOOK (Fixed Chart + Delete AI) ---
 // --- UPDATED ANALYSIS NOTEBOOK (With Sorting, Editing, & Graph) ---
+// ==========================================
+// ANALYSIS NOTEBOOK (With "Spotlight" Graph)
+// ==========================================
 const AnalysisNotebook = ({ notebook, onUpdate, onBack, apiKey, onRequestKey, onRemix, tests }) => {
     const [uploading, setUploading] = useState(false);
     const [analyzing, setAnalyzing] = useState(false);
@@ -1244,16 +1247,16 @@ const AnalysisNotebook = ({ notebook, onUpdate, onBack, apiKey, onRequestKey, on
     // UI State
     const [viewingEntry, setViewingEntry] = useState(null); 
     const [expandedEntryId, setExpandedEntryId] = useState(null);
-    const [editModalEntry, setEditModalEntry] = useState(null); // For the modal
-    const [sortMode, setSortMode] = useState('dateDesc'); // dateDesc, dateAsc, scoreDesc, scoreAsc
+    const [editModalEntry, setEditModalEntry] = useState(null); 
+    const [sortMode, setSortMode] = useState('dateDesc'); 
 
-    // --- SORTING LOGIC ---
+    // --- SORTING ---
     const getSortedEntries = () => {
         if (!notebook.entries) return [];
         const arr = [...notebook.entries];
         switch (sortMode) {
-            case 'dateDesc': return arr.sort((a, b) => new Date(b.date) - new Date(a.date)); // Newest first
-            case 'dateAsc': return arr.sort((a, b) => new Date(a.date) - new Date(b.date)); // Oldest first
+            case 'dateDesc': return arr.sort((a, b) => new Date(b.date) - new Date(a.date));
+            case 'dateAsc': return arr.sort((a, b) => new Date(a.date) - new Date(b.date));
             case 'scoreDesc': return arr.sort((a, b) => b.score - a.score);
             case 'scoreAsc': return arr.sort((a, b) => a.score - b.score);
             default: return arr;
@@ -1265,22 +1268,20 @@ const AnalysisNotebook = ({ notebook, onUpdate, onBack, apiKey, onRequestKey, on
         const updatedEntries = notebook.entries.map(e => e.id === updatedEntry.id ? updatedEntry : e);
         onUpdate({ ...notebook, entries: updatedEntries });
         if (viewingEntry && viewingEntry.id === updatedEntry.id) setViewingEntry(updatedEntry);
-        setEditModalEntry(null); // Close modal if open
+        setEditModalEntry(null);
     };
 
     const handleDeleteEntry = (e, entryId) => {
         e.stopPropagation(); 
-        if (confirm("Are you sure you want to delete this test entry? This action cannot be undone.")) {
+        if (confirm("Delete this attempt? Cannot be undone.")) {
             const updatedEntries = notebook.entries.filter(en => en.id !== entryId);
             onUpdate({ ...notebook, entries: updatedEntries });
         }
     };
 
     const handleDeleteAnalysis = () => {
-        if (confirm("Delete this AI Mentor Analysis report?")) {
-            const updatedNotebook = { ...notebook };
-            delete updatedNotebook.insights;
-            onUpdate(updatedNotebook);
+        if (confirm("Delete AI Mentor Analysis?")) {
+            const u = { ...notebook }; delete u.insights; onUpdate(u);
         }
     };
 
@@ -1288,24 +1289,18 @@ const AnalysisNotebook = ({ notebook, onUpdate, onBack, apiKey, onRequestKey, on
         const file = e.target.files[0];
         if (!file) return;
         if (!apiKey) return onRequestKey();
-        
         setUploading(true);
         try {
             const b64 = await fileToBase64(file);
             const data = await analyzeResultImage(b64, apiKey);
-            const newEntry = {
-                id: Date.now().toString(),
-                date: new Date().toISOString(),
-                ...data,
-                type: 'IMAGE_IMPORT'
-            };
+            const newEntry = { id: Date.now().toString(), date: new Date().toISOString(), ...data, type: 'IMAGE_IMPORT' };
             onUpdate({ ...notebook, entries: [newEntry, ...(notebook.entries || [])] });
-        } catch (err) { alert("Analysis failed: " + err.message); }
+        } catch (err) { alert("Failed: " + err.message); }
         setUploading(false);
     };
 
     const runDeepAnalysis = async () => {
-        if (!notebook.entries?.length) return alert("No entries to analyze.");
+        if (!notebook.entries?.length) return alert("No entries.");
         if (!apiKey) return onRequestKey();
         setAnalyzing(true);
         try {
@@ -1315,44 +1310,136 @@ const AnalysisNotebook = ({ notebook, onUpdate, onBack, apiKey, onRequestKey, on
         setAnalyzing(false);
     };
 
-    // --- CHART COMPONENT ---
-    const Chart = ({ entries }) => {
-        if (!entries || entries.length === 0) return <div className="h-32 flex items-center justify-center text-slate-400 text-xs border-2 border-dashed rounded-lg bg-slate-50">No data available.</div>;
-        
-        // Chart always sorts Oldest -> Newest to show progress over time
-        const sortedData = [...entries].sort((a, b) => new Date(a.date) - new Date(b.date));
+    // --- NEW: INTERACTIVE "SPOTLIGHT" CHART ---
+    const SuperChart = ({ entries }) => {
+        const [hovered, setHovered] = useState(null);
+
+        if (!entries || entries.length === 0) return <div className="h-40 flex items-center justify-center text-slate-400 border-2 border-dashed rounded-xl bg-slate-50/50">No data available.</div>;
+
+        // Prepare Data (Chronological)
+        const data = [...entries].sort((a, b) => new Date(a.date) - new Date(b.date)).map(e => {
+            const max = e.maxMarks || 100;
+            const pct = Math.min(100, Math.max(0, Math.round((e.score / max) * 100)));
+            return { ...e, pct, max };
+        });
+
+        // Active is either the one being hovered OR the latest one
+        const active = hovered || data[data.length - 1];
+
+        // Helper for SVG Path
+        const getPoints = () => {
+            if (data.length < 2) return "";
+            // Distribute points across 100% width
+            const step = 100 / (data.length - 1 || 1);
+            return data.map((d, i) => `${i * step},${100 - d.pct}`).join(" ");
+        };
 
         return (
-            <div className="h-48 mt-4 p-4 flex items-end gap-3 border-b border-l border-slate-200 bg-white rounded-lg relative overflow-x-auto">
-                {/* Background Grid */}
-                <div className="absolute inset-0 flex flex-col justify-between pointer-events-none p-4 opacity-10">
-                    <div className="border-t border-slate-900 w-full h-0"></div>
-                    <div className="border-t border-slate-900 w-full h-0"></div>
-                    <div className="border-t border-slate-900 w-full h-0"></div>
+            <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 transition-all hover:shadow-md">
+                
+                {/* 1. SPOTLIGHT HEADER (Dynamic Data) */}
+                <div className="flex justify-between items-end mb-8 h-16">
+                    <div>
+                        <div className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-1 flex items-center gap-2">
+                            <Icon name="Target" className="w-4 h-4 text-indigo-500" /> Performance Spotlight
+                        </div>
+                        <div className="text-xl font-black text-slate-800 leading-none truncate max-w-[200px] md:max-w-md">
+                            {active.testName || "Untitled Test"}
+                        </div>
+                        <div className="text-xs text-slate-500 font-medium mt-1 flex items-center gap-2">
+                            <Icon name="Clock" className="w-3 h-3" /> {new Date(active.date).toLocaleDateString()} 
+                            {active === hovered && <span className="bg-indigo-100 text-indigo-700 px-1.5 py-0.5 rounded text-[10px] font-bold">Viewing</span>}
+                        </div>
+                    </div>
+                    
+                    <div className="text-right">
+                        <div className="flex items-baseline justify-end gap-1">
+                            <span className="text-4xl font-black text-indigo-600 tracking-tight">{active.pct}%</span>
+                            <span className="text-sm font-bold text-slate-300">/ 100%</span>
+                        </div>
+                        <div className="text-xs font-bold text-slate-400 mt-1">
+                            Score: {active.score} / {active.max}
+                        </div>
+                    </div>
                 </div>
 
-                {sortedData.map((e, i) => {
-                    const max = e.maxMarks || 100;
-                    const pct = Math.min(100, Math.max(0, Math.round((e.score / max) * 100)));
-                    let barColor = "bg-red-400";
-                    if (pct >= 80) barColor = "bg-emerald-500";
-                    else if (pct >= 50) barColor = "bg-indigo-500";
-                    else if (pct >= 30) barColor = "bg-amber-400";
+                {/* 2. VISUAL GRAPH AREA */}
+                <div className="relative h-48 w-full" onMouseLeave={() => setHovered(null)}>
+                    
+                    {/* SVG Trend Line (Behind bars) */}
+                    <svg className="absolute inset-0 w-full h-full overflow-visible pointer-events-none z-0" preserveAspectRatio="none" viewBox={`0 0 100 100`}>
+                        {/* Gradient Fill under line */}
+                        <defs>
+                            <linearGradient id="chartGrad" x1="0" x2="0" y1="0" y2="1">
+                                <stop offset="0%" stopColor="#6366f1" stopOpacity="0.2" />
+                                <stop offset="100%" stopColor="#6366f1" stopOpacity="0" />
+                            </linearGradient>
+                        </defs>
+                        {data.length > 1 && (
+                            <>
+                                <polyline 
+                                    points={`${getPoints()} 100,100 0,100`} 
+                                    fill="url(#chartGrad)" 
+                                    stroke="none"
+                                />
+                                <polyline 
+                                    points={getPoints()} 
+                                    fill="none" 
+                                    stroke="#6366f1" 
+                                    strokeWidth="0.5" 
+                                    strokeLinecap="round" 
+                                    strokeLinejoin="round" 
+                                    vectorEffect="non-scaling-stroke"
+                                />
+                            </>
+                        )}
+                    </svg>
 
-                    return (
-                        <div key={i} className="flex-1 min-w-[30px] flex flex-col justify-end items-center group h-full relative z-10">
-                            <div className="absolute bottom-full mb-2 opacity-0 group-hover:opacity-100 transition-opacity bg-slate-900 text-white text-[10px] p-2 rounded shadow-xl whitespace-nowrap z-20 pointer-events-none transform translate-y-1 group-hover:translate-y-0">
-                                <div className="font-bold text-amber-300">{e.testName || "Untitled"}</div>
-                                <div>Score: {e.score}/{max} <span className="opacity-75">({pct}%)</span></div>
-                                <div className="text-slate-400 text-[9px]">{new Date(e.date).toLocaleDateString()}</div>
-                            </div>
-                            <div style={{ height: `${Math.max(pct, 5)}%` }} className={`w-full max-w-[40px] rounded-t-md transition-all duration-500 hover:opacity-80 cursor-pointer ${barColor} relative shadow-sm`}>
-                                {pct > 15 && <span className="absolute top-1 left-0 right-0 text-center text-[9px] font-bold text-white/90">{pct}%</span>}
-                            </div>
-                            <div className="mt-2 text-[10px] font-bold text-slate-400 truncate w-full text-center">{i + 1}</div>
-                        </div>
-                    );
-                })}
+                    {/* Bars Container */}
+                    <div className="absolute inset-0 flex items-end justify-between z-10 px-2">
+                        {data.map((d, i) => {
+                            const isFocus = active.id === d.id;
+                            let barColor = "bg-slate-200"; // Default / Inactive
+                            
+                            if (isFocus) {
+                                if (d.pct >= 80) barColor = "bg-gradient-to-t from-emerald-500 to-emerald-400 shadow-emerald-200";
+                                else if (d.pct >= 50) barColor = "bg-gradient-to-t from-indigo-500 to-indigo-400 shadow-indigo-200";
+                                else barColor = "bg-gradient-to-t from-amber-500 to-amber-400 shadow-amber-200";
+                            } else if (hovered) {
+                                barColor = "bg-slate-100"; // Fade others when hovering
+                            } else {
+                                // Default State (No hover)
+                                if (d.pct >= 80) barColor = "bg-emerald-200";
+                                else if (d.pct >= 50) barColor = "bg-indigo-200";
+                                else barColor = "bg-amber-200";
+                            }
+
+                            return (
+                                <div 
+                                    key={i}
+                                    onMouseEnter={() => setHovered(d)}
+                                    className="flex-1 flex flex-col justify-end items-center group h-full relative cursor-pointer px-0.5 md:px-2 transition-all duration-300"
+                                >
+                                    {/* The Bar */}
+                                    <div 
+                                        style={{ height: `${Math.max(d.pct, 4)}%` }} 
+                                        className={`w-full max-w-[40px] rounded-t-lg transition-all duration-300 relative ${barColor} ${isFocus ? 'shadow-lg scale-105' : 'hover:opacity-90'}`}
+                                    >
+                                        {/* Top Dot Marker */}
+                                        {isFocus && (
+                                            <div className="absolute -top-1 left-1/2 -translate-x-1/2 w-2 h-2 bg-white rounded-full shadow-sm ring-2 ring-indigo-500"></div>
+                                        )}
+                                    </div>
+                                    
+                                    {/* X-Axis Label */}
+                                    <div className={`mt-3 text-[10px] font-bold transition-colors ${isFocus ? 'text-indigo-600 scale-110' : 'text-slate-300'}`}>
+                                        {i + 1}
+                                    </div>
+                                </div>
+                            );
+                        })}
+                    </div>
+                </div>
             </div>
         );
     };
@@ -1362,32 +1449,17 @@ const AnalysisNotebook = ({ notebook, onUpdate, onBack, apiKey, onRequestKey, on
     return (
         <div className="h-full flex flex-col bg-slate-50 relative animate-in fade-in">
             {/* EDIT MODAL */}
-            {editModalEntry && (
-                <EntryEditorModal 
-                    entry={editModalEntry} 
-                    onClose={() => setEditModalEntry(null)} 
-                    onSave={handleEntryUpdate} 
-                />
-            )}
+            {editModalEntry && <EntryEditorModal entry={editModalEntry} onClose={() => setEditModalEntry(null)} onSave={handleEntryUpdate} />}
 
             {/* HEADER */}
             <div className="bg-white border-b px-6 py-4 flex items-center justify-between shadow-sm shrink-0">
                 <div className="flex items-center gap-4">
                     <button onClick={onBack} className="p-2 rounded-full hover:bg-slate-100 text-slate-500"><Icon name="ArrowLeft" /></button>
-                    <div>
-                        <input value={notebook.title} onChange={e => onUpdate({...notebook, title: e.target.value})} className="font-bold text-xl outline-none bg-transparent placeholder-slate-300" placeholder="Notebook Title" />
-                        <p className="text-xs text-slate-500 font-medium">{notebook.entries?.length || 0} Entries</p>
-                    </div>
+                    <div><input value={notebook.title} onChange={e => onUpdate({...notebook, title: e.target.value})} className="font-bold text-xl outline-none bg-transparent placeholder-slate-300" placeholder="Notebook Title" /><p className="text-xs text-slate-500 font-medium">{notebook.entries?.length || 0} Entries</p></div>
                 </div>
                 <div className="flex gap-2">
-                    <label className="flex items-center gap-2 bg-white border border-indigo-100 text-indigo-600 px-4 py-2 rounded-lg cursor-pointer hover:bg-indigo-50 font-bold shadow-sm transition-all">
-                        {uploading ? <Icon name="Loader2" className="animate-spin" /> : <Icon name="Camera" />}
-                        <span>Scan Result</span>
-                        <input type="file" className="hidden" accept="image/*" onChange={handleImageUpload} disabled={uploading} />
-                    </label>
-                    <button onClick={runDeepAnalysis} disabled={analyzing} className="flex items-center gap-2 bg-tattvam-900 text-white px-4 py-2 rounded-lg hover:bg-tattvam-800 font-bold shadow-sm transition-all">
-                        {analyzing ? <Icon name="Loader2" className="animate-spin" /> : <Icon name="BrainCircuit" />} Deep Analysis
-                    </button>
+                    <label className="flex items-center gap-2 bg-white border border-indigo-100 text-indigo-600 px-4 py-2 rounded-lg cursor-pointer hover:bg-indigo-50 font-bold shadow-sm transition-all">{uploading ? <Icon name="Loader2" className="animate-spin" /> : <Icon name="Camera" />}<span>Scan</span><input type="file" className="hidden" accept="image/*" onChange={handleImageUpload} disabled={uploading} /></label>
+                    <button onClick={runDeepAnalysis} disabled={analyzing} className="flex items-center gap-2 bg-tattvam-900 text-white px-4 py-2 rounded-lg hover:bg-tattvam-800 font-bold shadow-sm transition-all">{analyzing ? <Icon name="Loader2" className="animate-spin" /> : <Icon name="BrainCircuit" />} Analysis</button>
                 </div>
             </div>
 
@@ -1395,7 +1467,7 @@ const AnalysisNotebook = ({ notebook, onUpdate, onBack, apiKey, onRequestKey, on
             <div className="flex-1 overflow-y-auto p-6 md:p-8">
                 <div className="grid md:grid-cols-3 gap-6 max-w-6xl mx-auto">
                     
-                    {/* LEFT COL: AI & GRAPHS */}
+                    {/* LEFT COL: AI & SUPER CHART */}
                     <div className="space-y-6">
                         {notebook.insights && (
                             <div className="bg-white p-6 rounded-xl shadow-sm border border-purple-100 relative group animate-in slide-in-from-top-4">
@@ -1407,22 +1479,15 @@ const AnalysisNotebook = ({ notebook, onUpdate, onBack, apiKey, onRequestKey, on
                                 <div className="bg-purple-50 p-4 rounded-lg text-xs text-purple-800 border-l-4 border-purple-400 leading-relaxed"><strong>Advice:</strong> {notebook.insights.advice}</div>
                             </div>
                         )}
-                        <div className="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
-                            <h4 className="font-bold text-slate-700 mb-2 flex items-center gap-2"><Icon name="ListChecks" /> Performance Trend</h4>
-                            <Chart entries={notebook.entries} />
-                        </div>
+                        {/* THE NEW CHART */}
+                        <SuperChart entries={notebook.entries} />
                     </div>
 
                     {/* RIGHT COL: HISTORY LIST */}
                     <div className="md:col-span-2 space-y-4">
                         <div className="flex justify-between items-end mb-2">
                             <h3 className="font-bold text-slate-500 uppercase text-xs tracking-wider">Attempt History</h3>
-                            {/* SORT DROPDOWN */}
-                            <select 
-                                value={sortMode} 
-                                onChange={(e) => setSortMode(e.target.value)} 
-                                className="text-xs font-bold border border-slate-200 rounded-lg p-1.5 bg-white text-slate-600 outline-none focus:border-indigo-500"
-                            >
+                            <select value={sortMode} onChange={(e) => setSortMode(e.target.value)} className="text-xs font-bold border border-slate-200 rounded-lg p-1.5 bg-white text-slate-600 outline-none focus:border-indigo-500">
                                 <option value="dateDesc">Newest First</option>
                                 <option value="dateAsc">Oldest First</option>
                                 <option value="scoreDesc">Highest Score</option>
@@ -1446,17 +1511,10 @@ const AnalysisNotebook = ({ notebook, onUpdate, onBack, apiKey, onRequestKey, on
                                         <div className="text-right mr-2">
                                             <div className="text-2xl font-black text-indigo-600">{entry.score} <span className="text-sm text-slate-400 font-medium">/ {entry.maxMarks}</span></div>
                                         </div>
-                                        {/* EDIT BUTTON */}
-                                        <button onClick={(e) => { e.stopPropagation(); setEditModalEntry(entry); }} className="p-2 text-slate-300 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-all opacity-0 group-hover:opacity-100" title="Edit Date/Name">
-                                            <Icon name="Edit2" className="w-5 h-5" />
-                                        </button>
-                                        {/* DELETE BUTTON */}
-                                        <button onClick={(e) => handleDeleteEntry(e, entry.id)} className="p-2 text-slate-300 hover:text-red-600 hover:bg-red-50 rounded-lg transition-all opacity-0 group-hover:opacity-100" title="Delete">
-                                            <Icon name="Trash2" className="w-5 h-5" />
-                                        </button>
+                                        <button onClick={(e) => { e.stopPropagation(); setEditModalEntry(entry); }} className="p-2 text-slate-300 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-all opacity-0 group-hover:opacity-100" title="Edit"><Icon name="Edit2" className="w-5 h-5" /></button>
+                                        <button onClick={(e) => handleDeleteEntry(e, entry.id)} className="p-2 text-slate-300 hover:text-red-600 hover:bg-red-50 rounded-lg transition-all opacity-0 group-hover:opacity-100" title="Delete"><Icon name="Trash2" className="w-5 h-5" /></button>
                                     </div>
                                 </div>
-
                                 {expandedEntryId === entry.id && (
                                     <div className="bg-slate-50 p-5 border-t border-slate-100 animate-in slide-in-from-top-2">
                                         <div className="flex justify-between items-center mb-4">
@@ -1465,26 +1523,13 @@ const AnalysisNotebook = ({ notebook, onUpdate, onBack, apiKey, onRequestKey, on
                                                 <Icon name="BarChart" className="w-4 h-4" /> Open Full Analysis
                                             </button>
                                         </div>
-                                        {entry.details && (
-                                            <div className="flex gap-1 flex-wrap">
-                                                {entry.details.slice(0, 40).map((d, i) => (
-                                                    <div key={i} className={`w-3 h-3 rounded-sm ${d.status === 'correct' ? 'bg-green-500' : d.status === 'wrong' ? 'bg-red-500' : 'bg-slate-300'}`} title={`Q${d.qNum}: ${d.status}`}></div>
-                                                ))}
-                                                {entry.details.length > 40 && <span className="text-[10px] text-slate-400 font-medium pl-1">+{entry.details.length - 40} more</span>}
-                                            </div>
-                                        )}
+                                        {entry.details && <div className="flex gap-1 flex-wrap">{entry.details.slice(0, 40).map((d, i) => <div key={i} className={`w-3 h-3 rounded-sm ${d.status === 'correct' ? 'bg-green-500' : d.status === 'wrong' ? 'bg-red-500' : 'bg-slate-300'}`} title={`Q${d.qNum}: ${d.status}`}></div>)}{entry.details.length > 40 && <span className="text-[10px] text-slate-400 font-medium pl-1">+{entry.details.length - 40} more</span>}</div>}
                                     </div>
                                 )}
                             </div>
                         ))}
                         
-                        {(!notebook.entries || notebook.entries.length === 0) && (
-                            <div className="text-center py-16 text-slate-400 bg-white rounded-xl border-2 border-dashed border-slate-200">
-                                <Icon name="BookOpen" className="w-12 h-12 mx-auto mb-3 text-slate-300" />
-                                <p>No entries yet.</p>
-                                <p className="text-sm">Take a quiz or scan a result to begin.</p>
-                            </div>
-                        )}
+                        {(!notebook.entries || notebook.entries.length === 0) && <div className="text-center py-16 text-slate-400 bg-white rounded-xl border-2 border-dashed border-slate-200"><Icon name="BookOpen" className="w-12 h-12 mx-auto mb-3 text-slate-300" /><p>No entries yet.</p></div>}
                     </div>
                 </div>
             </div>
@@ -3563,6 +3608,7 @@ tests={tests}
     </script>
 </body>
 </html>
+
 
 
 
