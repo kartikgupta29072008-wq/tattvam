@@ -3559,6 +3559,8 @@ const QuizForge = () => {
                     onDeleteNotebook={(e, id) => { e.stopPropagation(); if(confirm("Delete this notebook?")) setNotebooks(notebooks.filter(n => n.id !== id)); }} 
                     onSelectTest={(id) => { setActiveId(id); setView('editor'); }} 
                     onSelectNotebook={(id) => { setActiveNotebookId(id); setView('notebook'); }} 
+                    officialTests={officialTests} 
+        onCloneOfficial={handleCloneOfficial}
                     onSettings={() => setModal(true)} 
                     onImport={importData} 
                     appLogo={appLogo} 
@@ -3621,6 +3623,7 @@ tests={tests}
     </script>
 </body>
 </html>
+
 
 
 
