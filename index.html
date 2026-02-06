@@ -28,7 +28,6 @@
         }
     </script>
 
-
     <!-- KaTeX -->
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
     <script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
@@ -71,7 +70,7 @@
 </head>
 <body class="bg-tattvam-50 text-slate-900 h-screen overflow-hidden">
     <div id="root" class="h-full"></div>
-<script src="./library/preload.js"></script>
+
     <script type="text/babel">
         const { useState, useEffect, useRef } = React;
 // --- ICONS (Updated with Eye & BarChart) ---
@@ -1536,7 +1535,7 @@ const AnalysisNotebook = ({ notebook, onUpdate, onBack, apiKey, onRequestKey, on
             </div>
         </div>
     );
-};      const Dashboard = ({ tests, officialTests, onCloneOfficial, notebooks, onCreateTest, onCreateNotebook, onDeleteTest, onDeleteNotebook, onSelectTest, onSelectNotebook, onSettings, onImport, appLogo, setAppLogo }) => {
+};      const Dashboard = ({ tests, notebooks, onCreateTest, onCreateNotebook, onDeleteTest, onDeleteNotebook, onSelectTest, onSelectNotebook, onSettings, onImport, appLogo, setAppLogo }) => {
             const [tab, setTab] = useState('tests');
             const [page, setPage] = useState(0); 
             const ITEMS_PER_PAGE = 6;           
@@ -1549,10 +1548,7 @@ const AnalysisNotebook = ({ notebook, onUpdate, onBack, apiKey, onRequestKey, on
             useEffect(() => { setImgError(false); }, [appLogo]);
             useEffect(() => { setPage(0); }, [tab]);
 
-           let currentList = [];
-if (tab === 'tests') currentList = tests;
-else if (tab === 'analysis') currentList = notebooks;
-else if (tab === 'library') currentList = officialTests || [];
+            const currentList = tab === 'tests' ? tests : notebooks;
             const totalPages = Math.ceil(currentList.length / ITEMS_PER_PAGE);
             const displayedItems = currentList.slice(page * ITEMS_PER_PAGE, (page + 1) * ITEMS_PER_PAGE);
 
@@ -1741,9 +1737,6 @@ else if (tab === 'library') currentList = officialTests || [];
                         <div className="bg-slate-100 p-1 rounded-lg flex font-bold text-sm">
                             <button onClick={() => setTab('tests')} className={`px-4 py-2 rounded-md transition-all ${tab==='tests' ? 'bg-white shadow text-slate-900' : 'text-slate-500'}`}>My Tests</button>
                             <button onClick={() => setTab('analysis')} className={`px-4 py-2 rounded-md transition-all ${tab==='analysis' ? 'bg-white shadow text-slate-900' : 'text-slate-500'}`}>Analysis Notebooks</button>
-                            <button onClick={() => setTab('library')} className={`px-4 py-2 rounded-md transition-all ${tab==='library' ? 'bg-white shadow text-indigo-700' : 'text-slate-500'}`}>
-    Library
-</button>
                         </div>
 
                         <div className="flex gap-2">
@@ -1758,31 +1751,9 @@ else if (tab === 'library') currentList = officialTests || [];
                             ) : (
                                 <button onClick={onCreateNotebook} className="flex items-center gap-2 bg-indigo-600 text-white px-5 py-2.5 rounded-lg hover:bg-indigo-500 font-medium shadow-sm"><Icon name="BookOpen" className="w-5 h-5" /> New Notebook</button>
                             )}
-                            {/* ADD THIS BLOCK AFTER THE 'analysis' BLOCK */}
+                        </div>
+                    </div>
 
-{/* ADD THIS BLOCK AFTER THE 'analysis' BLOCK */}
-
-{tab === 'library' && (
-    <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {displayedItems.map(test => (
-            <div key={test.id} className="group bg-gradient-to-br from-indigo-50 to-white rounded-xl p-6 shadow-sm border border-indigo-100 hover:shadow-md transition-all relative overflow-hidden h-48 flex flex-col">
-                <div className="absolute top-0 right-0 bg-indigo-600 text-white text-[10px] px-3 py-1 rounded-bl-lg font-bold uppercase tracking-wider">OFFICIAL</div>
-                
-                <div className="flex justify-between items-start mb-4">
-                    <div className="bg-white p-3 rounded-lg border border-indigo-50 shadow-sm"><Icon name="Sparkles" className="w-6 h-6 text-indigo-600" /></div>
-                </div>
-                
-                <h3 className="font-bold text-lg text-slate-900 mb-1 truncate">{test.title}</h3>
-                <p className="text-sm text-slate-500 mb-4">{test.questions?.length || 0} Questions</p>
-                
-                <button onClick={() => onCloneOfficial(test)} className="mt-auto w-full bg-white border border-slate-200 text-slate-700 py-2 rounded-lg text-xs font-bold hover:bg-indigo-600 hover:text-white transition-all flex items-center justify-center gap-2 shadow-sm">
-                    <Icon name="Download" className="w-4 h-4" /> Add to My Tests
-                </button>
-            </div>
-        ))}
-        {displayedItems.length === 0 && <div className="col-span-full text-center py-20 text-slate-400 border-2 border-dashed rounded-xl">Library is empty.</div>}
-    </div>
-)}
                     <div className="flex-1 overflow-y-auto pb-10">
                         {/* PAGINATION CONTROLS */}
                         {totalPages > 1 && (
@@ -1804,7 +1775,6 @@ else if (tab === 'library') currentList = officialTests || [];
                                 </button>
                             </div>
                         )}
-                        
 
                         {tab === 'tests' ? (
                             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -1840,8 +1810,7 @@ else if (tab === 'library') currentList = officialTests || [];
                     </div>
                 </div>
             );
-        };
-                        const MarksDistributor = ({ onClose, onApply, loading }) => {
+        };const MarksDistributor = ({ onClose, onApply, loading }) => {
             const [prompt, setPrompt] = useState('');
             
             const presets = [
@@ -3452,88 +3421,7 @@ const QuizForge = () => {
     // --- STATE MANAGEMENT ---
     const [tests, setTests] = useState(() => safeLoad('quizforge_tests', []));
     const [notebooks, setNotebooks] = useState(() => safeLoad('quizforge_notebooks', []));
-    const officialTests = window.TATTVAM_LIBRARY || [];
     const [playingTest, setPlayingTest] = useState(null);
-   // 3. NEW: AUTO-FETCHER WITH DEBUGGING
-    useEffect(() => {
-        const loadDynamicLibrary = async () => {
-            try {
-                console.log("🔍 Looking for library/index.json...");
-                const indexResponse = await fetch('./library/index.json');
-                
-                if (!indexResponse.ok) {
-                    console.warn("⚠️ Library Index not found.");
-                    return; 
-                }
-                
-                // SAFETY CHECK 1: Is index.json valid?
-                let fileList;
-                try {
-                    fileList = await indexResponse.json();
-                } catch (e) {
-                    alert("❌ Error in library/index.json\nYou probably have a trailing comma or missing quotes.\nCheck the file format.");
-                    return;
-                }
-
-                console.log("✅ Index found. Files to load:", fileList);
-
-                // SAFETY CHECK 2: Load each file individually
-                const promises = fileList.map(async (filename) => {
-                    try {
-                        const path = `./library/${filename}`;
-                        const res = await fetch(path);
-                        
-                        if (!res.ok) {
-                            console.error(`❌ Failed to fetch ${filename} (404 Not Found)`);
-                            return null;
-                        }
-
-                        // Try to parse the specific test file
-                        try {
-                            const data = await res.json();
-                            // Ensure the official flag is set
-                            data.official = true; 
-                            return data;
-                        } catch (parseErr) {
-                            console.error(`❌ Invalid JSON in file: ${filename}`);
-                            alert(`Error loading test: ${filename}\nThe JSON syntax is broken inside this specific file.`);
-                            return null;
-                        }
-
-                    } catch (err) {
-                        console.warn(`Network error loading ${filename}`, err);
-                        return null;
-                    }
-                });
-
-                const fetchedTests = (await Promise.all(promises)).filter(t => t);
-                
-                // If we found new tests, overwrite the list
-                if (fetchedTests.length > 0) {
-                    console.log(`🎉 Successfully loaded ${fetchedTests.length} tests.`);
-                    setOfficialTests(fetchedTests);
-                } else {
-                    console.warn("⚠️ Index was loaded, but no valid tests were found inside it.");
-                }
-
-            } catch (e) {
-                console.log("Library System Error:", e);
-            }
-        };
-
-        loadDynamicLibrary();
-    }, []);
-    const handleCloneOfficial = (officialTest) => {
-        if(confirm(`Add "${officialTest.title}" to your personal tests?`)) {
-            const cloned = {
-                ...officialTest,
-                id: "cloned_" + Date.now() + Math.random().toString(36).substr(2, 5),
-                title: `(Copy) ${officialTest.title}`,
-                created: new Date().toISOString()
-            };
-            setTests(prev => [cloned, ...prev]);
-        }
-    };
 
     // API Keys & Settings
     const [keyContext, setKeyContext] = useState(() => {
@@ -3658,8 +3546,6 @@ const QuizForge = () => {
                     onDeleteNotebook={(e, id) => { e.stopPropagation(); if(confirm("Delete this notebook?")) setNotebooks(notebooks.filter(n => n.id !== id)); }} 
                     onSelectTest={(id) => { setActiveId(id); setView('editor'); }} 
                     onSelectNotebook={(id) => { setActiveNotebookId(id); setView('notebook'); }} 
-                    officialTests={officialTests} 
-        onCloneOfficial={handleCloneOfficial}
                     onSettings={() => setModal(true)} 
                     onImport={importData} 
                     appLogo={appLogo} 
@@ -3722,18 +3608,6 @@ tests={tests}
     </script>
 </body>
 </html>
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
