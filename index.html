@@ -3453,6 +3453,43 @@ const QuizForge = () => {
     const [notebooks, setNotebooks] = useState(() => safeLoad('quizforge_notebooks', []));
     const officialTests = window.TATTVAM_LIBRARY || [];
     const [playingTest, setPlayingTest] = useState(null);
+    useEffect(() => {
+        const loadDynamicLibrary = async () => {
+            try {
+                // A. Fetch the 'Menu' (Index)
+                const indexResponse = await fetch('./library/index.json');
+                if (!indexResponse.ok) return; // Stop if file not found (e.g. offline)
+                
+                const fileList = await indexResponse.json();
+                
+                // B. Fetch every file listed in the Menu
+                const promises = fileList.map(async (filename) => {
+                    try {
+                        const res = await fetch(`./library/${filename}`);
+                        return await res.json();
+                    } catch (err) {
+                        console.warn(`Failed to load ${filename}`, err);
+                        return null;
+                    }
+                });
+
+                // C. Wait for all downloads and update the list
+                const fetchedTests = (await Promise.all(promises)).filter(t => t);
+                
+                // D. Merge with existing ones (avoiding duplicates)
+                setOfficialTests(prev => {
+                    const existingIds = new Set(prev.map(t => t.id));
+                    const newUnique = fetchedTests.filter(t => !existingIds.has(t.id));
+                    return [...prev, ...newUnique];
+                });
+
+            } catch (e) {
+                console.log("Library Index not found or offline.", e);
+            }
+        };
+
+        loadDynamicLibrary();
+    }, []);
     const handleCloneOfficial = (officialTest) => {
         if(confirm(`Add "${officialTest.title}" to your personal tests?`)) {
             const cloned = {
@@ -3652,6 +3689,7 @@ tests={tests}
     </script>
 </body>
 </html>
+
 
 
 
