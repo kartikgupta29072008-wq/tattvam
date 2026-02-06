@@ -2921,14 +2921,14 @@ const ResultDashboard = ({ entry, onBack, onSave, savedNotebooks, onCreateNotebo
                 try {
                     const formData = new FormData();
                     // REPLACE THESE entry.XXXXX IDs WITH YOUR GOOGLE FORM IDs
-                    formData.append("entry.123456789", studentName);          // Name ID
-                    formData.append("entry.987654321", test.title);           // Test Title ID
-                    formData.append("entry.111222333", totalScore);           // Score ID
-                    formData.append("entry.444555666", totalMaxMarks);        // Max Marks ID
+                    formData.append("entry.405818436", studentName);          // Name ID
+                    formData.append("entry.1868223280", test.title);           // Test Title ID
+                    formData.append("entry.1989064815", totalScore);           // Score ID
+                    formData.append("entry.1622530262", totalMaxMarks);        // Max Marks ID
                     
                     // We send the request using 'no-cors' so the browser doesn't block it.
                     // We won't get a success message back, but the data arrives in Sheets.
-                    await fetch("https://docs.google.com/forms/u/0/d/e/YOUR_FORM_ID/formResponse", {
+                    await fetch("https://docs.google.com/forms/d/e/1FAIpQLSfM0JlqRqrgi5CsX6znc3PGrtwj9tUQ4JD9fdOZ4JoQJ1rFkg/formResponse", {
                         method: "POST",
                         mode: "no-cors",
                         body: formData
@@ -3690,6 +3690,7 @@ tests={tests}
     </script>
 </body>
 </html>
+
 
 
 
