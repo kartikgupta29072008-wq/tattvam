@@ -3453,38 +3453,70 @@ const QuizForge = () => {
     const [notebooks, setNotebooks] = useState(() => safeLoad('quizforge_notebooks', []));
     const officialTests = window.TATTVAM_LIBRARY || [];
     const [playingTest, setPlayingTest] = useState(null);
+   // 3. NEW: AUTO-FETCHER WITH DEBUGGING
     useEffect(() => {
         const loadDynamicLibrary = async () => {
             try {
-                // A. Fetch the 'Menu' (Index)
+                console.log("🔍 Looking for library/index.json...");
                 const indexResponse = await fetch('./library/index.json');
-                if (!indexResponse.ok) return; // Stop if file not found (e.g. offline)
                 
-                const fileList = await indexResponse.json();
+                if (!indexResponse.ok) {
+                    console.warn("⚠️ Library Index not found.");
+                    return; 
+                }
                 
-                // B. Fetch every file listed in the Menu
+                // SAFETY CHECK 1: Is index.json valid?
+                let fileList;
+                try {
+                    fileList = await indexResponse.json();
+                } catch (e) {
+                    alert("❌ Error in library/index.json\nYou probably have a trailing comma or missing quotes.\nCheck the file format.");
+                    return;
+                }
+
+                console.log("✅ Index found. Files to load:", fileList);
+
+                // SAFETY CHECK 2: Load each file individually
                 const promises = fileList.map(async (filename) => {
                     try {
-                        const res = await fetch(`./library/${filename}`);
-                        return await res.json();
+                        const path = `./library/${filename}`;
+                        const res = await fetch(path);
+                        
+                        if (!res.ok) {
+                            console.error(`❌ Failed to fetch ${filename} (404 Not Found)`);
+                            return null;
+                        }
+
+                        // Try to parse the specific test file
+                        try {
+                            const data = await res.json();
+                            // Ensure the official flag is set
+                            data.official = true; 
+                            return data;
+                        } catch (parseErr) {
+                            console.error(`❌ Invalid JSON in file: ${filename}`);
+                            alert(`Error loading test: ${filename}\nThe JSON syntax is broken inside this specific file.`);
+                            return null;
+                        }
+
                     } catch (err) {
-                        console.warn(`Failed to load ${filename}`, err);
+                        console.warn(`Network error loading ${filename}`, err);
                         return null;
                     }
                 });
 
-                // C. Wait for all downloads and update the list
                 const fetchedTests = (await Promise.all(promises)).filter(t => t);
                 
-                // D. Merge with existing ones (avoiding duplicates)
-                setOfficialTests(prev => {
-                    const existingIds = new Set(prev.map(t => t.id));
-                    const newUnique = fetchedTests.filter(t => !existingIds.has(t.id));
-                    return [...prev, ...newUnique];
-                });
+                // If we found new tests, overwrite the list
+                if (fetchedTests.length > 0) {
+                    console.log(`🎉 Successfully loaded ${fetchedTests.length} tests.`);
+                    setOfficialTests(fetchedTests);
+                } else {
+                    console.warn("⚠️ Index was loaded, but no valid tests were found inside it.");
+                }
 
             } catch (e) {
-                console.log("Library Index not found or offline.", e);
+                console.log("Library System Error:", e);
             }
         };
 
@@ -3689,6 +3721,7 @@ tests={tests}
     </script>
 </body>
 </html>
+
 
 
 
