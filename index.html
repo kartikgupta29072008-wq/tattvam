@@ -1535,7 +1535,7 @@ const AnalysisNotebook = ({ notebook, onUpdate, onBack, apiKey, onRequestKey, on
             </div>
         </div>
     );
-};      const Dashboard = ({ tests, notebooks, onCreateTest, onCreateNotebook, onDeleteTest, onDeleteNotebook, onSelectTest, onSelectNotebook, onSettings, onImport, appLogo, setAppLogo }) => {
+};      const Dashboard = ({ tests, notebooks, onCreateTest, onCreateNotebook, onDeleteTest, onDeleteNotebook, onSelectTest, onSelectNotebook, onSettings, onImport, appLogo, setAppLogo, onStartOfficial}) => {
             const [tab, setTab] = useState('tests');
             const [page, setPage] = useState(0); 
             const ITEMS_PER_PAGE = 6;           
@@ -1544,7 +1544,24 @@ const AnalysisNotebook = ({ notebook, onUpdate, onBack, apiKey, onRequestKey, on
             const fileInputRef = useRef(null);
             const logoInputRef = useRef(null); 
             const [imgError, setImgError] = useState(false);
-
+    const [officialTests, setOfficialTests] = useState([]);
+    const [loadingOfficial, setLoadingOfficial] = useState(false);
+useEffect(() => {
+        const fetchOfficial = async () => {
+            setLoadingOfficial(true);
+            try {
+                // REPLACE THIS URL WITH YOUR RAW GITHUB JSON URL
+                const url = "https://raw.githubusercontent.com/YOUR_GITHUB_USERNAME/YOUR_REPO_NAME/main/official_tests.json";
+                const res = await fetch(url);
+                if(res.ok) {
+                    const data = await res.json();
+                    setOfficialTests(data);
+                }
+            } catch (e) { console.error("Could not load official tests", e); }
+            setLoadingOfficial(false);
+        };
+        fetchOfficial();
+    }, []);
             useEffect(() => { setImgError(false); }, [appLogo]);
             useEffect(() => { setPage(0); }, [tab]);
 
@@ -2585,7 +2602,35 @@ const ResultDashboard = ({ entry, onBack, onSave, savedNotebooks, onCreateNotebo
                     <button onClick={onBack} className="flex items-center gap-2 bg-slate-800 text-white px-5 py-2 rounded-lg font-bold hover:bg-slate-700 shadow-lg hover:shadow-xl transition-all">Exit <Icon name="X" className="w-4 h-4" /></button>
                 </div>
             </div>
-
+{/* --- OFFICIAL EXAM ZONE --- */}
+<div className="mb-8 bg-gradient-to-r from-indigo-900 to-slate-900 rounded-2xl p-6 text-white shadow-xl relative overflow-hidden">
+    <div className="absolute top-0 right-0 p-4 opacity-10"><Icon name="Flag" className="w-32 h-32" /></div>
+    <div className="relative z-10">
+        <h3 className="text-2xl font-bold flex items-center gap-2 mb-2"><Icon name="Target" /> Official Live Exams</h3>
+        <p className="text-indigo-200 text-sm mb-6 max-w-2xl">These tests are deployed by the administrator. Results will be automatically submitted for ranking.</p>
+        
+        {loadingOfficial ? (
+            <div className="flex items-center gap-2 text-sm font-bold"><Icon name="Loader2" className="animate-spin" /> Syncing with Server...</div>
+        ) : (
+            <div className="flex gap-4 overflow-x-auto pb-2">
+                {officialTests.length > 0 ? officialTests.map(ot => (
+                    <div key={ot.id} className="min-w-[280px] bg-white/10 backdrop-blur-md border border-white/20 p-4 rounded-xl hover:bg-white/20 transition-all cursor-pointer group" onClick={() => onStartOfficial(ot)}>
+                        <h4 className="font-bold text-lg mb-1">{ot.title}</h4>
+                        <div className="flex gap-3 text-xs font-mono text-indigo-200 mb-4">
+                            <span>{ot.questions?.length} Qs</span>
+                            <span>{ot.duration} Mins</span>
+                        </div>
+                        <button className="w-full bg-emerald-500 hover:bg-emerald-400 text-white font-bold py-2 rounded-lg flex items-center justify-center gap-2 shadow-lg group-hover:scale-[1.02] transition-transform">
+                            Attempt Now <Icon name="Play" className="w-4 h-4" />
+                        </button>
+                    </div>
+                )) : (
+                    <div className="text-sm text-indigo-300 italic">No live exams active at the moment.</div>
+                )}
+            </div>
+        )}
+    </div>
+</div>
             {/* --- TABS --- */}
             <div className="bg-white border-b px-6 flex gap-6 text-sm font-bold text-slate-500">
                 {['overview', 'solutions', 'time'].map(t => (
@@ -2857,14 +2902,44 @@ const ResultDashboard = ({ entry, onBack, onSave, savedNotebooks, onCreateNotebo
                 return { score: -neg, status: `Incorrect (-${neg})`, rawStatus: 'wrong' };
             };
 
-            const finishQuiz = (auto = false) => {
-                if(auto || confirm("Submit Test?")) {
-                    setIsSubmitted(true);
-                    localStorage.removeItem(storageKey);
+           const finishQuiz = async (auto = false) => {
+    if (auto || confirm("Submit Test? This is an Official Exam.")) {
+        setIsSubmitted(true);
+        localStorage.removeItem(storageKey);
+
+        const totalScore = questions.reduce((acc, q) => acc + calculatePoints(q, ans[q.id]).score, 0);
+        const totalMaxMarks = questions.reduce((acc, q) => acc + (q.marks?.pos || 0), 0);
+
+        // ... existing result construction logic ...
+
+        // --- NEW: GOOGLE FORM SUBMISSION LOGIC ---
+        // Only run this if it's an OFFICIAL test (you can check by ID prefix or a flag)
+        if (test.id.startsWith('official')) {
+            const studentName = prompt("Enter your Name for the Official Leaderboard:", "Anonymous Student");
+            
+            if (studentName) {
+                try {
+                    const formData = new FormData();
+                    // REPLACE THESE entry.XXXXX IDs WITH YOUR GOOGLE FORM IDs
+                    formData.append("entry.123456789", studentName);          // Name ID
+                    formData.append("entry.987654321", test.title);           // Test Title ID
+                    formData.append("entry.111222333", totalScore);           // Score ID
+                    formData.append("entry.444555666", totalMaxMarks);        // Max Marks ID
                     
-                    // --- CONSTRUCT THE UNIFIED ENTRY OBJECT HERE ---
-                    const totalScore = questions.reduce((acc, q) => acc + calculatePoints(q, ans[q.id]).score, 0);
-                    const totalMaxMarks = questions.reduce((acc, q) => acc + (q.marks?.pos||0), 0);
+                    // We send the request using 'no-cors' so the browser doesn't block it.
+                    // We won't get a success message back, but the data arrives in Sheets.
+                    await fetch("https://docs.google.com/forms/u/0/d/e/YOUR_FORM_ID/formResponse", {
+                        method: "POST",
+                        mode: "no-cors",
+                        body: formData
+                    });
+                    
+                    alert("✅ Result Submitted to Official Server!");
+                } catch (e) {
+                    alert("⚠️ Network Error: Result saved locally, but not uploaded.");
+                }
+            }
+        }
                     
                     const questionAnalytics = questions.map((q, i) => {
                         const { score, rawStatus } = calculatePoints(q, ans[q.id]);
@@ -3513,7 +3588,13 @@ const QuizForge = () => {
         setTests(prev => [...newTests, ...prev]);
         setNotebooks(prev => [...newNotebooks, ...prev]);
     };
-
+const handleStartOfficial = (officialTest) => {
+    // We treat it like a normal test, but ensure ID indicates it is official
+    setPlayingTest(officialTest);
+    // Use the official duration defined in the JSON
+    setQuizDuration(officialTest.duration || 180); 
+    setView('player');
+};
     // --- RENDER ---
     return (
         <div className="font-sans h-screen flex flex-col relative">
@@ -3550,6 +3631,7 @@ const QuizForge = () => {
                     onImport={importData} 
                     appLogo={appLogo} 
                     setAppLogo={setAppLogo} 
+                    onStartOfficial={handleStartOfficial}
                 />
             )}
 
@@ -3608,6 +3690,7 @@ tests={tests}
     </script>
 </body>
 </html>
+
 
 
 
