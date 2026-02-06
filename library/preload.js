@@ -2,6 +2,349 @@
 // This array holds the permanent "Official" tests.
 window.TATTVAM_LIBRARY = [
  {
+  "id": "imported_single_6obyk1imlalfsy3",
+  "title": "Maths Test 4",
+  "created": "2026-01-29T15:00:00.000Z",
+  "questions": [
+    {
+      "id": "q_0ivhcd4mlalfsy3",
+      "text": "$\\lim_{n \\to \\infty} \\frac{n^2}{\\left( (n^2+1^2)(n^2+2^2)........(n^2+n^2) \\right)^{\\frac{1}{n}}}$ equals:",
+      "type": "SINGLE",
+      "options": [
+        "(a) $2e^{2+\\frac{\\pi}{2}}$",
+        "(b) $2e^{-2-\\frac{\\pi}{2}}$",
+        "(c) $\\frac{1}{2} e^{2-\\frac{\\pi}{2}}$",
+        "(d) $\\frac{1}{2} e^{2+\\frac{\\pi}{2}}$"
+      ],
+      "correctIndex": 2,
+      "correctIndices": [],
+      "correctNum": "",
+      "marks": {
+        "pos": 3,
+        "neg": 1
+      },
+      "diagram": null,
+      "explanation": "According to source, the correct answer for the limit evaluated in question 2 is option (c)."
+    },
+    {
+      "id": "q_jdantgsmlalfsy3",
+      "text": "Let $f : R \\to R$ be a continuous function satisfying $f(x) + \\int_{0}^{x} t f(t) dt + x^2 = 0 \\forall x$. Then:",
+      "type": "SINGLE",
+      "options": [
+        "(a) $f(x)$ has more than one point in common with $x$-axis",
+        "(b) $f(x)$ is odd function",
+        "(c) $\\lim_{x \\to \\infty} f(x) = 2$",
+        "(d) $\\lim_{x \\to -\\infty} f(x) = -2$"
+      ],
+      "correctIndex": 3,
+      "correctIndices": [],
+      "correctNum": "",
+      "marks": {
+        "pos": 3,
+        "neg": 1
+      },
+      "diagram": null,
+      "explanation": "Analysis of the integral equation in question 7 identifies option (d) as the correct behavior of the function."
+    },
+    {
+      "id": "q_sc7m3ksmlalfsy3",
+      "text": "If the normal at one end of latus rectum of ellipse $\\frac{x^2}{a^2} + \\frac{y^2}{b^2} = 1$ passes from one end of minor axis and $e$ is eccentricity of ellipse, then:",
+      "type": "SINGLE",
+      "options": [
+        "(a) $e^2 + e + 1 = 0$",
+        "(b) $e^4 - e^2 + 1 = 0$",
+        "(c) $e^2 - e + 1 = 0$",
+        "(d) $e^4 + e^2 - 1 = 0$"
+      ],
+      "correctIndex": 3,
+      "correctIndices": [],
+      "correctNum": "",
+      "marks": {
+        "pos": 3,
+        "neg": 1
+      },
+      "diagram": null,
+      "explanation": "Geometric properties of the ellipse described in question 8 yield the relationship in option (d)."
+    },
+    {
+      "id": "q_1bdkz4bmlalfsy3",
+      "text": "Consider the circle $x^2 + y^2 = 25$ and a point $A(1, 2)$ lying inside it. Next consider secants of the circle passing through point $A$. It turns out that the mid-point of the secants lie on another circle of centre $(a, b)$ and radius $r$. Then triplet $(a, b, r)$ is:",
+      "type": "SINGLE",
+      "options": [
+        "(a) $(1, 2, 5)$",
+        "(b) $(\\frac{1}{2}, 1, \\frac{\\sqrt{5}}{2})$",
+        "(c) $(0, 0, \\sqrt{5})$",
+        "(d) $(1, 2, \\sqrt{5})$"
+      ],
+      "correctIndex": 1,
+      "correctIndices": [],
+      "correctNum": "",
+      "marks": {
+        "pos": 3,
+        "neg": 1
+      },
+      "diagram": null,
+      "explanation": "Solving for the locus of midpoints in question 20 results in the circle parameters listed in option (b)."
+    },
+    {
+      "id": "q_44xkwdemlalfsy3",
+      "text": "Let $A_k$ be the finite area bounded by the line $y = kx + k$ and the parabola $y = x^2$, where $k$ is a positive real number. The value of $\\lim_{k \\to \\infty} \\frac{A_k}{k^3}$ equals:",
+      "type": "SINGLE",
+      "options": [
+        "(a) $\\frac{1}{2}$",
+        "(b) $\\frac{1}{3}$",
+        "(c) $\\frac{1}{6}$",
+        "(d) $\\frac{2}{3}$"
+      ],
+      "correctIndex": 2,
+      "correctIndices": [],
+      "correctNum": "",
+      "marks": {
+        "pos": 3,
+        "neg": 1
+      },
+      "diagram": null,
+      "explanation": "Integration of the area bounded by the line and parabola in question 21 leads to the limit value of 1/6."
+    },
+    {
+      "id": "q_pky9e0nmlalfsy3",
+      "text": "Tangent is drawn at any point $(p, q)$ on the parabola $y^2 = 4ax$. Tangents are drawn from any point on this tangent to the circle $x^2 + y^2 = a^2$, such that the chords of contact pass through a fixed point $(r, s)$. Then $p, q, r, s$ hold which of the given relation?",
+      "type": "SINGLE",
+      "options": [
+        "(a) $rq^2 = 4ps^2$",
+        "(b) $r^2q = 4p^2s$",
+        "(c) $rq^2 = -4ps^2$",
+        "(d) $r^2q = -4p^2s$"
+      ],
+      "correctIndex": 2,
+      "correctIndices": [],
+      "correctNum": "",
+      "marks": {
+        "pos": 3,
+        "neg": 1
+      },
+      "diagram": null,
+      "explanation": "Relating the tangent and chord of contact equations for question 41 establishes the formula in option (c)."
+    },
+    {
+      "id": "q_kyy3oqsmlalfsy3",
+      "text": "The value of $\\sum_{k=1}^{\\infty} \\frac{6^k}{(3^k - 2^k)(3^{k+1} - 2^{k+1})}$ can be equal to:",
+      "type": "MULTI",
+      "options": [
+        "(a) $\\lim_{x \\to 0} \\frac{1 - \\cos 2x}{x^2}$",
+        "(b) $\\lim_{n \\to \\infty} \\left( \\sin \\frac{\\pi}{2n} \\times \\sin \\frac{2\\pi}{2n} \\times \\dots \\times \\sin \\frac{(n-1)\\pi}{n} \\right)^{1/n}$",
+        "(c) $\\frac{\\int_{0}^{\\pi/2} \\ln |\\cos 2x| dx}{\\frac{\\pi \\ln 2}{2}}$",
+        "(d) $\\frac{2}{\\pi \\ln 2} \\int_{0}^{\\pi/4} \\ln(1 + \\tan x) dx$"
+      ],
+      "correctIndex": -1,
+      "correctIndices": [
+        0,
+        2
+      ],
+      "correctNum": "",
+      "marks": {
+        "pos": 4,
+        "neg": 2
+      },
+      "diagram": null,
+      "explanation": "The sum for question 306 evaluates to 2, which matches the results of limits/integrals in options (a) and (c)."
+    },
+    {
+      "id": "q_rwqc1vjmlalfsy3",
+      "text": "If $a_1, a_2, \\dots, a_n$ is a sequence of positive numbers which are in A.P. with common difference $d$ and $a_1 + a_4 + a_7 + \\dots + a_{16} = 147$ then $a_1 + a_{16} = M$ and $a_1 + a_6 + a_{11} + a_{16} = N$. Maximum value of $a_1 a_2 \\dots a_{16} = (\\frac{S}{W})^{16}$ (where $S$ and $W$ are coprime), then:",
+      "type": "MULTI",
+      "options": [
+        "(a) $M = 49$",
+        "(b) $N = 98$",
+        "(c) $S = 49$",
+        "(d) $W = 2$"
+      ],
+      "correctIndex": -1,
+      "correctIndices": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "correctNum": "",
+      "marks": {
+        "pos": 4,
+        "neg": 2
+      },
+      "diagram": null,
+      "explanation": "All relations described in options (a) through (d) are verified correctly for the A.P. in question 308."
+    },
+    {
+      "id": "q_0oxtscxmlalfsy3",
+      "text": "The ends of the major axis of ellipse are $(-2, 4)$ and $(2, 1)$. If the point $(1, 3)$ lies on the ellipse. Then:",
+      "type": "MULTI",
+      "options": [
+        "(a) The length of major axis is equal to 10.",
+        "(b) The length of minor axis is equal to $\\frac{10}{\\sqrt{24}}$",
+        "(c) The length of latus rectum of ellipse is $\\frac{5}{6}$",
+        "(d) Square of the distance between the focii of ellipse is $\\frac{125}{6}$"
+      ],
+      "correctIndex": -1,
+      "correctIndices": [
+        1,
+        2,
+        3
+      ],
+      "correctNum": "",
+      "marks": {
+        "pos": 4,
+        "neg": 2
+      },
+      "diagram": null,
+      "explanation": "Calculations based on the axis endpoints and the given point for question 310 confirm options (b), (c), and (d)."
+    },
+    {
+      "id": "q_5twlb9zmlalfsy3",
+      "text": "Let $I_n = \\int_{-\\pi}^{\\pi} \\frac{1}{1 + 2^{\\sin(\\frac{x}{2})}} \\left( \\frac{\\sin(\\frac{nx}{2})}{\\sin(\\frac{x}{2})} \\right)^2 dx$, for $n = 0, 1, 2, 3, \\dots$, then which of the following is/are always correct?",
+      "type": "MULTI",
+      "options": [
+        "(a) $I_{n+1} - I_n = \\pi \\forall n = 0, 1, 2, \\dots$",
+        "(b) $I_0, I_1, I_2, I_3, \\dots, I_n$ form an A.P.",
+        "(c) $\\sum_{m=0}^{9} I_{2m} = 90\\pi$",
+        "(d) $\\sum_{m=0}^{10} I_m = 65\\pi$"
+      ],
+      "correctIndex": -1,
+      "correctIndices": [
+        0,
+        1,
+        2
+      ],
+      "correctNum": "",
+      "marks": {
+        "pos": 4,
+        "neg": 2
+      },
+      "diagram": null,
+      "explanation": "The integral property $I_{n+1}-I_n = \\pi$ establishes an A.P., verifying options (a), (b), and (c) for question 341."
+    },
+    {
+      "id": "q_ppe7moymlalfsy3",
+      "text": "If both $A - \\frac{1}{2}I$ and $A + \\frac{1}{2}I$ are orthogonal matrices, then which of the following statements are incorrect? (where $I$ is an identity matrix order same as that of $A$)",
+      "type": "MULTI",
+      "options": [
+        "(a) $A$ is skew-symmetric matrix of odd order.",
+        "(b) $A^2 = \\frac{3}{4} I$",
+        "(c) $A$ is skew-symmetric matrix of even order.",
+        "(d) $A$ is orthogonal"
+      ],
+      "correctIndex": -1,
+      "correctIndices": [
+        0,
+        1,
+        2
+      ],
+      "correctNum": "",
+      "marks": {
+        "pos": 4,
+        "neg": 2
+      },
+      "diagram": null,
+      "explanation": "Based on the orthogonality conditions in question 348, the statements in (a), (b), and (c) are incorrect."
+    },
+    {
+      "id": "q_smokxi5mlalfsy3",
+      "text": "Let $S_k$ be the area bounded by the curve $y = x^2 (1 - x)^k$ and the lines $x = 0, y = 0$ and $x = 1$. If $\\lim_{n \\to \\infty} \\sum_{k=1}^{n} S_k$ is equal to $\\frac{p}{q}$, where $p$ and $q$ are co-prime positive integers, find $(p + q)$.",
+      "type": "NUMERICAL",
+      "options": [],
+      "correctIndex": -1,
+      "correctIndices": [],
+      "correctNum": "7",
+      "marks": {
+        "pos": 4,
+        "neg": 1
+      },
+      "diagram": null,
+      "explanation": "Summing the bounded areas for question 742 results in a value where $p+q = 7$."
+    },
+    {
+      "id": "q_u4gb5psmlalfsy3",
+      "text": "Let $S_n = \\sum_{r=1}^{n} \\frac{6r + 9}{(r + 1)^2(r + 2)^2}$. If $S_{\\infty} = \\frac{p}{q}$ where $p, q \\in N$, then find the least value of $|p - q|$.",
+      "type": "NUMERICAL",
+      "options": [],
+      "correctIndex": -1,
+      "correctIndices": [],
+      "correctNum": "1",
+      "marks": {
+        "pos": 4,
+        "neg": 1
+      },
+      "diagram": null,
+      "explanation": "Evaluating the infinite series in question 844 leads to the least difference of 1."
+    },
+    {
+      "id": "q_5srrg9pmlalfsy3",
+      "text": "If the coefficient of $x^8$ in the expansion of $(2 + 9x^3 + 6x^4 + x^5)^{10}$ is $5 \\cdot 2^p \\cdot 3^q$, find $(p + q)$.",
+      "type": "NUMERICAL",
+      "options": [],
+      "correctIndex": -1,
+      "correctIndices": [],
+      "correctNum": "14",
+      "marks": {
+        "pos": 4,
+        "neg": 1
+      },
+      "diagram": null,
+      "explanation": "Expansion and coefficient analysis for question 876 determines that $(p+q) = 14$."
+    },
+    {
+      "text": "Let $\\vec{v_1} = \\sin\\theta \\hat{i} - 2\\hat{j} + a\\hat{k}$, $\\vec{v_2} = 2\\hat{i} + \\cos\\theta \\hat{j} - \\hat{k}$ and $\\vec{v_3} = \\hat{i} + \\hat{k}$ be three vectors such that the value of '$a$' is maximum for $\\vec{v_1} \\cdot \\vec{v_2} = 0$ where $\\theta \\in [0, \\pi]$. If for these values of '$a$' and '$\\theta$' $$\\sqrt{\\begin{vmatrix} \\vec{v_1} \\cdot \\vec{v_1} & \\vec{v_1} \\cdot \\vec{v_2} & \\vec{v_1} \\cdot \\vec{v_3} \\\\ \\vec{v_2} \\cdot \\vec{v_1} & \\vec{v_2} \\cdot \\vec{v_2} & \\vec{v_2} \\cdot \\vec{v_3} \\\\ \\vec{v_3} \\cdot \\vec{v_1} & \\vec{v_3} \\cdot \\vec{v_2} & \\vec{v_3} \\cdot \\vec{v_3} \\end{vmatrix}} = \\frac{p}{q}$$ where $p, q \\in N$, then find least value of $|p - 4q|$.",
+      "type": "NUMERICAL",
+      "options": [],
+      "marks": {
+        "pos": 4,
+        "neg": 1
+      },
+      "difficulty": "Medium",
+      "diagram_box": null,
+      "id": 0.6240635097612224,
+      "correctIndex": -1,
+      "correctIndices": [],
+      "correctNum": "7",
+      "matrixAns": {},
+      "explanation": ""
+    },
+    {
+      "text": " Let an octahedral dice (8 faces) marked the numbers 1 to 8 on its faces. On throwing two such dice three events $A, B, C$ are defined as:\n$A$: getting a sum 10 or more.\n$B$: getting a sum divisible by 2.\n$C$: getting a sum divisible by 3.\nIf $P\\left(\\frac{C-B}{A}\\right)=\\frac{a}{b}$ where $a, b \\in \\mathbb{N}$, then find the least value of $|a-b|$.",
+      "type": "NUMERICAL",
+      "options": [],
+      "marks": {
+        "pos": 4,
+        "neg": 1
+      },
+      "difficulty": "Medium",
+      "diagram_box": null,
+      "id": 0.516648064937189,
+      "correctIndex": -1,
+      "correctIndices": [],
+      "correctNum": "13",
+      "matrixAns": {},
+      "explanation": ""
+    },
+    {
+      "text": "The contents of three urns are 1 white, 2 red, 3 green balls; 2 white, 1 red and 1 green balls; 4 white, 5 red and 3 green balls. Two balls are drawn from an urn chosen at random and are found to be one white and one green. If the probability that the balls so drawn came from the third urn can be expressed as $\\frac{a}{b}$, where $a$ and $b$ are co-prime positive integers, find $(a+b)$.",
+      "type": "NUMERICAL",
+      "options": [],
+      "marks": {
+        "pos": 4,
+        "neg": 1
+      },
+      "difficulty": "Medium",
+      "diagram_box": null,
+      "id": 0.7335600575044922,
+      "correctIndex": -1,
+      "correctIndices": [],
+      "correctNum": "74",
+      "matrixAns": {},
+      "explanation": ""
+    }
+  ]
+}
+ {
   "id": "imported_single_5yojf6oml6lyz8h",
   "title": "Paper-1",
   "created": "2026-01-29T06:05:23.832Z",
