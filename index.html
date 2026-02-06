@@ -1536,7 +1536,7 @@ const AnalysisNotebook = ({ notebook, onUpdate, onBack, apiKey, onRequestKey, on
             </div>
         </div>
     );
-};      const Dashboard = ({ tests, notebooks, onCreateTest, onCreateNotebook, onDeleteTest, onDeleteNotebook, onSelectTest, onSelectNotebook, onSettings, onImport, appLogo, setAppLogo }) => {
+};      const Dashboard = ({ tests, officialTests, onCloneOfficial, notebooks, onCreateTest, onCreateNotebook, onDeleteTest, onDeleteNotebook, onSelectTest, onSelectNotebook, onSettings, onImport, appLogo, setAppLogo }) => {
             const [tab, setTab] = useState('tests');
             const [page, setPage] = useState(0); 
             const ITEMS_PER_PAGE = 6;           
@@ -1549,7 +1549,10 @@ const AnalysisNotebook = ({ notebook, onUpdate, onBack, apiKey, onRequestKey, on
             useEffect(() => { setImgError(false); }, [appLogo]);
             useEffect(() => { setPage(0); }, [tab]);
 
-            const currentList = tab === 'tests' ? tests : notebooks;
+           let currentList = [];
+if (tab === 'tests') currentList = tests;
+else if (tab === 'analysis') currentList = notebooks;
+else if (tab === 'library') currentList = officialTests || [];
             const totalPages = Math.ceil(currentList.length / ITEMS_PER_PAGE);
             const displayedItems = currentList.slice(page * ITEMS_PER_PAGE, (page + 1) * ITEMS_PER_PAGE);
 
@@ -1738,6 +1741,9 @@ const AnalysisNotebook = ({ notebook, onUpdate, onBack, apiKey, onRequestKey, on
                         <div className="bg-slate-100 p-1 rounded-lg flex font-bold text-sm">
                             <button onClick={() => setTab('tests')} className={`px-4 py-2 rounded-md transition-all ${tab==='tests' ? 'bg-white shadow text-slate-900' : 'text-slate-500'}`}>My Tests</button>
                             <button onClick={() => setTab('analysis')} className={`px-4 py-2 rounded-md transition-all ${tab==='analysis' ? 'bg-white shadow text-slate-900' : 'text-slate-500'}`}>Analysis Notebooks</button>
+                            <button onClick={() => setTab('library')} className={`px-4 py-2 rounded-md transition-all ${tab==='library' ? 'bg-white shadow text-indigo-700' : 'text-slate-500'}`}>
+    Library
+</button>
                         </div>
 
                         <div className="flex gap-2">
@@ -1752,6 +1758,29 @@ const AnalysisNotebook = ({ notebook, onUpdate, onBack, apiKey, onRequestKey, on
                             ) : (
                                 <button onClick={onCreateNotebook} className="flex items-center gap-2 bg-indigo-600 text-white px-5 py-2.5 rounded-lg hover:bg-indigo-500 font-medium shadow-sm"><Icon name="BookOpen" className="w-5 h-5" /> New Notebook</button>
                             )}
+                            {/* ADD THIS BLOCK AFTER THE 'analysis' BLOCK */}
+
+{tab === 'library' && (
+    <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {displayedItems.map(test => (
+            <div key={test.id} className="group bg-gradient-to-br from-indigo-50 to-white rounded-xl p-6 shadow-sm border border-indigo-100 hover:shadow-md transition-all relative overflow-hidden h-48 flex flex-col">
+                <div className="absolute top-0 right-0 bg-indigo-600 text-white text-[10px] px-3 py-1 rounded-bl-lg font-bold uppercase tracking-wider">OFFICIAL</div>
+                
+                <div className="flex justify-between items-start mb-4">
+                    <div className="bg-white p-3 rounded-lg border border-indigo-50 shadow-sm"><Icon name="Sparkles" className="w-6 h-6 text-indigo-600" /></div>
+                </div>
+                
+                <h3 className="font-bold text-lg text-slate-900 mb-1 truncate">{test.title}</h3>
+                <p className="text-sm text-slate-500 mb-4">{test.questions?.length || 0} Questions</p>
+                
+                <button onClick={() => onCloneOfficial(test)} className="mt-auto w-full bg-white border border-slate-200 text-slate-700 py-2 rounded-lg text-xs font-bold hover:bg-indigo-600 hover:text-white transition-all flex items-center justify-center gap-2 shadow-sm">
+                    <Icon name="Download" className="w-4 h-4" /> Add to My Tests
+                </button>
+            </div>
+        ))}
+        {displayedItems.length === 0 && <div className="col-span-full text-center py-20 text-slate-400 border-2 border-dashed rounded-xl">Library is empty.</div>}
+    </div>
+)}
                         </div>
                     </div>
 
@@ -3623,6 +3652,7 @@ tests={tests}
     </script>
 </body>
 </html>
+
 
 
 
