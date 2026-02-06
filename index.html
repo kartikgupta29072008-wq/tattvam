@@ -2902,72 +2902,78 @@ const ResultDashboard = ({ entry, onBack, onSave, savedNotebooks, onCreateNotebo
                 return { score: -neg, status: `Incorrect (-${neg})`, rawStatus: 'wrong' };
             };
 
-           const finishQuiz = async (auto = false) => {
-    if (auto || confirm("Submit Test? This is an Official Exam.")) {
-        setIsSubmitted(true);
-        localStorage.removeItem(storageKey);
+           const finishQuiz = (auto = false) => {
+                if(auto || confirm("Submit Test?")) {
+                    try {
+                        // 1. Calculate Results IMMEDIATELY (Synchronous)
+                        // We do this first so the user sees results instantly.
+                        const totalScore = questions.reduce((acc, q) => acc + calculatePoints(q, ans[q.id]).score, 0);
+                        const totalMaxMarks = questions.reduce((acc, q) => acc + (q.marks?.pos||0), 0);
+                        
+                        const questionAnalytics = questions.map((q, i) => {
+                            const { score, rawStatus } = calculatePoints(q, ans[q.id]);
+                            return {
+                                id: q.id,
+                                qNum: i + 1,
+                                text: q.text,
+                                status: rawStatus,
+                                timeSpent: questionTimes[i] || 0,
+                                marks: score,
+                                userAns: ans[q.id],
+                                isMarked: marked.has(i),
+                                qData: q 
+                            };
+                        });
 
-        const totalScore = questions.reduce((acc, q) => acc + calculatePoints(q, ans[q.id]).score, 0);
-        const totalMaxMarks = questions.reduce((acc, q) => acc + (q.marks?.pos || 0), 0);
-
-        // ... existing result construction logic ...
-
-        // --- NEW: GOOGLE FORM SUBMISSION LOGIC ---
-        // Only run this if it's an OFFICIAL test (you can check by ID prefix or a flag)
-        if (test.id.startsWith('official')) {
-            const studentName = prompt("Enter your Name for the Official Leaderboard:", "Anonymous Student");
-            
-            if (studentName) {
-                try {
-                    const formData = new FormData();
-                    // REPLACE THESE entry.XXXXX IDs WITH YOUR GOOGLE FORM IDs
-                    formData.append("entry.405818436", studentName);          // Name ID
-                    formData.append("entry.1868223280", test.title);           // Test Title ID
-                    formData.append("entry.1989064815", totalScore);           // Score ID
-                    formData.append("entry.1622530262", totalMaxMarks);        // Max Marks ID
-                    
-                    // We send the request using 'no-cors' so the browser doesn't block it.
-                    // We won't get a success message back, but the data arrives in Sheets.
-                    await fetch("https://docs.google.com/forms/d/e/1FAIpQLSfM0JlqRqrgi5CsX6znc3PGrtwj9tUQ4JD9fdOZ4JoQJ1rFkg/formResponse", {
-                        method: "POST",
-                        mode: "no-cors",
-                        body: formData
-                    });
-                    
-                    alert("✅ Result Submitted to Official Server!");
-                } catch (e) {
-                    alert("⚠️ Network Error: Result saved locally, but not uploaded.");
-                }
-            }
-        }
-                    
-                    const questionAnalytics = questions.map((q, i) => {
-                        const { score, rawStatus } = calculatePoints(q, ans[q.id]);
-                        return {
-                            id: q.id,
-                            qNum: i + 1,
-                            text: q.text,
-                            status: rawStatus,
-                            timeSpent: questionTimes[i] || 0,
-                            marks: score,
-                            userAns: ans[q.id],
-                            isMarked: marked.has(i),
-                            qData: q // Store full question data for persistence
+                        const entryData = {
+                            id: Date.now().toString(),
+                            testId: test.id,
+                            date: new Date().toISOString(),
+                            testName: test.title,
+                            score: totalScore,
+                            maxMarks: totalMaxMarks,
+                            details: questionAnalytics,
+                            type: 'QUIZ_ATTEMPT'
                         };
-                    });
 
-                    setFinalResultEntry({
-                        id: Date.now().toString(),
-testId: test.id,
-                        date: new Date().toISOString(),
-                        testName: test.title,
-                        score: totalScore,
-                        maxMarks: totalMaxMarks,
-                        details: questionAnalytics,
-                        type: 'QUIZ_ATTEMPT'
-                    });
+                        // 2. Background Upload (Fire and Forget)
+                        // We use String() to safely handle numeric IDs, preventing the "startsWith" crash.
+                        const safeId = String(test.id || "");
+                        
+                        if (safeId.startsWith('official')) {
+                            // Run this in background (setTimeout) so the UI updates first
+                            setTimeout(() => {
+                                const studentName = prompt("🎉 Test Submitted!\nEnter your Name for the Official Leaderboard:", "Anonymous Student");
+                                if (studentName) {
+                                    try {
+                                        const formData = new FormData();
+                                        
+                                        // --- REPLACE THESE WITH YOUR GOOGLE FORM ENTRY IDs ---
+                                        formData.append("entry.405818436", studentName);  
+                                        formData.append("entry.1868223280", test.title);   
+                                        formData.append("entry.1989064815", totalScore);   
+                                        formData.append("entry.1622530262", totalMaxMarks);
+                                        // ---------------------------------------------------
 
-                    if(auto) alert("Time Up! Submitted.");
+                                        fetch("https://docs.google.com/forms/d/e/1FAIpQLSfM0JlqRqrgi5CsX6znc3PGrtwj9tUQ4JD9fdOZ4JoQJ1rFkg/formResponse", {
+                                            method: "POST",
+                                            mode: "no-cors",
+                                            body: formData
+                                        }).then(() => console.log("Uploaded")).catch(e => console.warn(e));
+                                    } catch(e) { console.error("Upload error", e); }
+                                }
+                            }, 500); // Small delay allows the Result Dashboard to appear first
+                        }
+
+                        // 3. Update State & Clean Up
+                        localStorage.removeItem(storageKey);
+                        setFinalResultEntry(entryData);
+                        setIsSubmitted(true);
+
+                    } catch (err) {
+                        console.error("Submission Crash:", err);
+                        alert("Error generating result: " + err.message);
+                    }
                 }
             };
 
@@ -3690,6 +3696,7 @@ tests={tests}
     </script>
 </body>
 </html>
+
 
 
 
