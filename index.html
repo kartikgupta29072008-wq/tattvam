@@ -1535,7 +1535,7 @@ const AnalysisNotebook = ({ notebook, onUpdate, onBack, apiKey, onRequestKey, on
             </div>
         </div>
     );
-};      const Dashboard = ({ tests, notebooks, onCreateTest, onCreateNotebook, onDeleteTest, onDeleteNotebook, onSelectTest, onSelectNotebook, onSettings, onImport, appLogo, setAppLogo, onStartOfficial}) => {
+};      const Dashboard = ({ tests, notebooks, onCreateTest, onCreateNotebook, onDeleteTest, onDeleteNotebook, onSelectTest, onSelectNotebook, onSettings, onImport, appLogo, setAppLogo }) => {
             const [tab, setTab] = useState('tests');
             const [page, setPage] = useState(0); 
             const ITEMS_PER_PAGE = 6;           
@@ -1544,24 +1544,7 @@ const AnalysisNotebook = ({ notebook, onUpdate, onBack, apiKey, onRequestKey, on
             const fileInputRef = useRef(null);
             const logoInputRef = useRef(null); 
             const [imgError, setImgError] = useState(false);
-    const [officialTests, setOfficialTests] = useState([]);
-    const [loadingOfficial, setLoadingOfficial] = useState(false);
-useEffect(() => {
-        const fetchOfficial = async () => {
-            setLoadingOfficial(true);
-            try {
-                // REPLACE THIS URL WITH YOUR RAW GITHUB JSON URL
-                const url = "https://raw.githubusercontent.com/YOUR_GITHUB_USERNAME/YOUR_REPO_NAME/main/official_tests.json";
-                const res = await fetch(url);
-                if(res.ok) {
-                    const data = await res.json();
-                    setOfficialTests(data);
-                }
-            } catch (e) { console.error("Could not load official tests", e); }
-            setLoadingOfficial(false);
-        };
-        fetchOfficial();
-    }, []);
+
             useEffect(() => { setImgError(false); }, [appLogo]);
             useEffect(() => { setPage(0); }, [tab]);
 
@@ -2602,35 +2585,7 @@ const ResultDashboard = ({ entry, onBack, onSave, savedNotebooks, onCreateNotebo
                     <button onClick={onBack} className="flex items-center gap-2 bg-slate-800 text-white px-5 py-2 rounded-lg font-bold hover:bg-slate-700 shadow-lg hover:shadow-xl transition-all">Exit <Icon name="X" className="w-4 h-4" /></button>
                 </div>
             </div>
-{/* --- OFFICIAL EXAM ZONE --- */}
-<div className="mb-8 bg-gradient-to-r from-indigo-900 to-slate-900 rounded-2xl p-6 text-white shadow-xl relative overflow-hidden">
-    <div className="absolute top-0 right-0 p-4 opacity-10"><Icon name="Flag" className="w-32 h-32" /></div>
-    <div className="relative z-10">
-        <h3 className="text-2xl font-bold flex items-center gap-2 mb-2"><Icon name="Target" /> Official Live Exams</h3>
-        <p className="text-indigo-200 text-sm mb-6 max-w-2xl">These tests are deployed by the administrator. Results will be automatically submitted for ranking.</p>
-        
-        {loadingOfficial ? (
-            <div className="flex items-center gap-2 text-sm font-bold"><Icon name="Loader2" className="animate-spin" /> Syncing with Server...</div>
-        ) : (
-            <div className="flex gap-4 overflow-x-auto pb-2">
-                {officialTests.length > 0 ? officialTests.map(ot => (
-                    <div key={ot.id} className="min-w-[280px] bg-white/10 backdrop-blur-md border border-white/20 p-4 rounded-xl hover:bg-white/20 transition-all cursor-pointer group" onClick={() => onStartOfficial(ot)}>
-                        <h4 className="font-bold text-lg mb-1">{ot.title}</h4>
-                        <div className="flex gap-3 text-xs font-mono text-indigo-200 mb-4">
-                            <span>{ot.questions?.length} Qs</span>
-                            <span>{ot.duration} Mins</span>
-                        </div>
-                        <button className="w-full bg-emerald-500 hover:bg-emerald-400 text-white font-bold py-2 rounded-lg flex items-center justify-center gap-2 shadow-lg group-hover:scale-[1.02] transition-transform">
-                            Attempt Now <Icon name="Play" className="w-4 h-4" />
-                        </button>
-                    </div>
-                )) : (
-                    <div className="text-sm text-indigo-300 italic">No live exams active at the moment.</div>
-                )}
-            </div>
-        )}
-    </div>
-</div>
+
             {/* --- TABS --- */}
             <div className="bg-white border-b px-6 flex gap-6 text-sm font-bold text-slate-500">
                 {['overview', 'solutions', 'time'].map(t => (
@@ -2902,78 +2857,42 @@ const ResultDashboard = ({ entry, onBack, onSave, savedNotebooks, onCreateNotebo
                 return { score: -neg, status: `Incorrect (-${neg})`, rawStatus: 'wrong' };
             };
 
-           const finishQuiz = (auto = false) => {
+            const finishQuiz = (auto = false) => {
                 if(auto || confirm("Submit Test?")) {
-                    try {
-                        // 1. Calculate Results IMMEDIATELY (Synchronous)
-                        // We do this first so the user sees results instantly.
-                        const totalScore = questions.reduce((acc, q) => acc + calculatePoints(q, ans[q.id]).score, 0);
-                        const totalMaxMarks = questions.reduce((acc, q) => acc + (q.marks?.pos||0), 0);
-                        
-                        const questionAnalytics = questions.map((q, i) => {
-                            const { score, rawStatus } = calculatePoints(q, ans[q.id]);
-                            return {
-                                id: q.id,
-                                qNum: i + 1,
-                                text: q.text,
-                                status: rawStatus,
-                                timeSpent: questionTimes[i] || 0,
-                                marks: score,
-                                userAns: ans[q.id],
-                                isMarked: marked.has(i),
-                                qData: q 
-                            };
-                        });
-
-                        const entryData = {
-                            id: Date.now().toString(),
-                            testId: test.id,
-                            date: new Date().toISOString(),
-                            testName: test.title,
-                            score: totalScore,
-                            maxMarks: totalMaxMarks,
-                            details: questionAnalytics,
-                            type: 'QUIZ_ATTEMPT'
+                    setIsSubmitted(true);
+                    localStorage.removeItem(storageKey);
+                    
+                    // --- CONSTRUCT THE UNIFIED ENTRY OBJECT HERE ---
+                    const totalScore = questions.reduce((acc, q) => acc + calculatePoints(q, ans[q.id]).score, 0);
+                    const totalMaxMarks = questions.reduce((acc, q) => acc + (q.marks?.pos||0), 0);
+                    
+                    const questionAnalytics = questions.map((q, i) => {
+                        const { score, rawStatus } = calculatePoints(q, ans[q.id]);
+                        return {
+                            id: q.id,
+                            qNum: i + 1,
+                            text: q.text,
+                            status: rawStatus,
+                            timeSpent: questionTimes[i] || 0,
+                            marks: score,
+                            userAns: ans[q.id],
+                            isMarked: marked.has(i),
+                            qData: q // Store full question data for persistence
                         };
+                    });
 
-                        // 2. Background Upload (Fire and Forget)
-                        // We use String() to safely handle numeric IDs, preventing the "startsWith" crash.
-                        const safeId = String(test.id || "");
-                        
-                        if (safeId.startsWith('official')) {
-                            // Run this in background (setTimeout) so the UI updates first
-                            setTimeout(() => {
-                                const studentName = prompt("🎉 Test Submitted!\nEnter your Name for the Official Leaderboard:", "Anonymous Student");
-                                if (studentName) {
-                                    try {
-                                        const formData = new FormData();
-                                        
-                                        // --- REPLACE THESE WITH YOUR GOOGLE FORM ENTRY IDs ---
-                                        formData.append("entry.405818436", studentName);  
-                                        formData.append("entry.1868223280", test.title);   
-                                        formData.append("entry.1989064815", totalScore);   
-                                        formData.append("entry.1622530262", totalMaxMarks);
-                                        // ---------------------------------------------------
+                    setFinalResultEntry({
+                        id: Date.now().toString(),
+testId: test.id,
+                        date: new Date().toISOString(),
+                        testName: test.title,
+                        score: totalScore,
+                        maxMarks: totalMaxMarks,
+                        details: questionAnalytics,
+                        type: 'QUIZ_ATTEMPT'
+                    });
 
-                                        fetch("https://docs.google.com/forms/d/e/1FAIpQLSfM0JlqRqrgi5CsX6znc3PGrtwj9tUQ4JD9fdOZ4JoQJ1rFkg/formResponse", {
-                                            method: "POST",
-                                            mode: "no-cors",
-                                            body: formData
-                                        }).then(() => console.log("Uploaded")).catch(e => console.warn(e));
-                                    } catch(e) { console.error("Upload error", e); }
-                                }
-                            }, 500); // Small delay allows the Result Dashboard to appear first
-                        }
-
-                        // 3. Update State & Clean Up
-                        localStorage.removeItem(storageKey);
-                        setFinalResultEntry(entryData);
-                        setIsSubmitted(true);
-
-                    } catch (err) {
-                        console.error("Submission Crash:", err);
-                        alert("Error generating result: " + err.message);
-                    }
+                    if(auto) alert("Time Up! Submitted.");
                 }
             };
 
@@ -3594,13 +3513,7 @@ const QuizForge = () => {
         setTests(prev => [...newTests, ...prev]);
         setNotebooks(prev => [...newNotebooks, ...prev]);
     };
-const handleStartOfficial = (officialTest) => {
-    // We treat it like a normal test, but ensure ID indicates it is official
-    setPlayingTest(officialTest);
-    // Use the official duration defined in the JSON
-    setQuizDuration(officialTest.duration || 180); 
-    setView('player');
-};
+
     // --- RENDER ---
     return (
         <div className="font-sans h-screen flex flex-col relative">
@@ -3637,7 +3550,6 @@ const handleStartOfficial = (officialTest) => {
                     onImport={importData} 
                     appLogo={appLogo} 
                     setAppLogo={setAppLogo} 
-                    onStartOfficial={handleStartOfficial}
                 />
             )}
 
@@ -3696,9 +3608,6 @@ tests={tests}
     </script>
 </body>
 </html>
-
-
-
 
 
 
