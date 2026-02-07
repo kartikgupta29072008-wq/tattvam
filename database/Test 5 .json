@@ -1,0 +1,387 @@
+{
+  "id": "1769666724040",
+  "title": "GRB 1000 Challenging Problems - Corrected Questions",
+  "created": "2026-01-29T19:00:00.000Z",
+  "questions": [
+    {
+      "text": "Let $f$ be a differentiable function satisfy $x^2 f'(x) + 2xf(x) = e^x$ and $f(2) = e^2/4$, then:",
+      "type": "SINGLE",
+      "options": [
+        "$f(x)$ has no local maxima and no local minima",
+        "$f(x)$ has both local maxima and local minima",
+        "$f(x)$ has local maxima but no local minima",
+        "$f(x)$ has no local maxima but local minima"
+      ],
+      "marks": {
+        "pos": 3,
+        "neg": 1
+      },
+      "difficulty": "Medium",
+      "diagram_box": null,
+      "id": 16,
+      "correctIndex": 3,
+      "correctIndices": [],
+      "correctNum": "",
+      "matrixAns": {},
+      "explanation": "Source: Question 16, Answer Key."
+    },
+    {
+      "text": "If $I = \\int_{e^{\\pi/6}}^{e^{\\pi/2}} \\frac{\\sin(\\ln(\\sin(\\ln x)))\\cos(\\ln x)}{x \\sin(\\ln x)} dx$, then the value of $\\cos^{-1}(I+1)$ is equal to:",
+      "type": "SINGLE",
+      "options": [
+        "$\\frac{\\pi}{4}$",
+        "$\\frac{\\pi}{3}$",
+        "$\\ln 2$",
+        "$2 \\ln 2$"
+      ],
+      "marks": {
+        "pos": 3,
+        "neg": 1
+      },
+      "difficulty": "Medium",
+      "diagram_box": null,
+      "id": 24,
+      "correctIndex": 2,
+      "correctIndices": [],
+      "correctNum": "",
+      "matrixAns": {},
+      "explanation": "Source: Question 24, Answer Key."
+    },
+    {
+      "text": "Let the equation $x^3+y^3+3xy=1$ represents the coordinate of one vertex $A$ and the equation of side $BC$ of the triangle $ABC$. If $B$ is the orthocentre of the triangle $ABC$, then the equation of side $AB$ is $y = mx + c$. Then absolute value of $(4 - m - c)$, is:",
+      "type": "SINGLE",
+      "options": [
+        "2",
+        "3",
+        "4",
+        "5"
+      ],
+      "marks": {
+        "pos": 3,
+        "neg": 1
+      },
+      "difficulty": "Medium",
+      "diagram_box": null,
+      "id": 39,
+      "correctIndex": 1,
+      "correctIndices": [],
+      "correctNum": "",
+      "matrixAns": {},
+      "explanation": "Source: Question 39, Answer Key."
+    },
+    {
+      "text": "The value of definite integral $\\int_{1}^{\\sqrt{3}} \\{x^{2x^2+1} + \\ln(x^{2x^{2x^2+1}})\\} dx$ is equal to:",
+      "type": "SINGLE",
+      "options": [
+        "2",
+        "3",
+        "8",
+        "13"
+      ],
+      "marks": {
+        "pos": 3,
+        "neg": 1
+      },
+      "difficulty": "Medium",
+      "diagram_box": null,
+      "id": 77,
+      "correctIndex": 3,
+      "correctIndices": [],
+      "correctNum": "",
+      "matrixAns": {},
+      "explanation": "Source: Question 77, Answer Key."
+    },
+    {
+      "text": "Function $f(x)$ is such that $f(x) = a \\ln x + \\frac{x^2}{2}$ where $a > 0$ is a parameter. If $\\frac{f(x_1) - f(x_2)}{x_1 - x_2} \\ge 2 \\forall x_1, x_2 \\in (0, \\infty)$ and $x_1 \\neq x_2$, then possible value of '$a$' can be:",
+      "type": "MULTI",
+      "options": [
+        "0",
+        "1/2",
+        "3/2",
+        "1"
+      ],
+      "marks": {
+        "pos": 4,
+        "neg": -1
+      },
+      "difficulty": "Medium",
+      "diagram_box": null,
+      "id": 303,
+      "correctIndex": -1,
+      "correctIndices": [
+        2,
+        3
+      ],
+      "correctNum": "",
+      "matrixAns": {},
+      "explanation": "Source: Question 303, Answer Key."
+    },
+    {
+      "text": "Consider the piecewise defined function $f(x) = \\begin{cases} \\{x\\}\\sqrt{4x^2-12x+9}, & 1 \\le x \\le 2 \\\\ \\cos\\left(\\frac{\\pi}{2}(|x| - \\{x\\})\\right), & -1 \\le x < 1 \\end{cases}$ with $\\{x\\}$ denoting the fractional part of $x$. Which of the following is/are true?",
+      "type": "MULTI",
+      "options": [
+        "Range of $f(x)$ is equal to $$.",
+        "The number of values of $x$ for which function is continuous but not differentiable is 1.",
+        "$f(x) = 1$ has two solutions.",
+        "Number of values of $x$ for which $f(x)$ is discontinuous is 2."
+      ],
+      "marks": {
+        "pos": 4,
+        "neg": -1
+      },
+      "difficulty": "Medium",
+      "diagram_box": null,
+      "id": 332,
+      "correctIndex": -1,
+      "correctIndices": [
+        0,
+        1
+      ],
+      "correctNum": "",
+      "matrixAns": {},
+      "explanation": "Source: Question 332, Answer Key."
+    },
+    {
+      "text": "Let $P(x)$ and $Q(x)$ are two different polynomials with real coefficients satisfying the conditions: (i) $a$ and $b$ are the roots of $P(x)$ and $Q(x)$ respectively. (ii) $P(b) \\cdot Q(a) > 0$. Then:",
+      "type": "MULTI",
+      "options": [
+        "$P(c) - Q(c) = 0$ for some $c$",
+        "$P(c) - 3P^2(c) = Q(c) - 2Q^2(c)$ for some $c$",
+        "$P(c) - 2Q(c) = 0$ for some $c$",
+        "$P(c) - 2P^2(c) = Q(c) - 3Q^2(c)$ for some $c$"
+      ],
+      "marks": {
+        "pos": 4,
+        "neg": -1
+      },
+      "difficulty": "Medium",
+      "diagram_box": null,
+      "id": 342,
+      "correctIndex": -1,
+      "correctIndices": [
+        0,
+        2
+      ],
+      "correctNum": "",
+      "matrixAns": {},
+      "explanation": "Source: Question 342, Answer Key."
+    },
+    {
+      "text": "If $(1+x)^n = C_0 + C_1x + C_2x^2 + \\dots + C_n x^n$, then the sum of the product of the coefficients taken two at a time can be represented by $\\sum_{0 \\le i < j \\le n} C_i C_j = 2^a - \\frac{b!}{c(d!)^2}$. Then which of the following are correct?",
+      "type": "MULTI",
+      "options": [
+        "$a = 2n-1$",
+        "$b = 2n$",
+        "$c = 2$",
+        "$d = n$"
+      ],
+      "marks": {
+        "pos": 4,
+        "neg": -1
+      },
+      "difficulty": "Medium",
+      "diagram_box": null,
+      "id": 350,
+      "correctIndex": -1,
+      "correctIndices": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "correctNum": "",
+      "matrixAns": {},
+      "explanation": "Source: Question 350, Answer Key."
+    },
+    {
+      "text": "Let $S$ be the set of all $3 \\times 3$ matrices having 3 entries equal to 1 and 6 entries equal to 0. A matrix $M$ is picked uniformly at random from the set $S$. Then the correct statement(s) is(are):",
+      "type": "MULTI",
+      "options": [
+        "total number of matrices in the set $S$ is 84",
+        "probability that $M$ is non-singular is $\\frac{1}{14}$",
+        "probability that $M$ is identity matrix = $\\frac{1}{14}$",
+        "probability that $M$ has trace equal to 0 = $\\frac{5}{21}$"
+      ],
+      "marks": {
+        "pos": 4,
+        "neg": -1
+      },
+      "difficulty": "Medium",
+      "diagram_box": null,
+      "id": 351,
+      "correctIndex": -1,
+      "correctIndices": [
+        0,
+        1,
+        3
+      ],
+      "correctNum": "",
+      "matrixAns": {},
+      "explanation": "Source: Question 351, Answer Key."
+    },
+    {
+      "text": "Let $\\mathbf{A} = 2\\mathbf{i} + \\mathbf{j} + 5\\mathbf{k}$ and $\\mathbf{B} = x\\mathbf{i} + y\\mathbf{j} + z\\mathbf{k}$. If $\\mathbf{A} \\cdot \\mathbf{B} = 11; \\mathbf{A} \\times \\mathbf{B} = -13\\mathbf{i} - 9\\mathbf{j} + 7\\mathbf{k}$, then:",
+      "type": "MULTI",
+      "options": [
+        "$x^2 + y^2 = 10$",
+        "$y^2 + z^2 = 13$",
+        "$[x+y+z] = 5$",
+        "$\\frac{x+y}{z} = 2$"
+      ],
+      "marks": {
+        "pos": 4,
+        "neg": -1
+      },
+      "difficulty": "Medium",
+      "diagram_box": null,
+      "id": 374,
+      "correctIndex": -1,
+      "correctIndices": [
+        0,
+        1
+      ],
+      "correctNum": "",
+      "matrixAns": {},
+      "explanation": "Source: Question 374, Answer Key."
+    },
+    {
+      "text": "If $t_1, t_2, t_3, \\dots, t_9$ are positive numbers such that $t_1 \\cdot t_2 \\dots t_9 = 3^7$ and $m = t_1 + t_2 + \\dots + t_7 + 3t_8 + 3t_9$ and $n = \\frac{1}{t_1} + \\frac{1}{t_2} + \\dots + \\frac{1}{t_7} + \\frac{1}{3t_8} + \\frac{1}{3t_9}$, then match the following:\n\n| List-I | List-II |\n| :--- | :--- |\n| (P) Least value of $m$ is equal to | (1) 3 |\n| (Q) Least value of $n$ is equal to | (2) 13/3 |\n| (R) If $m$ is least, then $\\sum_{i=1}^{9} t_i$ is equal to | (3) 23 |\n| (S) If $n$ is least, then $\\sum_{i=1}^{9} t_i$ is equal to | (4) 27 |",
+      "type": "MATCH",
+      "options": [
+        "P $\\to$ 2, Q $\\to$ 1, R $\\to$ 4, S $\\to$ 3",
+        "P $\\to$ 4, Q $\\to$ 1, R $\\to$ 3, S $\\to$ 3",
+        "P $\\to$ 4, Q $\\to$ 3, R $\\to$ 2, S $\\to$ 1",
+        "P $\\to$ 3, Q $\\to$ 2, R $\\to$ 1, S $\\to$ 3"
+      ],
+      "marks": {
+        "pos": 4,
+        "neg": 1
+      },
+      "difficulty": "Hard",
+      "diagram_box": null,
+      "id": 680,
+      "correctIndex": 1,
+      "correctIndices": [],
+      "correctNum": "",
+      "matrixAns": {},
+      "explanation": "Source: Question 680, Answer Key."
+    },
+    {
+      "text": "Let $f(x) = \\begin{cases} (15-3b)\\{x\\} - (b^2-4b-5)\\text{sgn}(x+1), & -\\pi/2 < x < 0 \\\\ k[|x| + \\{-x\\}], & 0 \\le x \\le \\pi \\\\ \\frac{(a+2\\cos x)(1+\\tan x)}{\\ln(1+\\pi^2-2\\pi x+x^2)}, & \\pi < x < 3\\pi/2 \\end{cases}$. Match the following:\n\n| List-I | List-II |\n| :--- | :--- |\n| (P) If $f$ is continuous in $(-\\frac{\\pi}{2}, 0)$, then the value of $b$ is | (1) 0 |\n| (Q) If $f$ is continuous at $x = \\pi$, then value of $(a+k)$ is | (2) 1 |\n| (R) If $f$ is continuous in $(-\\frac{\\pi}{2}, \\pi)$, then value of $(b+k)$ is | (3) 5 |\n| (S) If $f$ has exactly four points of discontinuity in $(-\\frac{\\pi}{2}, \\frac{3\\pi}{2})$, then $(a+b+k)$ is equal to | (4) 6 |",
+      "type": "MATCH",
+      "options": [
+        "P $\\to$ 3, Q $\\to$ 2, R $\\to$ 3, S $\\to$ 4",
+        "P $\\to$ 3, Q $\\to$ 1, R $\\to$ 3, S $\\to$ 3",
+        "P $\\to$ 4, Q $\\to$ 1, R $\\to$ 4, S $\\to$ 4",
+        "P $\\to$ 4, Q $\\to$ 2, R $\\to$ 4, S $\\to$ 4"
+      ],
+      "marks": {
+        "pos": 4,
+        "neg": 1
+      },
+      "difficulty": "Hard",
+      "diagram_box": null,
+      "id": 681,
+      "correctIndex": 0,
+      "correctIndices": [],
+      "correctNum": "",
+      "matrixAns": {},
+      "explanation": "Source: Question 681, Answer Key."
+    },
+    {
+      "text": "Let $x, y$ be positive real numbers such that $xy^3 = 81$, then match the following:\n\n| List-I | List-II |\n| :--- | :--- |\n| (P) The least value of $(x+y)^4$ is | (1) $2(12)^4$ |\n| (Q) The least value of $(x+3y)^4$ is | (2) $9(2)^8$ |\n| (R) The least value of $(3x+y)^4$ is | (3) $27(2)^8$ |\n| (S) The least value of $(2x+3y)^4$ is | (4) $3(2)^8$ |\n| | (5) $(12)^4$ |",
+      "type": "MATCH",
+      "options": [
+        "P $\\to$ 4, Q $\\to$ 5, R $\\to$ 2, S $\\to$ 1",
+        "P $\\to$ 4, Q $\\to$ 3, R $\\to$ 1, S $\\to$ 2",
+        "P $\\to$ 3, Q $\\to$ 2, R $\\to$ 3, S $\\to$ 1",
+        "P $\\to$ 1, Q $\\to$ 4, R $\\to$ 2, S $\\to$ 3"
+      ],
+      "marks": {
+        "pos": 4,
+        "neg": 1
+      },
+      "difficulty": "Hard",
+      "diagram_box": null,
+      "id": 684,
+      "correctIndex": 0,
+      "correctIndices": [],
+      "correctNum": "",
+      "matrixAns": {},
+      "explanation": "Source: Question 684, Answer Key."
+    },
+    {
+      "text": "If a variable line $L: 3x - 2y - 4 + \\lambda(x - 2y + 4) = 0$ where $\\lambda$ is a parameter is passing through a fixed point $P(a, b)$ and $S: x^2 + y^2 = 8$ is a circle, then match the following:\n\n| List-I | List-II |\n| :--- | :--- |\n| (P) $(a+b)$ is equal to | (1) $2\\sqrt{2}$ |\n| (Q) Length of the tangent from 'P' to the circle 'S' is | (2) $4\\sqrt{2}$ |\n| (R) Least distance of 'P' to the circle 'S' is | (3) $6\\sqrt{2}$ |\n| (S) Least radius of the circle whose centre is 'P' and it contains the circle 'S', is | (4) $2\\sqrt{6}$ |\n| | (5) 8 |",
+      "type": "MATCH",
+      "options": [
+        "P $\\to$ 1, Q $\\to$ 1, R $\\to$ 5, S $\\to$ 5",
+        "P $\\to$ 3, Q $\\to$ 2, R $\\to$ 4, S $\\to$ 1",
+        "P $\\to$ 1, Q $\\to$ 2, R $\\to$ 5, S $\\to$ 4",
+        "P $\\to$ 3, Q $\\to$ 2, R $\\to$ 4, S $\\to$ 5"
+      ],
+      "marks": {
+        "pos": 4,
+        "neg": 1
+      },
+      "difficulty": "Hard",
+      "diagram_box": null,
+      "id": 695,
+      "correctIndex": 1,
+      "correctIndices": [],
+      "correctNum": "",
+      "matrixAns": {},
+      "explanation": "Source: Question 695, Answer Key."
+    },
+    {
+      "text": "Vector $\\mathbf{OA}, \\mathbf{OB}, \\mathbf{OC}$ are on the same plane, $|\\mathbf{OA}| = 1, |\\mathbf{OB}| = 1, |\\mathbf{OC}| = \\sqrt{2}$. The relative position is as follows: $\\mathbf{OA}$ lies along the positive x-axis. $\\mathbf{OC}$ is in the first quadrant making an angle $\\alpha$ with $\\mathbf{OA}$. $\\mathbf{OB}$ lies in the second quadrant such that the angle between $\\mathbf{OC}$ and $\\mathbf{OB}$ is $\\frac{\\pi}{4}$. If $\\tan \\alpha = 7$ and $\\mathbf{OC} = m\\mathbf{OA} + n\\mathbf{OB}$, $(m, n \\in R)$, find the value of $(m+n)$.",
+      "type": "NUMERICAL",
+      "options": [],
+      "marks": {
+        "pos": 4,
+        "neg": 0
+      },
+      "difficulty": "Medium",
+      "diagram_box": null,
+      "id": 795,
+      "correctIndex": -1,
+      "correctIndices": [],
+      "correctNum": "3",
+      "matrixAns": {},
+      "explanation": "Source: Question 795, Answer Key."
+    },
+    {
+      "text": "Let $H: x^2 + y^2 + 4xy + 8x + 8y + 8 = 0$ be a hyperbola. A line $L: x + y + 1 = 0$ intersects the hyperbola $H$ at two distinct points. If radius of the circle which touches the hyperbola at the points where $H$ meets the line $L$ is $R$, then find the value of $R^2$.",
+      "type": "NUMERICAL",
+      "options": [],
+      "marks": {
+        "pos": 4,
+        "neg": 0
+      },
+      "difficulty": "Hard",
+      "diagram_box": null,
+      "id": 972,
+      "correctIndex": -1,
+      "correctIndices": [],
+      "correctNum": "14",
+      "matrixAns": {},
+      "explanation": "Source: Question 972, Answer Key."
+    },
+    {
+      "text": "Let $E_1, E_2, E_3$ be three independent events associated with a random experiment such that $3P(E_1 \\cap \\overline{E_2} \\cap \\overline{E_3}) = P(\\overline{E_1} \\cap \\overline{E_2} \\cap \\overline{E_3}) = 3 - 3P(E_1 \\cup E_2 \\cup E_3)$, where $P(E_1), P(E_2), P(E_3) \\neq 1$ and $P(A)$ denotes probability of event A. If absolute value of $\\begin{vmatrix} P(E_1) & P(E_2) & P(E_3) \\\\ P(E_2) & P(E_3) & P(E_1) \\\\ P(E_3) & P(E_1) & P(E_2) \\end{vmatrix} = \\frac{a}{b}$, where $a, b \\in N$, then find the least value of $(a+b)$.",
+      "type": "NUMERICAL",
+      "options": [],
+      "marks": {
+        "pos": 4,
+        "neg": 0
+      },
+      "difficulty": "Hard",
+      "diagram_box": null,
+      "id": 930,
+      "correctIndex": -1,
+      "correctIndices": [],
+      "correctNum": "41",
+      "matrixAns": {},
+      "explanation": "Source: Question 930, Answer Key."
+    }
+  ]
+}
