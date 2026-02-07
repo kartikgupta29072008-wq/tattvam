@@ -13,7 +13,7 @@
     "title": "test_5",
     "date": "2026-02-06",
     "duration": 60,
-    "marks": 62,
+    "marks": 63,
     "url": "https://raw.githubusercontent.com/kartikgupta29072008-wq/tattvam/refs/heads/main/database/Test%205%20.json",
     "active": true
   },
@@ -22,7 +22,7 @@
     "title": "test_6",
     "date": "2026-02-07",
     "duration": 60,
-    "marks": 62,
+    "marks": 59,
     "url": "https://raw.githubusercontent.com/kartikgupta29072008-wq/tattvam/refs/heads/main/database/test_6.json",
     "active": true
   },
