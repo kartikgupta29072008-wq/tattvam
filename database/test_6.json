@@ -1,1 +1,308 @@
-
+{
+  "title": "Test_6(MYK)",
+  "questions": [
+    {
+      "id": "q_kq1xtoamlcpqdn0",
+      "text": "The length of sub-tangent to the hyperbola $x^2 - 4y^2 = 4$ corresponding to the normal having slope unity is $\\frac{1}{\\sqrt{k}}$, then the value of $k$ is:",
+      "type": "SINGLE",
+      "options": [
+        "1",
+        "2",
+        "3",
+        "4"
+      ],
+      "correctIndex": 2,
+      "correctIndices": [],
+      "correctNum": "",
+      "marks": {
+        "pos": 3,
+        "neg": 1
+      },
+      "diagram": null,
+      "explanation": "Source: Question 64"
+    },
+    {
+      "id": "q_v13e25jmlcpqdn0",
+      "text": "Let $f(x)$ be a cubic polynomial on $R$ which increases in the interval $(-\\infty, 0) \\cup (1, \\infty)$ and decreases in the interval $(0, 1)$. If $f'(2)=6$ and $f(2)=2$, then the value of $\\tan^{-1}(f(1)) + \\tan^{-1}(f(\\frac{3}{2})) + \\tan^{-1}(f(0))$ is equal to:",
+      "type": "SINGLE",
+      "options": [
+        "$\\tan^{-1} 2$",
+        "$\\cot^{-1} 2$",
+        "$-\\tan^{-1} 2$",
+        "$-\\cot^{-1} 2$"
+      ],
+      "correctIndex": 3,
+      "correctIndices": [],
+      "correctNum": "",
+      "marks": {
+        "pos": 3,
+        "neg": 1
+      },
+      "diagram": null,
+      "explanation": "Source: Question 75"
+    },
+    {
+      "id": "q_durj2zkmlcpqdn0",
+      "text": "A strictly increasing continuous function $f(x)$ intersects with its inverse $f^{-1}(x)$ at $x=\\alpha$ and $x=\\beta$. If $\\int_{\\alpha}^{\\beta} (f(x) + f^{-1}(x)) dx = 13$ where $\\alpha, \\beta \\in N$, then the value of $|\\alpha\\beta|$ equals:",
+      "type": "SINGLE",
+      "options": [
+        "25",
+        "36",
+        "42",
+        "56"
+      ],
+      "correctIndex": 2,
+      "correctIndices": [],
+      "correctNum": "",
+      "marks": {
+        "pos": 3,
+        "neg": 1
+      },
+      "diagram": null,
+      "explanation": "Source: Question 81"
+    },
+    {
+      "id": "q_a0ru3s8mlcpqdn0",
+      "text": "The $1^{st}, 2^{nd}$ and $3^{rd}$ terms of an arithmetic series are $a, b$ and $a^2$, where $a$ is negative then sum of an infinite geometric series whose first three terms are $a, a^2$ and $b$ respectively, is:",
+      "type": "SINGLE",
+      "options": [
+        "$\\frac{-1}{2}$",
+        "$\\frac{-3}{2}$",
+        "$\\frac{-1}{3}$",
+        "none of these"
+      ],
+      "correctIndex": 2,
+      "correctIndices": [],
+      "correctNum": "",
+      "marks": {
+        "pos": 3,
+        "neg": 1
+      },
+      "diagram": null,
+      "explanation": "Source: Question 83"
+    },
+    {
+      "id": "q_eidvomamlcpqdn0",
+      "text": "A function $f: R \\rightarrow R$ satisfies the equation $f(x)f(y) - f(xy) = x+y, \\forall x, y \\in R$ and $f(1) > 0$, then:",
+      "type": "SINGLE",
+      "options": [
+        "$f(x)f^{-1}(x) = x^2 - 4$",
+        "$f(x)f^{-1}(x) = x^2 - 6$",
+        "$f(x)f^{-1}(x) = x^2 - 1$",
+        "$f(x)f^{-1}(x) = x^2$"
+      ],
+      "correctIndex": 2,
+      "correctIndices": [],
+      "correctNum": "",
+      "marks": {
+        "pos": 3,
+        "neg": 1
+      },
+      "diagram": null,
+      "explanation": "Source: Question 87"
+    },
+    {
+      "id": "q_wogyc4kmlcpqdn0",
+      "text": "Let $A$ and $B$ are square matrices satisfying $AB=A$ and $BA=B$, then $(A^{2019} + B^{2019})^{2020}$ is equal to:",
+      "type": "SINGLE",
+      "options": [
+        "$A+B$",
+        "$2020(A+B)$",
+        "$2^{2019}(A+B)$",
+        "$2^{2020}(A+B)$"
+      ],
+      "correctIndex": 2,
+      "correctIndices": [],
+      "correctNum": "",
+      "marks": {
+        "pos": 3,
+        "neg": 1
+      },
+      "diagram": null,
+      "explanation": "Source: Question 94"
+    },
+    {
+      "id": "q_4bqv31zmlcpqdn0",
+      "text": "The solution of the differential equation $e^{-x}(y+1)dy + (\\cos^2 x - \\sin 2x)y dx = 0$ subjected to condition that $y=1$ when $x=0$, is:",
+      "type": "SINGLE",
+      "options": [
+        "$(y+1) + e^x \\cos^2 x = 2$",
+        "$y + \\ln y = e^x \\cos^2 x$",
+        "$\\ln(y+1) + e^x \\cos^2 x = 1$",
+        "$y + \\ln y + e^x \\cos^2 x = 2$"
+      ],
+      "correctIndex": 3,
+      "correctIndices": [],
+      "correctNum": "",
+      "marks": {
+        "pos": 3,
+        "neg": 1
+      },
+      "diagram": null,
+      "explanation": "Source: Question 99"
+    },
+    {
+      "id": "q_burruhxmlcpqdn0",
+      "text": "If $\\lim_{n \\to \\infty} \\sum_{k=1}^{n} \\frac{e^{\\frac{k}{n}} + e^{-\\frac{k}{n}}}{n \\sqrt{11 - e^{\\frac{2k}{n}} - e^{-\\frac{2k}{n}}}} = \\sin^{-1}\\left(\\frac{e^a - e^{-a}}{b}\\right)$ where $a$ and $b$ are positive integers, then the value of $a+b$ is:",
+      "type": "SINGLE",
+      "options": [
+        "2",
+        "3",
+        "4",
+        "5"
+      ],
+      "correctIndex": 2,
+      "correctIndices": [],
+      "correctNum": "",
+      "marks": {
+        "pos": 3,
+        "neg": 1
+      },
+      "diagram": null,
+      "explanation": "Source: Question 121"
+    },
+    {
+      "id": "q_vjjgokbmlcpqdn0",
+      "text": "If $T_n$ denotes the $n^{th}$ term of an arithmetic progression such that $T_p = \\frac{1}{q}$ and $T_q = \\frac{1}{p}$, then which of the given option is necessarily a root to the equation $(p+2q-3r)x^2 + (q+2r-3p)x + (r+2p-3q) = 0$, given that $p+2q-3r \\neq 0$?",
+      "type": "SINGLE",
+      "options": [
+        "$T_{pq}$",
+        "$T_p$",
+        "$T_q$",
+        "$T_{p+q}$"
+      ],
+      "correctIndex": 0,
+      "correctIndices": [],
+      "correctNum": "",
+      "marks": {
+        "pos": 3,
+        "neg": 1
+      },
+      "diagram": null,
+      "explanation": "Source: Question 139"
+    },
+    {
+      "id": "q_o6adnesmlcpqdn0",
+      "text": "Let $S = S_1 \\cap S_2 \\cap S_3$ where $S_1 = \\{z \\in C : |z| < 4\\}$, $S_2 = \\left\\{z \\in C : \\text{Im}\\left[\\frac{z-1+i\\sqrt{3}}{1-i\\sqrt{3}}\\right] > 0\\right\\}$, $S_3 = \\{z \\in C : \\text{Re}(z) > 0\\}$. If area of $S$ is $\\frac{a\\pi}{b}$, where $a$ and $b$ are positive integers that are relatively prime. Find $a+b$.",
+      "type": "NUMERICAL",
+      "options": [],
+      "correctIndex": -1,
+      "correctIndices": [],
+      "correctNum": "23",
+      "marks": {
+        "pos": 4,
+        "neg": 1
+      },
+      "diagram": null,
+      "explanation": "Source: Question 969"
+    },
+    {
+      "id": "q_jtypz6ymlcpqdn0",
+      "text": "A variable point $P$ on an ellipse of eccentricity $e = \\frac{1}{8}$, is joined to its focii $S_1$ and $S_2$. Given that the locus of the incentre of the triangle $\\Delta P S_1 S_2$ comes out to be a conic; evaluate its eccentricity $e'$. Now $e'$ is of the form $\\sqrt{\\frac{a}{b}}$, where $a$ and $b$ are co-prime positive integers, find $a \\times b$.",
+      "type": "NUMERICAL",
+      "options": [],
+      "correctIndex": -1,
+      "correctIndices": [],
+      "correctNum": "6",
+      "marks": {
+        "pos": 4,
+        "neg": 1
+      },
+      "diagram": null,
+      "explanation": "Source: Question 971"
+    },
+    {
+      "id": "q_lmi2eynmlcpqdn0",
+      "text": "Let $T(n) = \\cos^2(30^\\circ - n^\\circ) - \\cos(30^\\circ - n^\\circ)\\cos(30^\\circ + n^\\circ) + \\cos^2(30^\\circ + n^\\circ)$. Find the value of $4\\sum_{n=1}^{30} T(n)$.",
+      "type": "NUMERICAL",
+      "options": [],
+      "correctIndex": -1,
+      "correctIndices": [],
+      "correctNum": "1395",
+      "marks": {
+        "pos": 4,
+        "neg": 1
+      },
+      "diagram": null,
+      "explanation": "Source: Question 989"
+    },
+    {
+      "id": "q_l73vcn6mlcpqdn0",
+      "text": "Let $P$ be a $2 \\times 2$ matrix such that $P\\begin{bmatrix} 1 \\\\ -1 \\end{bmatrix} = \\begin{bmatrix} -1 \\\\ 2 \\end{bmatrix}$ and $P^2\\begin{bmatrix} 1 \\\\ -1 \\end{bmatrix} = \\begin{bmatrix} 1 \\\\ 0 \\end{bmatrix}$. If $x_1$ and $x_2$ are two values of $x$ for which $|P - xI| = 0$, where $I$ is an identity matrix of order 2 then find the value of $x_1^2 + x_2^2$.",
+      "type": "NUMERICAL",
+      "options": [],
+      "correctIndex": -1,
+      "correctIndices": [],
+      "correctNum": "5",
+      "marks": {
+        "pos": 4,
+        "neg": 1
+      },
+      "diagram": null,
+      "explanation": "Source: Question 996"
+    },
+    {
+      "id": "q_s7b2cegmlcpqdn0",
+      "text": "Consider a curve passing through $(1, 1)$ such that perpendicular distance of normal drawn at any point $P$ on the curve from origin is equal to ordinate of the point $P$. If area enclosed by the curve is $A$, then find $[2A]$. [Note: $[k]$ denotes greatest integer less than or equal to $k$.]",
+      "type": "NUMERICAL",
+      "options": [],
+      "correctIndex": -1,
+      "correctIndices": [],
+      "correctNum": "6",
+      "marks": {
+        "pos": 4,
+        "neg": 1
+      },
+      "diagram": null,
+      "explanation": "Source: Question 950"
+    },
+    {
+      "id": "q_iji0q7gmlcpqdn0",
+      "text": "If $A$ and $B$ are square matrices of order 3 such that $2(A+B) = A^T + B^T + 3I$ and $AA^T = 4I$, then find the value of $\\det(12A^{-1} - BA^T + I)$.",
+      "type": "NUMERICAL",
+      "options": [],
+      "correctIndex": -1,
+      "correctIndices": [],
+      "correctNum": "125",
+      "marks": {
+        "pos": 4,
+        "neg": 1
+      },
+      "diagram": null,
+      "explanation": "Source: Question 921"
+    },
+    {
+      "id": "q_e7y67sqmlcpqdn0",
+      "text": "Let $A = \\begin{pmatrix} x^3+1 & x+5 & 3x+2 \\\\ y+1 & -6x^2+2 & z-1 \\\\ 2 & 3 & 9x+6 \\end{pmatrix}$ and $|A| = 3$. If $f(x) = tr. (B^{-1})$ and $B = adj(A)$, then global maximum value of $f(x)$ in $x \\in [0, 6]$ is:",
+      "type": "NUMERICAL",
+      "options": [],
+      "correctIndex": -1,
+      "correctIndices": [],
+      "correctNum": "21",
+      "marks": {
+        "pos": 4,
+        "neg": 1
+      },
+      "diagram": null,
+      "explanation": "Source: Question 909"
+    },
+    {
+      "text": "If $p$ is a positive integer and $f$ be a function defined for positive numbers and attains only positive values such that $f(xf(y)) = x^p y^4$ then find $p$.",
+      "type": "NUMERICAL",
+      "options": [],
+      "marks": {
+        "pos": 4,
+        "neg": 1
+      },
+      "difficulty": "Hard",
+      "diagram_box": null,
+      "id": 0.563834925553697,
+      "correctIndex": -1,
+      "correctIndices": [],
+      "correctNum": "2",
+      "matrixAns": {},
+      "explanation": "source question 999"
+    }
+  ],
+  "id": "imported_single_4xt7x5dmlcpqdmz"
+}
