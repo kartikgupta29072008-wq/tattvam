@@ -178,7 +178,45 @@
                 throw err;
             }
         };
+// --- OFFICIAL EXAM UTILS: SUBMIT TO GOOGLE ---
+const submitResultToGoogle = async (formData) => {
+    // 🔴 IMPORTANT: REPLACE THESE WITH YOUR COPIED IDs FROM PHASE 2
+    const FORM_ID = "1FAIpQLSd_Kmp_8KRFWdcy5ZlEHpwS4QQvGXVe59VvgOk5torxSNyC1A"; // Your Form ID (between /d/e/ and /viewform)
+    
+    const MAPPING = {
+        name: "entry.62457682",   // Replace with your Name Entry ID
+        testId: "entry.1900409645", // Replace with your Test ID Entry ID
+        score: "entry.840307252",  // Replace with your Score Entry ID
+        data: "entry.20137862"    // Replace with your Analysis Entry ID
+    };
 
+    const formUrl = `https://docs.google.com/forms/d/e/${FORM_ID}/formResponse`;
+    
+    const params = new URLSearchParams();
+    params.append(MAPPING.name, formData.studentName);
+    params.append(MAPPING.testId, formData.testTitle);
+    params.append(MAPPING.score, `${formData.score} / ${formData.maxMarks}`);
+    
+    // We only send a summary or light version if the data is too huge, 
+    // but usually Google Forms handles a fair bit of text.
+    params.append(MAPPING.data, JSON.stringify(formData.details)); 
+
+    try {
+        // We use 'no-cors' mode. This means we won't know if it succeeded 
+        // (status will be 0), but the data WILL be sent.
+        await fetch(formUrl, {
+            method: "POST",
+            mode: "no-cors",
+            headers: { "Content-Type": "application/x-www-form-urlencoded" },
+            body: params
+        });
+        console.log("Sent to Google Forms");
+        return true;
+    } catch (e) {
+        console.error("Submission Error:", e);
+        return false;
+    }
+};
         const fileToBase64 = (file) => new Promise((resolve) => {
             const reader = new FileReader();
             reader.readAsDataURL(file);
@@ -1535,7 +1573,138 @@ const AnalysisNotebook = ({ notebook, onUpdate, onBack, apiKey, onRequestKey, on
             </div>
         </div>
     );
-};      const Dashboard = ({ tests, notebooks, onCreateTest, onCreateNotebook, onDeleteTest, onDeleteNotebook, onSelectTest, onSelectNotebook, onSettings, onImport, appLogo, setAppLogo }) => {
+}; 
+      // --- NEW COMPONENT: OFFICIAL EXAM HUB ---
+const OfficialExamHub = ({ onStartTest, onBack }) => {
+    const [exams, setExams] = useState([]);
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState(null);
+    const [studentName, setStudentName] = useState(localStorage.getItem("tattvam_student_name") || "");
+
+    // 1. Fetch the Exam List from GitHub
+    useEffect(() => {
+        const fetchExams = async () => {
+            setLoading(true);
+            try {
+                // 🔴 REPLACE THIS URL WITH YOUR 'exam_list.json' RAW URL FROM PHASE 1
+                const GITHUB_DB_URL = "https://raw.githubusercontent.com/kartikgupta29072008-wq/tattvam/refs/heads/main/database/exam_list.json";
+                
+                // We add ?t=Timestamp to force a fresh fetch (bypass cache)
+                const res = await fetch(GITHUB_DB_URL + "?t=" + Date.now());
+                if (!res.ok) throw new Error("Could not connect to Exam Server");
+                const data = await res.json();
+                setExams(data.filter(e => e.active)); // Only show active tests
+            } catch (e) {
+                console.error(e);
+                setError("Unable to load exam list. Check internet connection.");
+            }
+            setLoading(false);
+        };
+        fetchExams();
+    }, []);
+
+    // 2. Handle Clicking "Start Exam"
+    const handleStart = async (examMeta) => {
+        if (!studentName.trim()) return alert("Please enter your name first!");
+        
+        // Save name for next time
+        localStorage.setItem("tattvam_student_name", studentName);
+        
+        setLoading(true);
+        try {
+            // Fetch the actual test questions
+            const res = await fetch(examMeta.url);
+            if (!res.ok) throw new Error("Failed to download test paper");
+            const testData = await res.json();
+            
+            // Mark this test as "OFFICIAL" so the Player knows to submit results
+            const officialTest = {
+                ...testData,
+                isOfficial: true,       // FLAG: This triggers the upload logic
+                officialMeta: examMeta, // Metadata
+                studentName: studentName // The student's name
+            };
+            
+            onStartTest(officialTest, examMeta.duration || 180);
+        } catch (e) {
+            alert("Error loading test: " + e.message);
+        }
+        setLoading(false);
+    };
+
+    return (
+        <div className="h-full bg-slate-50 flex flex-col animate-in fade-in">
+            {/* Header */}
+            <div className="bg-slate-900 text-white p-6 shadow-md shrink-0">
+                <div className="flex justify-between items-center mb-4">
+                    <div>
+                        <h2 className="text-2xl font-bold flex items-center gap-2"><Icon name="Flag" /> Official Testing Center</h2>
+                        <p className="text-slate-400 text-sm">Live Examinations & Competitions</p>
+                    </div>
+                    <button onClick={onBack} className="bg-slate-800 hover:bg-slate-700 px-4 py-2 rounded-lg font-bold text-sm">Exit</button>
+                </div>
+                
+                {/* Name Input */}
+                <div className="bg-slate-800/50 p-3 rounded-lg border border-slate-700 max-w-md">
+                    <label className="text-xs font-bold text-slate-400 uppercase block mb-1">Candidate Name</label>
+                    <input 
+                        value={studentName} 
+                        onChange={e => setStudentName(e.target.value)} 
+                        placeholder="Enter your full name..." 
+                        className="w-full bg-transparent border-none text-white font-bold outline-none placeholder-slate-600 focus:ring-0"
+                    />
+                </div>
+            </div>
+
+            {/* Exam List */}
+            <div className="flex-1 overflow-y-auto p-6">
+                {loading && (
+                    <div className="text-center py-10">
+                        <Icon name="Loader2" className="w-8 h-8 animate-spin mx-auto text-indigo-600" />
+                        <p className="text-slate-500 mt-2 font-bold">Connecting to Server...</p>
+                    </div>
+                )}
+                
+                {error && <div className="text-red-500 text-center font-bold py-10">{error}</div>}
+
+                {!loading && !error && exams.length === 0 && (
+                    <div className="text-center py-20 bg-white rounded-2xl border-2 border-dashed border-slate-200">
+                        <Icon name="Search" className="w-12 h-12 text-slate-300 mx-auto mb-3" />
+                        <h3 className="text-lg font-bold text-slate-500">No Active Exams</h3>
+                        <p className="text-slate-400 text-sm">Check back later for scheduled tests.</p>
+                    </div>
+                )}
+
+                <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    {exams.map(exam => (
+                        <div key={exam.id} className="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden hover:shadow-lg transition-all group relative">
+                            <div className="h-2 bg-gradient-to-r from-indigo-500 to-purple-500"></div>
+                            <div className="p-6">
+                                <div className="flex justify-between items-start mb-4">
+                                    <span className="bg-indigo-50 text-indigo-700 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wide flex items-center gap-1"><div className="w-2 h-2 bg-indigo-500 rounded-full animate-pulse"></div> Live</span>
+                                    <span className="text-xs font-bold text-slate-400">{exam.date}</span>
+                                </div>
+                                <h3 className="text-xl font-bold text-slate-800 mb-2">{exam.title}</h3>
+                                <div className="flex items-center gap-4 text-sm text-slate-500 font-medium mb-6">
+                                    <span className="flex items-center gap-1"><Icon name="Clock" className="w-4 h-4" /> {exam.duration} Mins</span>
+                                    {exam.marks && <span className="flex items-center gap-1"><Icon name="Target" className="w-4 h-4" /> {exam.marks} Marks</span>}
+                                </div>
+                                <button 
+                                    onClick={() => handleStart(exam)} 
+                                    disabled={!studentName}
+                                    className="w-full bg-slate-900 text-white py-3 rounded-lg font-bold hover:bg-slate-800 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 group-hover:scale-[1.02] transition-transform shadow-md"
+                                >
+                                    {studentName ? "Start Exam" : "Enter Name to Start"} <Icon name="ChevronRight" className="w-4 h-4" />
+                                </button>
+                            </div>
+                        </div>
+                    ))}
+                </div>
+            </div>
+        </div>
+    );
+};  
+        const Dashboard = ({ tests, notebooks, onCreateTest, onCreateNotebook, onDeleteTest, onDeleteNotebook, onSelectTest, onSelectNotebook, onSettings, onImport, appLogo, setAppLogo }) => {
             const [tab, setTab] = useState('tests');
             const [page, setPage] = useState(0); 
             const ITEMS_PER_PAGE = 6;           
@@ -1745,12 +1914,19 @@ const AnalysisNotebook = ({ notebook, onUpdate, onBack, apiKey, onRequestKey, on
                             <button onClick={() => fileInputRef.current.click()} className="p-2 text-slate-400 hover:text-indigo-600 bg-white border rounded-lg shadow-sm" title="Import JSON"><Icon name="Upload" className="w-5 h-5" /></button>
                             <button onClick={handleExportBackup} className="p-2 text-slate-400 hover:text-indigo-600 bg-white border rounded-lg shadow-sm" title="Export Backup"><Icon name="Download" className="w-5 h-5" /></button>
                             <button onClick={onSettings} className="p-2 text-slate-400 hover:text-tattvam-600 hover:bg-tattvam-50 rounded-full"><Icon name="Settings" className="w-6 h-6" /></button>
-                            
+                            {/* OFFICIAL EXAMS BUTTON */}
+<button 
+    onClick={onOpenOfficial} 
+    className="flex items-center gap-2 bg-gradient-to-r from-slate-800 to-slate-900 text-white px-5 py-2.5 rounded-lg hover:shadow-lg font-medium shadow-sm border border-slate-700 transition-all"
+>
+    <Icon name="Flag" className="w-5 h-5 text-yellow-400" /> Official Exams
+</button>
                             {tab === 'tests' ? (
                                 <button onClick={onCreateTest} className="flex items-center gap-2 bg-tattvam-600 text-white px-5 py-2.5 rounded-lg hover:bg-tattvam-500 font-medium shadow-sm"><Icon name="Plus" className="w-5 h-5" /> New Test</button>
                             ) : (
                                 <button onClick={onCreateNotebook} className="flex items-center gap-2 bg-indigo-600 text-white px-5 py-2.5 rounded-lg hover:bg-indigo-500 font-medium shadow-sm"><Icon name="BookOpen" className="w-5 h-5" /> New Notebook</button>
                             )}
+                            
                         </div>
                     </div>
 
@@ -2857,12 +3033,12 @@ const ResultDashboard = ({ entry, onBack, onSave, savedNotebooks, onCreateNotebo
                 return { score: -neg, status: `Incorrect (-${neg})`, rawStatus: 'wrong' };
             };
 
-            const finishQuiz = (auto = false) => {
+          const finishQuiz = (auto = false) => {
                 if(auto || confirm("Submit Test?")) {
                     setIsSubmitted(true);
                     localStorage.removeItem(storageKey);
                     
-                    // --- CONSTRUCT THE UNIFIED ENTRY OBJECT HERE ---
+                    // --- Construct Result Object ---
                     const totalScore = questions.reduce((acc, q) => acc + calculatePoints(q, ans[q.id]).score, 0);
                     const totalMaxMarks = questions.reduce((acc, q) => acc + (q.marks?.pos||0), 0);
                     
@@ -2877,21 +3053,37 @@ const ResultDashboard = ({ entry, onBack, onSave, savedNotebooks, onCreateNotebo
                             marks: score,
                             userAns: ans[q.id],
                             isMarked: marked.has(i),
-                            qData: q // Store full question data for persistence
+                            qData: q 
                         };
                     });
 
-                    setFinalResultEntry({
+                    const finalResult = {
                         id: Date.now().toString(),
-testId: test.id,
+                        testId: test.id,
                         date: new Date().toISOString(),
                         testName: test.title,
                         score: totalScore,
                         maxMarks: totalMaxMarks,
                         details: questionAnalytics,
                         type: 'QUIZ_ATTEMPT'
-                    });
+                    };
 
+                    // --- NEW: OFFICIAL SUBMISSION TRIGGER ---
+                    if (test.isOfficial) {
+                        // 1. Show a "Submitting..." indicator (optional, or just alert)
+                        // 2. Send Data
+                        submitResultToGoogle({
+                            studentName: test.studentName,
+                            testTitle: test.title,
+                            score: totalScore,
+                            maxMarks: totalMaxMarks,
+                            details: finalResult // Sending the whole analysis object
+                        });
+                        
+                        alert(`✅ Exam Submitted Successfully!\nName: ${test.studentName}\nScore: ${totalScore}/${totalMaxMarks}`);
+                    }
+
+                    setFinalResultEntry(finalResult);
                     if(auto) alert("Time Up! Submitted.");
                 }
             };
@@ -3550,6 +3742,7 @@ const QuizForge = () => {
                     onImport={importData} 
                     appLogo={appLogo} 
                     setAppLogo={setAppLogo} 
+                    onOpenOfficial={() => setView('official')}
                 />
             )}
 
@@ -3591,7 +3784,17 @@ tests={tests}
                     onCreateNotebook={handleCreateNotebook} // <--- PASSING THE NEW HANDLER HERE
                 />
             )}
-
+{/* 6. OFFICIAL EXAM HUB VIEW */}
+{view === 'official' && (
+    <OfficialExamHub 
+        onBack={() => setView('dashboard')}
+        onStartTest={(testData, duration) => {
+            setPlayingTest(testData);
+            setQuizDuration(duration);
+            setView('player');
+        }}
+    />
+)}
             {/* 5. PRINT VIEW */}
             {view === 'print' && activeTest && (
                 <PrintView 
@@ -3608,6 +3811,7 @@ tests={tests}
     </script>
 </body>
 </html>
+
 
 
 
