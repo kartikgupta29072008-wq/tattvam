@@ -179,17 +179,15 @@
             }
         };
 // --- OFFICIAL EXAM UTILS: SUBMIT TO GOOGLE ---
-// --- OFFICIAL EXAM UTILS: SUBMIT TO GOOGLE ---
 const submitResultToGoogle = async (formData) => {
-    // 🔴 YOUR EXACT FORM ID
-    const FORM_ID = "1FAIpQLSd_Kmp_8KRFWdcy5ZlEHpwS4QQvGXVe59VvgOk5torxSNyC1A";
+    // 🔴 IMPORTANT: REPLACE THESE WITH YOUR COPIED IDs FROM PHASE 2
+    const FORM_ID = "1FAIpQLSd_Kmp_8KRFWdcy5ZlEHpwS4QQvGXVe59VvgOk5torxSNyC1A"; // Your Form ID (between /d/e/ and /viewform)
     
-    // 🔴 YOUR EXACT ENTRY IDs (Extracted from your link)
     const MAPPING = {
-        name: "entry.62457682",      // NAME_123
-        testId: "entry.1900409645",  // ID_123
-        score: "entry.840307252",    // SCORE_123
-        data: "entry.20137862"       // DATA_123
+        name: "entry.62457682",   // Replace with your Name Entry ID
+        testId: "entry.1900409645", // Replace with your Test ID Entry ID
+        score: "entry.840307252",  // Replace with your Score Entry ID
+        data: "entry.20137862"    // Replace with your Analysis Entry ID
     };
 
     const formUrl = `https://docs.google.com/forms/d/e/${FORM_ID}/formResponse`;
@@ -199,73 +197,23 @@ const submitResultToGoogle = async (formData) => {
     params.append(MAPPING.testId, formData.testTitle);
     params.append(MAPPING.score, `${formData.score} / ${formData.maxMarks}`);
     
-    // Convert the detailed analysis to a string so it fits in the paragraph box
+    // We only send a summary or light version if the data is too huge, 
+    // but usually Google Forms handles a fair bit of text.
     params.append(MAPPING.data, JSON.stringify(formData.details)); 
 
     try {
+        // We use 'no-cors' mode. This means we won't know if it succeeded 
+        // (status will be 0), but the data WILL be sent.
         await fetch(formUrl, {
             method: "POST",
             mode: "no-cors",
             headers: { "Content-Type": "application/x-www-form-urlencoded" },
             body: params
         });
-        console.log("✅ Data sent to Google successfully");
+        console.log("Sent to Google Forms");
         return true;
     } catch (e) {
-        console.error("❌ Submission Error:", e);
-        return false;
-    }
-};
-// --- BOSS FEATURE: GITHUB CLOUD UPLOAD ---
-const uploadToGitHub = async (testData, token, filename) => {
-    // 🔴 REPLACE THESE TWO WITH YOUR EXACT DETAILS!
-    const USERNAME = "kartikgupta29072008-wq"; 
-    const REPO_NAME = "tattvam"; 
-    
-    // We assume your tests are inside the 'database' folder
-    const FILE_PATH = `database/${filename}`; 
-    const API_URL = `https://api.github.com/repos/${USERNAME}/${REPO_NAME}/contents/${FILE_PATH}`;
-
-    try {
-        // 1. Get current file info (we need the 'SHA' ID to update it)
-        const getRes = await fetch(API_URL, {
-            headers: { "Authorization": `Bearer ${token}` }
-        });
-        
-        // If file doesn't exist, we can't update it (safety check)
-        if (!getRes.ok) throw new Error("File not found on GitHub or Invalid Token");
-        const fileInfo = await getRes.json();
-        
-        // 2. Prepare content (Base64 Encode for GitHub)
-        // We remove the 'isBossDraft' and 'isOfficial' flags before uploading
-        const cleanData = { ...testData };
-        delete cleanData.isBossDraft;
-        delete cleanData.isOfficial; // It becomes official again when fetched
-        
-        const jsonString = JSON.stringify(cleanData, null, 2);
-        // This complex encoding handles Emojis/Hindi characters correctly
-        const encodedContent = btoa(unescape(encodeURIComponent(jsonString)));
-
-        // 3. Send the Update (PUT request)
-        const putRes = await fetch(API_URL, {
-            method: "PUT",
-            headers: {
-                "Authorization": `Bearer ${token}`,
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify({
-                message: "Boss Edit Hotfix via Tattvam",
-                content: encodedContent,
-                sha: fileInfo.sha // This ID proves we are overwriting the correct file
-            })
-        });
-
-        if (putRes.ok) return true;
-        else throw new Error("Upload failed. Check console.");
-
-    } catch (e) {
-        alert("Cloud Error: " + e.message);
-        console.error(e);
+        console.error("Submission Error:", e);
         return false;
     }
 };
@@ -1627,55 +1575,34 @@ const AnalysisNotebook = ({ notebook, onUpdate, onBack, apiKey, onRequestKey, on
     );
 }; 
       // --- NEW COMPONENT: OFFICIAL EXAM HUB ---
-const OfficialExamHub = ({ onStartTest, onBack, isBoss, setBossMode }) => {
+const OfficialExamHub = ({ onStartTest, onBack }) => {
     const [exams, setExams] = useState([]);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
     const [studentName, setStudentName] = useState(localStorage.getItem("tattvam_student_name") || "");
-const [secretCode, setSecretCode] = useState("");
-const handleBossLogin = () => {
-        if(secretCode === "tattvam123") { // <--- PASSWORD SETTING
-            setBossMode(true);
-            alert("🔓 BOSS MODE ACTIVATED");
-        } else {
-            alert("Wrong Code");
-        }
-    };
 
     // 1. Fetch the Exam List from GitHub
-useEffect(() => {
+    useEffect(() => {
         const fetchExams = async () => {
             setLoading(true);
             try {
-                // 1. MAKE SURE THIS URL IS CORRECT!
-                // If this is wrong, the app will normally crash. Now it will just show an error.
+                // 🔴 REPLACE THIS URL WITH YOUR 'exam_list.json' RAW URL FROM PHASE 1
                 const GITHUB_DB_URL = "https://raw.githubusercontent.com/kartikgupta29072008-wq/tattvam/refs/heads/main/database/exam_list.json";
                 
+                // We add ?t=Timestamp to force a fresh fetch (bypass cache)
                 const res = await fetch(GITHUB_DB_URL + "?t=" + Date.now());
-                
-                if (!res.ok) throw new Error(`Server Error: ${res.status}`);
-                
+                if (!res.ok) throw new Error("Could not connect to Exam Server");
                 const data = await res.json();
-                
-                // 🔴 CRASH PREVENTION CHECK 🔴
-                // We check if 'data' is actually a list (Array). If not, we stop.
-                if (!Array.isArray(data)) {
-                    throw new Error("Invalid Data Format: Expected a list of exams.");
-                }
-
-                setExams(data.filter(e => e.active)); 
-                setError(null);
-
+                setExams(data.filter(e => e.active)); // Only show active tests
             } catch (e) {
-                console.error("Exam Load Error:", e);
-                // Instead of crashing white, we show a friendly message
-                setError("Could not load exams. Please check your internet or the GitHub URL.");
-                setExams([]); // Keep the list empty so the .map() function doesn't crash the UI
+                console.error(e);
+                setError("Unable to load exam list. Check internet connection.");
             }
             setLoading(false);
         };
         fetchExams();
     }, []);
+
     // 2. Handle Clicking "Start Exam"
     const handleStart = async (examMeta) => {
         if (!studentName.trim()) return alert("Please enter your name first!");
@@ -1714,28 +1641,7 @@ useEffect(() => {
                         <h2 className="text-2xl font-bold flex items-center gap-2"><Icon name="Flag" /> Official Testing Center</h2>
                         <p className="text-slate-400 text-sm">Live Examinations & Competitions</p>
                     </div>
-                    <div className="flex gap-2">
-                        {/* ONLY SHOW LOGIN IF NOT ALREADY BOSS */}
-                        {!isBoss && (
-                            <div className="flex gap-1">
-                                <input 
-                                    type="password" 
-                                    placeholder="Code" 
-                                    className="bg-slate-800 text-xs text-white p-2 rounded w-20 outline-none" 
-                                    value={secretCode} 
-                                    onChange={e => setSecretCode(e.target.value)} 
-                                />
-                                <button onClick={handleBossLogin} className="bg-slate-700 hover:bg-slate-600 px-2 rounded">
-                                    <Icon name="Unlock" className="w-3 h-3" />
-                                </button>
-                            </div>
-                        )}
-                        
-                        {/* SHOW BADGE IF BOSS */}
-                        {isBoss && <span className="bg-red-600 text-white text-xs font-bold px-2 py-2 rounded animate-pulse">BOSS ACTIVE</span>}
-
-                        <button onClick={onBack} className="bg-slate-800 hover:bg-slate-700 px-4 py-2 rounded-lg font-bold text-sm">Exit</button>
-                    </div>
+                    <button onClick={onBack} className="bg-slate-800 hover:bg-slate-700 px-4 py-2 rounded-lg font-bold text-sm">Exit</button>
                 </div>
                 
                 {/* Name Input */}
@@ -2009,14 +1915,12 @@ useEffect(() => {
                             <button onClick={handleExportBackup} className="p-2 text-slate-400 hover:text-indigo-600 bg-white border rounded-lg shadow-sm" title="Export Backup"><Icon name="Download" className="w-5 h-5" /></button>
                             <button onClick={onSettings} className="p-2 text-slate-400 hover:text-tattvam-600 hover:bg-tattvam-50 rounded-full"><Icon name="Settings" className="w-6 h-6" /></button>
                             {/* OFFICIAL EXAMS BUTTON */}
-{/* OFFICIAL EXAMS BUTTON */}
 <button 
     onClick={onOpenOfficial} 
     className="flex items-center gap-2 bg-gradient-to-r from-slate-800 to-slate-900 text-white px-5 py-2.5 rounded-lg hover:shadow-lg font-medium shadow-sm border border-slate-700 transition-all"
 >
     <Icon name="Flag" className="w-5 h-5 text-yellow-400" /> Official Exams
 </button>
-
                             {tab === 'tests' ? (
                                 <button onClick={onCreateTest} className="flex items-center gap-2 bg-tattvam-600 text-white px-5 py-2.5 rounded-lg hover:bg-tattvam-500 font-medium shadow-sm"><Icon name="Plus" className="w-5 h-5" /> New Test</button>
                             ) : (
@@ -2270,7 +2174,7 @@ useEffect(() => {
                 </div>
             );
         };
-const Editor = ({ test, onUpdateTest, onBack, onPlay, onPrint, apiKey, onRequestKey, onRemix, isBoss }) => {
+const Editor = ({ test, onUpdateTest, onBack, onPlay, onPrint, apiKey, onRequestKey, onRemix }) => {
             // --- STATE MANAGEMENT ---
             const [proc, setProc] = useState(false);
             const [step, setStep] = useState('');
@@ -2420,34 +2324,6 @@ const Editor = ({ test, onUpdateTest, onBack, onPlay, onPrint, apiKey, onRequest
                 try { setGuide(await generateGuide(test.questions, apiKey)); } catch (e) { alert(e.message); }
                 setGuideLoad(false);
             };
-// ... deleteQ function ends here ...
-
-    const handlePublish = async () => {
-        // 1. Ask for the Magic Key
-        const token = prompt("🔑 ENTER BOSS TOKEN to Publish Update:", "");
-        if(!token) return;
-
-        // 2. Identify the filename
-        // We try to grab the filename from the original URL (e.g. 'mock1.json')
-        let filename = "unknown.json";
-        if (test.officialMeta && test.officialMeta.url) {
-            filename = test.officialMeta.url.split('/').pop(); 
-        } else {
-            // Backup: Ask user if we can't find it
-            filename = prompt("Filename not found. Enter filename (e.g. mock1.json):");
-        }
-        if(!filename) return;
-
-        // 3. Trigger the Upload
-        alert("☁️ Uploading... Please Wait.");
-        // Note: uploadToGitHub must be defined in your Utils section!
-        const success = await uploadToGitHub(test, token, filename);
-        
-        if (success) {
-            alert("✅ SUCCESS! Test updated for everyone.");
-            onBack(); // Return to dashboard
-        }
-    };
 
             return (
                 <div className="h-screen flex flex-col bg-slate-50">
@@ -2498,14 +2374,7 @@ const Editor = ({ test, onUpdateTest, onBack, onPlay, onPrint, apiKey, onRequest
                                     <button onClick={() => setShowMarksModal(true)} className="flex items-center gap-2 bg-emerald-50 text-emerald-700 px-4 py-2 rounded-lg hover:bg-emerald-100 font-medium border border-emerald-100">
                                         <Icon name="Target" className="w-4 h-4" /> Marks
                                     </button>
-                                    {isBoss && test.isBossDraft && (
-                        <button 
-                            onClick={handlePublish} 
-                            className="bg-purple-600 text-white px-4 py-2 rounded-lg font-bold hover:bg-purple-700 animate-pulse shadow-lg flex items-center gap-2"
-                        >
-                            <Icon name="Cloud" /> PUBLISH LIVE
-                        </button>
-                    )}
+                                    
                                     <button onClick={onPrint} className="flex items-center gap-2 bg-slate-100 text-slate-700 px-4 py-2 rounded-lg hover:bg-slate-200 font-medium">
                                         <Icon name="Printer" className="w-4 h-4" /> Print
                                     </button>
@@ -3056,7 +2925,7 @@ const ResultDashboard = ({ entry, onBack, onSave, savedNotebooks, onCreateNotebo
         </div>
     );
 };
- const Player = ({ test, duration, onBack, notebooks, onSaveToNotebook, onCreateNotebook, isBoss, onBossEdit }) => {
+ const Player = ({ test, duration, onBack, notebooks, onSaveToNotebook, onCreateNotebook }) => {
             const storageKey = `tattvam_progress_${test.id}`;
 
             const { activeQuestions, savedState } = React.useMemo(() => {
@@ -3261,14 +3130,6 @@ onCreateNotebook={onCreateNotebook}
                                 <Icon name="ArrowLeft" className="w-4 h-4" /> Save & Exit
                             </button>
                             <h2 className="font-bold text-lg text-slate-800 truncate max-w-xs">{test.title}</h2>
-{isBoss && test.isOfficial && (
-                        <button 
-                            onClick={() => onBossEdit(test)} 
-                            className="bg-red-600 text-white px-6 py-3 rounded-xl font-bold hover:bg-red-700 shadow-lg flex items-center gap-2 animate-pulse"
-                        >
-                            <Icon name="Edit" /> BOSS: Fix This Test
-                        </button>
-                    )}
                         </div>
                         <div className="flex items-center gap-4">
                             <button onClick={() => { if(confirm("Restarting will erase current progress. Sure?")) { localStorage.removeItem(storageKey); setAns({}); setTimeLeft(duration*60); setQuestionTimes(new Array(questions.length).fill(0)); setMarked(new Set()); setIdx(0); } }} className="text-xs font-bold text-red-400 hover:text-red-600 hover:bg-red-50 px-2 py-1 rounded">Restart</button>
@@ -3740,22 +3601,7 @@ const PrintView = ({ test, onBack, apiKey, onRequestKey }) => {
 // --- MAIN APP COMPONENT (QUIZFORGE) ---
 const QuizForge = () => {
     const [view, setView] = useState('dashboard'); // dashboard | editor | notebook | player | print
-    const [isBoss, setBossMode] = useState(false); // <--- 1. NEW STATE
-
-    // <--- 2. NEW FUNCTION
-    const handleBossEdit = (officialTest) => {
-        // Create a temporary "Draft" version of the test
-        const draft = { 
-            ...officialTest, 
-            isOfficial: false, 
-            isBossDraft: true // This flag tells Editor to show "Publish" button
-        };
-        
-        // Add it to the list so the Editor can load it
-        setTests(prev => [draft, ...prev]);
-        setActiveId(draft.id);
-        setView('editor');
-    };	
+    
     // --- SAFE STORAGE LOADERS ---
     const safeLoad = (key, fallback) => {
         try {
@@ -3911,7 +3757,6 @@ const QuizForge = () => {
                     apiKey={keyContext} 
                     onRequestKey={() => setModal(true)} 
                     onRemix={handleDirectRemix} 
-isBoss={isBoss}
                 />
             )}
 
@@ -3933,20 +3778,16 @@ tests={tests}
                 <Player 
                     test={playingTest} 
                     duration={quizDuration} 
-                    onBack={() => setView(playingTest?.isOfficial ? 'official' : 'editor')}
+                    onBack={() => setView(playingTest.isOfficial ? 'official' : 'editor')}
                     notebooks={notebooks} 
                     onSaveToNotebook={handleSaveToNotebook}
                     onCreateNotebook={handleCreateNotebook} // <--- PASSING THE NEW HANDLER HERE
-isBoss={isBoss}              // <--- PASS PROP
-        onBossEdit={handleBossEdit}  // <--- PASS FUNCTION
                 />
             )}
 {/* 6. OFFICIAL EXAM HUB VIEW */}
 {view === 'official' && (
     <OfficialExamHub 
         onBack={() => setView('dashboard')}
-isBoss={isBoss}             // <--- PASS PROP
-        setBossMode={setBossMode}   // <--- PASS PROP
         onStartTest={(testData, duration) => {
             setPlayingTest(testData);
             setQuizDuration(duration);
@@ -3970,6 +3811,8 @@ isBoss={isBoss}             // <--- PASS PROP
     </script>
 </body>
 </html>
+
+
 
 
 
