@@ -1704,7 +1704,7 @@ const OfficialExamHub = ({ onStartTest, onBack }) => {
         </div>
     );
 };  
-        const Dashboard = ({ tests, notebooks, onCreateTest, onCreateNotebook, onDeleteTest, onDeleteNotebook, onSelectTest, onSelectNotebook, onSettings, onImport, appLogo, setAppLogo }) => {
+        const Dashboard = ({ tests, notebooks, onCreateTest, onCreateNotebook, onDeleteTest, onDeleteNotebook, onSelectTest, onSelectNotebook, onSettings, onImport, appLogo, setAppLogo, onOpenOfficial }) => {
             const [tab, setTab] = useState('tests');
             const [page, setPage] = useState(0); 
             const ITEMS_PER_PAGE = 6;           
@@ -3811,6 +3811,7 @@ tests={tests}
     </script>
 </body>
 </html>
+
 
 
 
