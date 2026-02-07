@@ -24,7 +24,7 @@
     "duration": 60,
     "marks": 62,
     "url": "https://raw.githubusercontent.com/kartikgupta29072008-wq/tattvam/refs/heads/main/database/test_6.json",
-    "active": true
+    "active": false
   },
   {
     "id": "official_04",
@@ -33,7 +33,7 @@
     "duration": 60,
     "marks": 62,
     "url": "https://raw.githubusercontent.com/kartikgupta29072008-wq/tattvam/refs/heads/main/database/test_7.json",
-    "active": true
+    "active": false
   },
   {
     "id": "official_05",
@@ -42,7 +42,7 @@
     "duration": 60,
     "marks": 62,
     "url": "https://raw.githubusercontent.com/kartikgupta29072008-wq/tattvam/refs/heads/main/database/test_8.json",
-    "active": true
+    "active": false
   },
   {
     "id": "official_06",
@@ -51,7 +51,7 @@
     "duration": 60,
     "marks": 62,
     "url": "https://raw.githubusercontent.com/kartikgupta29072008-wq/tattvam/refs/heads/main/database/test_9.json",
-    "active": true
+    "active": false
   },
   {
     "id": "official_07",
@@ -60,7 +60,7 @@
     "duration": 60,
     "marks": 62,
     "url": "https://raw.githubusercontent.com/kartikgupta29072008-wq/tattvam/refs/heads/main/database/test_10.json",
-    "active": true
+    "active": false
   },
   {
     "id": "official_08",
@@ -69,6 +69,6 @@
     "duration": 60,
     "marks": 62,
     "url": "https://raw.githubusercontent.com/kartikgupta29072008-wq/tattvam/refs/heads/main/database/test_11.json",
-    "active": true
+    "active": false
   }
 ]
