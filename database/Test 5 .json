@@ -322,8 +322,23 @@
       "explanation": "Source: Question 795, Answer Key."
     },
     {
+      "id": "q_ecmb06wmlazkrhd",
+      "text": "Let $H: x^2 + y^2 + 4xy + 8x + 8y + 8 = 0$ be a hyperbola. A line $L: x + y + 1 = 0$ intersects the hyperbola $H$ at two distinct points. If radius of the circle which touches the hyperbola at the points where $H$ meets the line $L$ is $R$, then find the value of $R^2$.",
+      "type": "NUMERICAL",
+      "options": [],
+      "correctIndex": -1,
+      "correctIndices": [],
+      "correctNum": "14",
+      "marks": {
+        "pos": 4,
+        "neg": 0
+      },
+      "diagram": null,
+      "explanation": "Source: Question 972, Answer Key."
+    },
+    {
       "id": "q_tfj87mamlazkrhd",
-      "text": " Let $E_1, E_2, E_3$ be three independent events associated with a random experiment such that $3P(E_1 \\cap \\overline{E_2} \\cap \\overline{E_3}) = P(\\overline{E_1} \\cap E_2 \\cap \\overline{E_3}) = 9P(\\overline{E_1} \\cap \\overline{E_2} \\cap E_3) = 3 - 3P(E_1 \\cup E_2 \\cup E_3)$, where $P(E_1), P(E_2), P(E_3) \\neq 1$ and $P(A)$ denotes probability of event $A$. If absolute value of $\\begin{vmatrix} P(E_1) & P(E_2) & P(E_3) \\\\ P(E_2) & P(E_3) & P(E_1) \\\\ P(E_3) & P(E_1) & P(E_2) \\end{vmatrix} = \\frac{a}{b}$, where $a, b \\in N$, then find the least value of $(a + b)$.",
+      "text": "930. Let $E_1, E_2, E_3$ be three independent events associated with a random experiment such that $3P(E_1 \\cap \\overline{E_2} \\cap \\overline{E_3}) = P(\\overline{E_1} \\cap E_2 \\cap \\overline{E_3}) = 9P(\\overline{E_1} \\cap \\overline{E_2} \\cap E_3) = 3 - 3P(E_1 \\cup E_2 \\cup E_3)$, where $P(E_1), P(E_2), P(E_3) \\neq 1$ and $P(A)$ denotes probability of event $A$. If absolute value of $\\begin{vmatrix} P(E_1) & P(E_2) & P(E_3) \\\\ P(E_2) & P(E_3) & P(E_1) \\\\ P(E_3) & P(E_1) & P(E_2) \\end{vmatrix} = \\frac{a}{b}$, where $a, b \\in N$, then find the least value of $(a + b)$.",
       "type": "NUMERICAL",
       "options": [],
       "correctIndex": -1,
@@ -336,15 +351,5 @@
       "diagram": null,
       "explanation": "Source: Question 930, Answer Key."
     }
-  ],
-  "officialMeta": {
-    "id": "official_02",
-    "title": "test_5",
-    "date": "2026-02-06",
-    "duration": 60,
-    "marks": 62,
-    "url": "https://raw.githubusercontent.com/kartikgupta29072008-wq/tattvam/refs/heads/main/database/Test%205%20.json",
-    "active": true
-  },
-  "studentName": "Kartik"
+  ]
 }
