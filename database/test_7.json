@@ -1,1 +1,326 @@
-
+{
+  "id": "imported_single_1ecizmomldopcj9",
+  "title": "test_7",
+  "created": "2026-01-29T10:30:00.000Z",
+  "questions": [
+    {
+      "id": "q_skapsvnmldopcja",
+      "text": "A curve passes through $(-2, -2)$ and its slope at the point $(x, y)$ is given by $\\frac{1}{x\\sqrt{x^2-1}}$. Which of the following points the curve also passes through?",
+      "type": "MULTI",
+      "options": [
+        "$\\left(\\frac{-2}{\\sqrt{3}}, \\frac{-\\pi}{6}-2\\right)$",
+        "$\\left(\\frac{-2}{\\sqrt{3}}, \\frac{\\pi}{6}-2\\right)$",
+        "$\\left(-\\sqrt{2}, \\frac{-\\pi}{12}-2\\right)$",
+        "$\\left(-\\sqrt{2}, \\frac{\\pi}{12}-2\\right)$"
+      ],
+      "correctIndex": -1,
+      "correctIndices": [
+        0,
+        2
+      ],
+      "correctNum": "",
+      "marks": {
+        "pos": 4,
+        "neg": -1
+      },
+      "diagram": null,
+      "explanation": "Source: Question 302"
+    },
+    {
+      "id": "q_pwma8ccmldopcja",
+      "text": "If $\\frac{x}{a} + \\frac{y}{b} = 1$ and $\\frac{x}{c} + \\frac{y}{d} = 1$ where $a, b, c, d > 0$ intersect the axes at four con-cyclic points and $a^2 + c^2 = b^2 + d^2$, then the lines can intersect at which of the following given points?",
+      "type": "MULTI",
+      "options": [
+        "$(1, 1)$",
+        "$(1, -1)$",
+        "$(2, -2)$",
+        "$(3, 3)$"
+      ],
+      "correctIndex": -1,
+      "correctIndices": [
+        0,
+        3
+      ],
+      "correctNum": "",
+      "marks": {
+        "pos": 4,
+        "neg": -1
+      },
+      "diagram": null,
+      "explanation": "Source: Question 305"
+    },
+    {
+      "id": "q_v9ekuiumldopcja",
+      "text": "A polynomial function $f(x)$ with non-negative coefficient satisfy the equation $f(f(x)) = x \\int_{0}^{x} f(t) dt$ and $f(0)=0$, then:",
+      "type": "MULTI",
+      "options": [
+        "number of points where $|f(|x|)|$ is non derivable is 0.",
+        "$\\text{sgn}(f(x))$ is discontinuous at $x=1$.",
+        "derivative of $f(x)$ with respect to $\\sin^{-1} \\left( \\frac{2x}{1+x^2} \\right)$ at $x=\\sqrt{3}$ is -4.",
+        "$\\lim_{x \\to 0^+} \\left( \\frac{\\sqrt{3} f(x)}{x} \\right)^x = 1$."
+      ],
+      "correctIndex": -1,
+      "correctIndices": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "correctNum": "",
+      "marks": {
+        "pos": 4,
+        "neg": -1
+      },
+      "diagram": null,
+      "explanation": "Source: Question 316"
+    },
+    {
+      "id": "q_d4fc0i8mldopcja",
+      "text": "Let $\\alpha$ and $\\beta$ are two roots of the equation $x^2 + px + q = 0$, where $p$ and $q$ are real numbers, and $q \\neq 0$. Now suppose another quadratic equation $x^2 + mx + n = 0$ with roots $\\alpha + \\frac{1}{\\alpha}$ and $\\beta + \\frac{1}{\\beta}$ such that $m+n=0$. Then the possible integral values in the range of $q$ can be:",
+      "type": "MULTI",
+      "options": [
+        "1",
+        "2",
+        "3",
+        "4"
+      ],
+      "correctIndex": -1,
+      "correctIndices": [
+        0,
+        1,
+        2
+      ],
+      "correctNum": "",
+      "marks": {
+        "pos": 4,
+        "neg": -1
+      },
+      "diagram": null,
+      "explanation": "Source: Question 334"
+    },
+    {
+      "id": "q_4y2m7rrmldopcja",
+      "text": "The value of $3\\sum_{n=1}^{\\infty} \\left( \\frac{1}{\\pi} \\sum_{k=1}^{\\infty} \\cot^{-1} \\left( 1 + 2\\sqrt{\\sum_{r=1}^{k} r^3} \\right) \\right)^n$ is less than:",
+      "type": "MULTI",
+      "options": [
+        "1",
+        "2",
+        "3",
+        "4"
+      ],
+      "correctIndex": -1,
+      "correctIndices": [
+        1,
+        2,
+        3
+      ],
+      "correctNum": "",
+      "marks": {
+        "pos": 4,
+        "neg": -1
+      },
+      "diagram": null,
+      "explanation": "Source: Question 343"
+    },
+    {
+      "id": "q_vv3pkpvmldopcja",
+      "text": "In $\\Delta ABC$, if $\\frac{a+b}{c} + \\frac{c(a+b)}{ab} \\le 4$ and $r = \\sqrt{3}$, then:<br><br><b>Column-I</b><br>(P) $2(\\cos A + 2\\cos B)$ is equal to<br>(Q) $R$ is equal to<br>(R) $\\tan A + Ar. (\\Delta ABC)$ is equal to<br>(S) $(r_1 + r_2 + r_3)$ is equal to<br><br><b>Column-II</b><br>(1) $2\\sqrt{3}$<br>(2) $3\\sqrt{3}$<br>(3) 3<br>(4) $9\\sqrt{3}$<br>(5) $10\\sqrt{3}$",
+      "type": "SINGLE",
+      "options": [
+        "P$\\to$2; Q$\\to$1; R$\\to$5; S$\\to$3",
+        "P$\\to$3; Q$\\to$2; R$\\to$4; S$\\to$3",
+        "P$\\to$3; Q$\\to$1; R$\\to$5; S$\\to$4",
+        "P$\\to$2; Q$\\to$2; R$\\to$4; S$\\to$4"
+      ],
+      "correctIndex": 3,
+      "correctIndices": [],
+      "correctNum": "",
+      "marks": {
+        "pos": 3,
+        "neg": 1
+      },
+      "diagram": null,
+      "explanation": "Source: Question 693"
+    },
+    {
+      "id": "q_vkczve0mldopcja",
+      "text": "If $\\int (x^4 + 2x^2 + 1) \\sin x dx = f(x) \\sin x + g(x) \\cos x + C$, then:<br>[Note: Where $f(x)$ and $g(x)$ are polynomial functions defined from $R$ to $R$ and '$C$' is the constant of integration.]<br><br><b>Column-I</b><br>(P) $f(x)$ is<br>(Q) $g(x)$ is<br>(R) Number of points where $|f(x)|$ is non-derivable is<br>(S) Number of points where $|g(x)|$ is non-derivable is<br><br><b>Column-II</b><br>(1) One-one function<br>(2) Many-one function<br>(3) Onto function<br>(4) Into function<br>(5) 3<br>(6) 4",
+      "type": "SINGLE",
+      "options": [
+        "P$\\to$2, 3; Q$\\to$2, 4; R$\\to$5; S$\\to$6",
+        "P$\\to$5; Q$\\to$4; R$\\to$1; S$\\to$3",
+        "P$\\to$5; Q$\\to$4; R$\\to$3; S$\\to$3",
+        "P$\\to$5; Q$\\to$2; R$\\to$2; S$\\to$4"
+      ],
+      "correctIndex": 0,
+      "correctIndices": [],
+      "correctNum": "",
+      "marks": {
+        "pos": 3,
+        "neg": 1
+      },
+      "diagram": null,
+      "explanation": "Source: Question 696"
+    },
+    {
+      "id": "q_852emxxmldopcja",
+      "text": "Consider a system of linear equations $3x + y - z = 0, x - \\frac{py}{4} + z = 2$ and $2x - y + 2z = q$ where $p, q \\in I$ and $p, q \\in$, then identify the correct statement(s).<br><br><b>Column-I</b><br>(P) Number of ordered pairs $(p, q)$ for which system of equation has unique solution is<br>(Q) Number of ordered pairs $(p, q)$ for which system of equation has no solution is<br>(R) Number of ordered pairs $(p, q)$ for which system of equation has infinite solutions is<br>(S) Number of ordered pairs $(p, q)$ for which system of equation has atleast one solution is<br><br><b>Column-II</b><br>(1) 1<br>(2) 9<br>(3) 10<br>(4) 90<br>(5) 91",
+      "type": "SINGLE",
+      "options": [
+        "P$\\to$4; Q$\\to$2; R$\\to$1; S$\\to$5",
+        "P$\\to$4; Q$\\to$3; R$\\to$1; S$\\to$4",
+        "P$\\to$4; Q$\\to$3; R$\\to$2; S$\\to$5",
+        "P$\\to$4; Q$\\to$2; R$\\to$2; S$\\to$4"
+      ],
+      "correctIndex": 0,
+      "correctIndices": [],
+      "correctNum": "",
+      "marks": {
+        "pos": 3,
+        "neg": 1
+      },
+      "diagram": null,
+      "explanation": "Source: Question 698"
+    },
+    {
+      "id": "q_73vhcl2mldopcja",
+      "text": "Let $N$ be the number of words which can be formed using all the letters of the word 'DARJEELING' so that there are atleast two consonants between any two vowels.<br><br><b>Column-I</b><br>(P) If $N$ is divisible by $2^n (n \\in N)$, then $n$ can be<br>(Q) If $N$ is divisible by $6^p (p \\in N)$, then $p$ must be less than<br>(R) Number of odd divisors of $N$ is greater than<br>(S) Number of zeroes at the end of $N$ is less than<br><br><b>Column-II</b><br>(1) 1<br>(2) 2<br>(3) 3<br>(4) 4<br>(5) 5<br>(6) 6",
+      "type": "SINGLE",
+      "options": [
+        "P$\\to$3, 4, 5, 6; Q$\\to$5, 6; R$\\to$3, 4, 5, 6; S$\\to$4, 5, 6",
+        "P$\\to$4, 5, 6; Q$\\to$5, 6; R$\\to$4, 5, 6; S$\\to$4, 5, 6",
+        "P$\\to$1, 2, 3, 4, 5, 6; Q$\\to$4, 5, 6; R$\\to$1, 2, 3, 4, 5, 6; S$\\to$2, 3, 4, 5, 6",
+        "P$\\to$1, 2, 3, 4, 5, 6; Q$\\to$4, 5, 6; R$\\to$2, 3, 4, 5, 6; S$\\to$4, 5, 6"
+      ],
+      "correctIndex": 2,
+      "correctIndices": [],
+      "correctNum": "",
+      "marks": {
+        "pos": 3,
+        "neg": 1
+      },
+      "diagram": null,
+      "explanation": "Source: Question 700"
+    },
+    {
+      "id": "q_a0uu4vomldopcja",
+      "text": "A hyperbola has the equation $\\frac{x^2}{a^2} - \\frac{y^2}{b^2} = 1$. A tangent and normal to the hyperbola is drawn at the same point. The tangent has y-intercept $\\alpha$ and normal has y-intercept $\\beta$. If $\\alpha = -4$ and $\\beta = 9$ then find the x coordinate of the focus $c$ of hyperbola. (Given $c$ lies on the positive x-axis.)",
+      "type": "NUMERICAL",
+      "options": [],
+      "correctIndex": -1,
+      "correctIndices": [],
+      "correctNum": "6",
+      "marks": {
+        "pos": 4,
+        "neg": 0
+      },
+      "diagram": null,
+      "explanation": "Source: Question 717"
+    },
+    {
+      "id": "q_7dpdnvomldopcja",
+      "text": "A continuous function $f(x) = \\begin{cases} x+a & ; \\text{for } |x| < 2 \\\\ bf(x/2) + c & ; \\text{for } |x| \\ge 2 \\end{cases}$ is defined for some non-zero constants $a, b$ and $c$. Find the value of $\\frac{a}{c} + b$.",
+      "type": "NUMERICAL",
+      "options": [],
+      "correctIndex": -1,
+      "correctIndices": [],
+      "correctNum": "1",
+      "marks": {
+        "pos": 4,
+        "neg": 0
+      },
+      "diagram": null,
+      "explanation": "Source: Question 735"
+    },
+    {
+      "id": "q_ivpp9gbmldopcja",
+      "text": "For all $x$, define the functions, $f(x) = x^2, g(x) = -x^2+1, p(x) = |x|+1$. Consider the piecewise function $h(x)$ where $h(x) = \\begin{cases} \\max(f(x), g(x), p(x)), & x \\ge \\frac{-81}{100} \\\\ \\min(f(x), g(x), p(x)), & x < \\frac{-81}{100} \\end{cases}$. If $h(x)$ is non-differentiable at $m$ number of points and discontinuous at $n$ number of points, then find the value of $(m+n)$.",
+      "type": "NUMERICAL",
+      "options": [],
+      "correctIndex": -1,
+      "correctIndices": [],
+      "correctNum": "4",
+      "marks": {
+        "pos": 4,
+        "neg": 0
+      },
+      "diagram": null,
+      "explanation": "Source: Question 744"
+    },
+    {
+      "id": "q_129l009mldopcja",
+      "text": "If $[\\mathbf{b}\\ \\mathbf{c}\\ \\mathbf{d}] = 48$ and $(\\mathbf{a}\\times\\mathbf{b})\\times(\\mathbf{c}\\times\\mathbf{d}) + (\\mathbf{a}\\times\\mathbf{c})\\times(\\mathbf{d}\\times\\mathbf{b}) + (\\mathbf{a}\\times\\mathbf{d})\\times(\\mathbf{b}\\times\\mathbf{c}) + k \\mathbf{a} = \\mathbf{0}$ (where $\\mathbf{a}$ is a non zero vector), then find value of $k$.",
+      "type": "NUMERICAL",
+      "options": [],
+      "correctIndex": -1,
+      "correctIndices": [],
+      "correctNum": "96",
+      "marks": {
+        "pos": 4,
+        "neg": 0
+      },
+      "diagram": null,
+      "explanation": "Source: Question 757"
+    },
+    {
+      "id": "q_284mtpdmldopcja",
+      "text": "Let $P_0$ is the parabola $y^2 = 4x$ with vertex $K(0, 0)$, $A$ and $B$ are points on $P_0$ where tangents drawn intersect at right angles. Let $C$ be the centroid of $\\Delta ABK$. The locus of $C$ is another parabola $P_1$. Now the process is repeated with $P_1$ then $P_2, P_3 \\dots$ etc. Then the length of latus rectum of $P_{10}$ can be expressed as $\\frac{a}{b}$ where $a, b$ are co-prime natural numbers. Find the value of $(a + \\log_3 b)$.",
+      "type": "NUMERICAL",
+      "options": [],
+      "correctIndex": -1,
+      "correctIndices": [],
+      "correctNum": "14",
+      "marks": {
+        "pos": 4,
+        "neg": 0
+      },
+      "diagram": null,
+      "explanation": "Source: Question 758"
+    },
+    {
+      "id": "q_905bk59mldopcja",
+      "text": "If $a_1, a_2, \\dots, a_{4001}$ are in arithmetic progression and $\\frac{1}{a_1 a_2} + \\frac{1}{a_2 a_3} + \\dots + \\frac{1}{a_{4000} a_{4001}} = 10$ and $a_2 + a_{4000} = 50$. Find the value of $|a_1 - a_{4001}|$.",
+      "type": "NUMERICAL",
+      "options": [],
+      "correctIndex": -1,
+      "correctIndices": [],
+      "correctNum": "80",
+      "marks": {
+        "pos": 4,
+        "neg": 0
+      },
+      "diagram": null,
+      "explanation": "Source: Question 780"
+    },
+    {
+      "id": "q_8wrt2jgmldopcja",
+      "text": "Consider a family of $n$ children. Let two events $A$ and $B$ are defined as follows:<br>$A$: is the event that the family has both boys and girls<br>$B$: is the event that the family has atmost one girl<br>If the events $A$ and $B$ are independent, then find the value of $n$.<br>[Note: Probability that a randomly selected child is a boy or girl is same.]",
+      "type": "NUMERICAL",
+      "options": [],
+      "correctIndex": -1,
+      "correctIndices": [],
+      "correctNum": "3",
+      "marks": {
+        "pos": 4,
+        "neg": 0
+      },
+      "diagram": null,
+      "explanation": "Source: Question 816"
+    },
+    {
+      "id": "q_0px22ymmldopcja",
+      "text": "Consider the set of complex number $A, B, C$ and $S$ defined as<br>$A = \\{z : ||z+2| - |z-2|| = 2\\}$<br>$B = \\{z : \\arg\\left(\\frac{z-1}{z}\\right) = \\frac{\\pi}{2}\\}$<br>$C = \\{z : \\arg(z-1) = \\pi\\}$<br>$S = \\{z : \\text{Re}\\left(\\frac{z-1}{z+1}\\right) = 0\\}$<br>If $z_1, z_2, z_3 \\in S$, then find the minimum value of $|z_1+z_2|^2 + |z_2+z_3|^2 + |z_3+z_1|^2$.",
+      "type": "NUMERICAL",
+      "options": [],
+      "correctIndex": -1,
+      "correctIndices": [],
+      "correctNum": "3",
+      "marks": {
+        "pos": 4,
+        "neg": 0
+      },
+      "diagram": null,
+      "explanation": "Source: Question 1000"
+    }
+  ]
+}
