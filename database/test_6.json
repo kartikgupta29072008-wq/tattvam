@@ -213,7 +213,7 @@
     },
     {
       "id": "q_lmi2eynmlcpqdn0",
-      "text": "Let $T(n) = \\cos^2(30^\\circ - n^\\circ) - \\cos(30^\\circ - n^\\circ)\\cos(30^\\circ + n^\\circ) + \\cos^2(30^\\circ + n^\\circ)$. Find the value of $4\\sum_{n=1}^{30} T(n)$.",
+      "text": "Let $T(n) = \\cos^2(30^\\circ - n^\\circ) - \\cos(30^\\circ - n^\\circ)\\cos(30^\\circ + n^\\circ) + \\cos^2(30^\\circ + n^\\circ)$. Find the value of $4\\sum_{n=1}^{30} nT(n)$.",
       "type": "NUMERICAL",
       "options": [],
       "correctIndex": -1,
@@ -304,5 +304,15 @@
       "explanation": "source question 999"
     }
   ],
-  "id": "imported_single_4xt7x5dmlcpqdmz"
+  "id": "imported_single_4xt7x5dmlcpqdmz",
+  "officialMeta": {
+    "id": "official_03",
+    "title": "test_6",
+    "date": "2026-02-07",
+    "duration": 60,
+    "marks": 59,
+    "url": "https://raw.githubusercontent.com/kartikgupta29072008-wq/tattvam/refs/heads/main/database/test_6.json",
+    "active": true
+  },
+  "studentName": "Kartik Gupta"
 }
