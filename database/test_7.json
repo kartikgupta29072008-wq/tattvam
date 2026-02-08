@@ -21,7 +21,7 @@
       "correctNum": "",
       "marks": {
         "pos": 4,
-        "neg": -1
+        "neg": 2
       },
       "diagram": null,
       "explanation": "Source: Question 302"
@@ -44,7 +44,7 @@
       "correctNum": "",
       "marks": {
         "pos": 4,
-        "neg": -1
+        "neg": 2
       },
       "diagram": null,
       "explanation": "Source: Question 305"
@@ -69,7 +69,7 @@
       "correctNum": "",
       "marks": {
         "pos": 4,
-        "neg": -1
+        "neg": 2
       },
       "diagram": null,
       "explanation": "Source: Question 316"
@@ -93,7 +93,7 @@
       "correctNum": "",
       "marks": {
         "pos": 4,
-        "neg": -1
+        "neg": 2
       },
       "diagram": null,
       "explanation": "Source: Question 334"
@@ -117,7 +117,7 @@
       "correctNum": "",
       "marks": {
         "pos": 4,
-        "neg": -1
+        "neg": 2
       },
       "diagram": null,
       "explanation": "Source: Question 343"
@@ -212,7 +212,7 @@
       "correctNum": "6",
       "marks": {
         "pos": 4,
-        "neg": 0
+        "neg": 1
       },
       "diagram": null,
       "explanation": "Source: Question 717"
@@ -227,7 +227,7 @@
       "correctNum": "1",
       "marks": {
         "pos": 4,
-        "neg": 0
+        "neg": 1
       },
       "diagram": null,
       "explanation": "Source: Question 735"
@@ -242,7 +242,7 @@
       "correctNum": "4",
       "marks": {
         "pos": 4,
-        "neg": 0
+        "neg": 1
       },
       "diagram": null,
       "explanation": "Source: Question 744"
@@ -257,7 +257,7 @@
       "correctNum": "96",
       "marks": {
         "pos": 4,
-        "neg": 0
+        "neg": 1
       },
       "diagram": null,
       "explanation": "Source: Question 757"
@@ -272,7 +272,7 @@
       "correctNum": "14",
       "marks": {
         "pos": 4,
-        "neg": 0
+        "neg": 1
       },
       "diagram": null,
       "explanation": "Source: Question 758"
@@ -287,7 +287,7 @@
       "correctNum": "80",
       "marks": {
         "pos": 4,
-        "neg": 0
+        "neg": 1
       },
       "diagram": null,
       "explanation": "Source: Question 780"
@@ -302,7 +302,7 @@
       "correctNum": "3",
       "marks": {
         "pos": 4,
-        "neg": 0
+        "neg": 1
       },
       "diagram": null,
       "explanation": "Source: Question 816"
@@ -317,7 +317,7 @@
       "correctNum": "3",
       "marks": {
         "pos": 4,
-        "neg": 0
+        "neg": 1
       },
       "diagram": null,
       "explanation": "Source: Question 1000"
