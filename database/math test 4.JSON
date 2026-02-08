@@ -306,7 +306,7 @@
       "explanation": ""
     },
     {
-      "text": " Let an octahedral dice (8 faces) marked the numbers 1 to 8 on its faces. On throwing two such dice three events $A, B, C$ are defined as:\n$A$: getting a sum 10 or more.\n$B$: getting a sum divisible by 2.\n$C$: getting a sum divisible by 3.\nIf $P\\left(\\frac{C-B}{A}\\right)=\\frac{a}{b}$ where $a, b \\in \\mathbb{N}$, then find the least value of $|a-b|$.",
+      "text": " Let a octahedral dice (8 faces) marked the numbers 1 to 8 on its faces. On throwing two such dice three events $A, B, C$ are defined as:\n$A$: getting a sum 10 or more.\n$B$: getting a sum divisible by 2.\n$C$: getting a sum divisible by 3.\nIf $P\\left(\\frac{C-B}{A}\\right)=\\frac{a}{b}$ where $a, b \\in \\mathbb{N}$, then find the least value of $|a-b|$.",
       "type": "NUMERICAL",
       "options": [],
       "marks": {
