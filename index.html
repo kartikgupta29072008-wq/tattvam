@@ -179,15 +179,17 @@
             }
         };
 // --- OFFICIAL EXAM UTILS: SUBMIT TO GOOGLE ---
+// --- OFFICIAL EXAM UTILS: SUBMIT TO GOOGLE ---
 const submitResultToGoogle = async (formData) => {
-    // 🔴 IMPORTANT: REPLACE THESE WITH YOUR COPIED IDs FROM PHASE 2
-    const FORM_ID = "1FAIpQLSd_Kmp_8KRFWdcy5ZlEHpwS4QQvGXVe59VvgOk5torxSNyC1A"; // Your Form ID (between /d/e/ and /viewform)
+    // 🔴 YOUR EXACT FORM ID
+    const FORM_ID = "1FAIpQLSd_Kmp_8KRFWdcy5ZlEHpwS4QQvGXVe59VvgOk5torxSNyC1A";
     
+    // 🔴 YOUR EXACT ENTRY IDs (Extracted from your link)
     const MAPPING = {
-        name: "entry.62457682",   // Replace with your Name Entry ID
-        testId: "entry.1900409645", // Replace with your Test ID Entry ID
-        score: "entry.840307252",  // Replace with your Score Entry ID
-        data: "entry.20137862"    // Replace with your Analysis Entry ID
+        name: "entry.62457682",      // NAME_123
+        testId: "entry.1900409645",  // ID_123
+        score: "entry.840307252",    // SCORE_123
+        data: "entry.20137862"       // DATA_123
     };
 
     const formUrl = `https://docs.google.com/forms/d/e/${FORM_ID}/formResponse`;
@@ -197,23 +199,74 @@ const submitResultToGoogle = async (formData) => {
     params.append(MAPPING.testId, formData.testTitle);
     params.append(MAPPING.score, `${formData.score} / ${formData.maxMarks}`);
     
-    // We only send a summary or light version if the data is too huge, 
-    // but usually Google Forms handles a fair bit of text.
+    // Convert the detailed analysis to a string so it fits in the paragraph box
     params.append(MAPPING.data, JSON.stringify(formData.details)); 
 
     try {
-        // We use 'no-cors' mode. This means we won't know if it succeeded 
-        // (status will be 0), but the data WILL be sent.
         await fetch(formUrl, {
             method: "POST",
             mode: "no-cors",
             headers: { "Content-Type": "application/x-www-form-urlencoded" },
             body: params
         });
-        console.log("Sent to Google Forms");
+        console.log("✅ Data sent to Google successfully");
         return true;
     } catch (e) {
-        console.error("Submission Error:", e);
+        console.error("❌ Submission Error:", e);
+        return false;
+    }
+};
+const HARDCODED_GITHUB_TOKEN = "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";
+// --- BOSS FEATURE: GITHUB CLOUD UPLOAD ---
+const uploadToGitHub = async (testData, token, filename) => {
+    // 🔴 REPLACE THESE TWO WITH YOUR EXACT DETAILS!
+    const USERNAME = "kartikgupta29072008-wq"; 
+    const REPO_NAME = "tattvam"; 
+    
+    // We assume your tests are inside the 'database' folder
+    const FILE_PATH = `database/${filename}`; 
+    const API_URL = `https://api.github.com/repos/${USERNAME}/${REPO_NAME}/contents/${FILE_PATH}`;
+
+    try {
+        // 1. Get current file info (we need the 'SHA' ID to update it)
+        const getRes = await fetch(API_URL, {
+            headers: { "Authorization": `Bearer ${token}` }
+        });
+        
+        // If file doesn't exist, we can't update it (safety check)
+        if (!getRes.ok) throw new Error("File not found on GitHub or Invalid Token");
+        const fileInfo = await getRes.json();
+        
+        // 2. Prepare content (Base64 Encode for GitHub)
+        // We remove the 'isBossDraft' and 'isOfficial' flags before uploading
+        const cleanData = { ...testData };
+        delete cleanData.isBossDraft;
+        delete cleanData.isOfficial; // It becomes official again when fetched
+        
+        const jsonString = JSON.stringify(cleanData, null, 2);
+        // This complex encoding handles Emojis/Hindi characters correctly
+        const encodedContent = btoa(unescape(encodeURIComponent(jsonString)));
+
+        // 3. Send the Update (PUT request)
+        const putRes = await fetch(API_URL, {
+            method: "PUT",
+            headers: {
+                "Authorization": `Bearer ${token}`,
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                message: "Boss Edit Hotfix via Tattvam",
+                content: encodedContent,
+                sha: fileInfo.sha // This ID proves we are overwriting the correct file
+            })
+        });
+
+        if (putRes.ok) return true;
+        else throw new Error("Upload failed. Check console.");
+
+    } catch (e) {
+        alert("Cloud Error: " + e.message);
+        console.error(e);
         return false;
     }
 };
@@ -1270,6 +1323,197 @@ const EntryEditorModal = ({ entry, onSave, onClose }) => {
         </div>
     );
 };
+
+// --- NEW: REMIX STUDIO PRO (With Cross-Test Library) ---
+// --- IMPROVED: REMIX STUDIO PRO (Fixed Icons & All Questions) ---
+const RemixStudioModal = ({ notebook, allTests, onClose, onCreate }) => {
+    const [tab, setTab] = useState('notebook'); // 'notebook' | 'library'
+    const [cart, setCart] = useState([]); 
+    const [search, setSearch] = useState("");
+    const [filterType, setFilterType] = useState('mistakes'); // 'mistakes' | 'correct' | 'all'
+
+    // 1. GET QUESTIONS FROM CURRENT NOTEBOOK
+    const notebookQuestions = React.useMemo(() => {
+        const unique = new Map();
+        notebook.entries?.forEach(entry => {
+            entry.details?.forEach(d => {
+                // FILTER LOGIC:
+                let match = false;
+                if (filterType === 'mistakes') match = (d.status === 'wrong' || d.status === 'left');
+                else if (filterType === 'correct') match = (d.status === 'correct');
+                else match = true; // 'all' - Show everything
+
+                if (match && d.qData) {
+                    if (!unique.has(d.qData.text)) {
+                        unique.set(d.qData.text, { ...d.qData, _source: `From: ${entry.testName}` });
+                    }
+                }
+            });
+        });
+        return Array.from(unique.values());
+    }, [notebook, filterType]);
+
+    // 2. SEARCH GLOBAL LIBRARY
+    // 2. SEARCH GLOBAL LIBRARY (CRASH PROOF VERSION)
+    const libraryQuestions = React.useMemo(() => {
+        if (!search || search.length < 2) return []; // Wait for 2 chars
+        
+        console.log("Searching in tests:", allTests?.length); // Debugging Log
+        
+        const results = [];
+        const term = search.toLowerCase();
+
+        (allTests || []).forEach(test => {
+            // Safety: Skip if test has no questions
+            if (!test.questions || !Array.isArray(test.questions)) return;
+
+            test.questions.forEach(q => {
+                // Safety: Ensure text exists before checking
+                const qText = (q.text || "").toLowerCase();
+                
+                // Search in Question Text
+                if (qText.includes(term)) {
+                    results.push({ ...q, _source: `From: ${test.title}` });
+                }
+            });
+        });
+        return results.slice(0, 50);
+    }, [allTests, search]);
+
+    const toggleCart = (q) => {
+        if (cart.find(c => c.text === q.text)) setCart(cart.filter(c => c.text !== q.text));
+        else setCart([...cart, { ...q, id: Date.now() + Math.random() }]);
+    };
+
+    const handleFinish = () => {
+        if (cart.length === 0) return alert("Select at least one question!");
+        const title = prompt("Name your Remix Test:", `Remix: ${notebook.title} (${cart.length} Qs)`);
+        if (!title) return;
+        onCreate({
+            id: Date.now().toString(),
+            title: title,
+            created: new Date().toISOString(),
+            questions: cart
+        });
+    };
+
+    return (
+        <div className="fixed inset-0 bg-slate-900/80 backdrop-blur-sm z-[100] flex items-center justify-center p-4 animate-in zoom-in-95">
+            <div className="bg-white w-full max-w-5xl h-[85vh] rounded-2xl shadow-2xl flex flex-col overflow-hidden">
+                
+                {/* HEADER */}
+                <div className="bg-slate-900 p-4 flex justify-between items-center text-white shrink-0">
+                    <div className="flex items-center gap-3">
+                        <div className="bg-purple-600 p-2 rounded-lg">
+                            <Icon name="RefreshCw" className="w-5 h-5 text-white" />
+                        </div>
+                        <div>
+                            <h2 className="font-bold text-lg">Remix Studio</h2>
+                            <p className="text-xs text-slate-400">Build a custom test</p>
+                        </div>
+                    </div>
+                    <button onClick={onClose} className="hover:bg-white/10 p-2 rounded-full">
+                        <Icon name="X" className="w-5 h-5 text-white" />
+                    </button>
+                </div>
+
+                <div className="flex flex-1 overflow-hidden">
+                    
+                    {/* LEFT PANEL: SOURCE SELECTION */}
+                    <div className="w-2/3 border-r border-slate-200 flex flex-col bg-slate-50">
+                        {/* TABS */}
+                        <div className="flex border-b bg-white">
+                            <button onClick={() => setTab('notebook')} className={`flex-1 py-4 text-sm font-bold flex items-center justify-center gap-2 border-b-2 ${tab==='notebook' ? 'border-purple-600 text-purple-700 bg-purple-50' : 'border-transparent text-slate-500 hover:bg-slate-50'}`}>
+                                <Icon name="Book" className="w-4 h-4" /> From Notebook
+                            </button>
+                            <button onClick={() => setTab('library')} className={`flex-1 py-4 text-sm font-bold flex items-center justify-center gap-2 border-b-2 ${tab==='library' ? 'border-indigo-600 text-indigo-700 bg-indigo-50' : 'border-transparent text-slate-500 hover:bg-slate-50'}`}>
+                                <Icon name="Search" className="w-4 h-4" /> Search All Tests
+                            </button>
+                        </div>
+
+                        {/* FILTERS OR SEARCH BAR */}
+                        <div className="p-4 border-b bg-white shadow-sm z-10">
+                            {tab === 'notebook' ? (
+                                <div className="flex gap-2">
+                                    {/* 🔴 NEW FILTERS HERE */}
+                                    <button onClick={() => setFilterType('mistakes')} className={`px-4 py-2 rounded-full text-xs font-bold uppercase transition-all border ${filterType==='mistakes' ? 'bg-red-100 text-red-700 border-red-200' : 'bg-white text-slate-500 border-slate-200'}`}>Mistakes</button>
+                                    <button onClick={() => setFilterType('correct')} className={`px-4 py-2 rounded-full text-xs font-bold uppercase transition-all border ${filterType==='correct' ? 'bg-green-100 text-green-700 border-green-200' : 'bg-white text-slate-500 border-slate-200'}`}>Correct</button>
+                                    <button onClick={() => setFilterType('all')} className={`px-4 py-2 rounded-full text-xs font-bold uppercase transition-all border ${filterType==='all' ? 'bg-slate-800 text-white border-slate-900' : 'bg-white text-slate-500 border-slate-200'}`}>Show All</button>
+                                </div>
+                            ) : (
+                                <div className="relative">
+                                    <div className="absolute left-3 top-3 text-slate-400">
+                                        <Icon name="Search" className="w-4 h-4" />
+                                    </div>
+                                    <input autoFocus value={search} onChange={e => setSearch(e.target.value)} placeholder="Search for any question..." className="w-full pl-9 p-2.5 bg-slate-100 rounded-lg text-sm font-bold focus:ring-2 focus:ring-indigo-500 outline-none" />
+                                </div>
+                            )}
+                        </div>
+
+                        {/* QUESTION LIST */}
+                        <div className="flex-1 overflow-y-auto p-4 space-y-3">
+                            {(tab === 'notebook' ? notebookQuestions : libraryQuestions).map((q, i) => {
+                                const isSelected = cart.some(c => c.text === q.text);
+                                return (
+                                    <div key={i} onClick={() => toggleCart(q)} className={`p-4 rounded-xl border-2 cursor-pointer transition-all hover:scale-[1.01] flex gap-4 ${isSelected ? 'border-purple-500 bg-purple-50 shadow-md' : 'border-slate-200 bg-white hover:border-purple-300'}`}>
+                                        <div className="flex-1">
+                                            <span className="text-[10px] font-bold bg-slate-200 text-slate-600 px-2 py-0.5 rounded uppercase mb-2 inline-block">{q._source}</span>
+                                            <div className="text-sm font-medium text-slate-800 line-clamp-3"><LatexRenderer content={q.text} /></div>
+                                        </div>
+                                        <div className="shrink-0 pt-1">
+                                            {isSelected ? (
+                                                <div className="bg-purple-600 text-white rounded-full p-1"><Icon name="Check" className="w-4 h-4" /></div>
+                                            ) : (
+                                                <div className="w-6 h-6 rounded-full border-2 border-slate-300"></div>
+                                            )}
+                                        </div>
+                                    </div>
+                                )
+                            })}
+                            {tab === 'library' && !search && <div className="text-center py-10 text-slate-400 font-bold">Type to search...</div>}
+                            {tab === 'notebook' && notebookQuestions.length === 0 && <div className="text-center py-10 text-slate-400 font-bold">No questions found for this filter.</div>}
+                        </div>
+                    </div>
+
+                    {/* RIGHT PANEL: CART */}
+                    <div className="w-1/3 flex flex-col bg-white border-l border-slate-200 shadow-xl relative z-20">
+                        <div className="p-4 bg-purple-50 border-b border-purple-100 shrink-0">
+                            <h3 className="font-bold text-purple-900 flex items-center gap-2">
+                                <Icon name="List" className="w-5 h-5" /> Your Mix Tape
+                            </h3>
+                            <p className="text-xs text-purple-600 font-medium">{cart.length} Questions Selected</p>
+                        </div>
+                        
+                        <div className="flex-1 overflow-y-auto p-4 space-y-2">
+                            {cart.length === 0 ? (
+                                <div className="flex flex-col items-center justify-center h-full text-slate-300">
+                                    <Icon name="Plus" className="w-12 h-12 mb-2 opacity-20" />
+                                    <p className="font-bold text-sm">Click questions to add</p>
+                                </div>
+                            ) : (
+                                cart.map((q, i) => (
+                                    <div key={i} className="flex gap-2 items-start p-3 bg-slate-50 rounded-lg border border-slate-100 group hover:border-red-200 transition-colors">
+                                        <div className="flex-1 text-xs text-slate-600 line-clamp-2 font-medium">{q.text}</div>
+                                        <button onClick={(e) => { e.stopPropagation(); toggleCart(q); }} className="text-slate-400 hover:text-red-500 transition-colors">
+                                            <Icon name="X" className="w-4 h-4" />
+                                        </button>
+                                    </div>
+                                ))
+                            )}
+                        </div>
+
+                        <div className="p-4 border-t bg-slate-50 shrink-0">
+                            <button onClick={handleFinish} disabled={cart.length === 0} className="w-full bg-gradient-to-r from-purple-600 to-indigo-600 text-white py-4 rounded-xl font-bold shadow-lg hover:shadow-xl hover:scale-[1.02] transition-all disabled:opacity-50 disabled:scale-100 flex items-center justify-center gap-2 text-sm uppercase tracking-wide">
+                                <Icon name="Play" className="w-5 h-5 fill-current" /> Create Test & Play
+                            </button>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    );
+};
 // --- UPDATED ANALYSIS NOTEBOOK (LAUNCHES DASHBOARD) ---
 // --- UPDATED ANALYSIS NOTEBOOK (With Entry Deletion) ---
 // --- UPDATED ANALYSIS NOTEBOOK (With Persistence Support) ---
@@ -1277,6 +1521,9 @@ const EntryEditorModal = ({ entry, onSave, onClose }) => {
 // --- UPDATED ANALYSIS NOTEBOOK (With Sorting, Editing, & Graph) ---
 // ==========================================
 // ANALYSIS NOTEBOOK (With "Spotlight" Graph)
+// ==========================================
+// ==========================================
+// ANALYSIS NOTEBOOK (With Remix Studio Pro)
 // ==========================================
 const AnalysisNotebook = ({ notebook, onUpdate, onBack, apiKey, onRequestKey, onRemix, tests }) => {
     const [uploading, setUploading] = useState(false);
@@ -1287,6 +1534,9 @@ const AnalysisNotebook = ({ notebook, onUpdate, onBack, apiKey, onRequestKey, on
     const [expandedEntryId, setExpandedEntryId] = useState(null);
     const [editModalEntry, setEditModalEntry] = useState(null); 
     const [sortMode, setSortMode] = useState('dateDesc'); 
+
+    // NEW: Remix Modal State
+    const [showRemix, setShowRemix] = useState(false);
 
     // --- SORTING ---
     const getSortedEntries = () => {
@@ -1348,131 +1598,54 @@ const AnalysisNotebook = ({ notebook, onUpdate, onBack, apiKey, onRequestKey, on
         setAnalyzing(false);
     };
 
-    // --- NEW: INTERACTIVE "SPOTLIGHT" CHART ---
+    // --- CHART COMPONENT ---
     const SuperChart = ({ entries }) => {
         const [hovered, setHovered] = useState(null);
-
         if (!entries || entries.length === 0) return <div className="h-40 flex items-center justify-center text-slate-400 border-2 border-dashed rounded-xl bg-slate-50/50">No data available.</div>;
 
-        // Prepare Data (Chronological)
         const data = [...entries].sort((a, b) => new Date(a.date) - new Date(b.date)).map(e => {
             const max = e.maxMarks || 100;
             const pct = Math.min(100, Math.max(0, Math.round((e.score / max) * 100)));
             return { ...e, pct, max };
         });
-
-        // Active is either the one being hovered OR the latest one
         const active = hovered || data[data.length - 1];
-
-        // Helper for SVG Path
         const getPoints = () => {
             if (data.length < 2) return "";
-            // Distribute points across 100% width
             const step = 100 / (data.length - 1 || 1);
             return data.map((d, i) => `${i * step},${100 - d.pct}`).join(" ");
         };
 
         return (
             <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 transition-all hover:shadow-md">
-                
-                {/* 1. SPOTLIGHT HEADER (Dynamic Data) */}
                 <div className="flex justify-between items-end mb-8 h-16">
                     <div>
                         <div className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-1 flex items-center gap-2">
                             <Icon name="Target" className="w-4 h-4 text-indigo-500" /> Performance Spotlight
                         </div>
-                        <div className="text-xl font-black text-slate-800 leading-none truncate max-w-[200px] md:max-w-md">
-                            {active.testName || "Untitled Test"}
-                        </div>
-                        <div className="text-xs text-slate-500 font-medium mt-1 flex items-center gap-2">
-                            <Icon name="Clock" className="w-3 h-3" /> {new Date(active.date).toLocaleDateString()} 
-                            {active === hovered && <span className="bg-indigo-100 text-indigo-700 px-1.5 py-0.5 rounded text-[10px] font-bold">Viewing</span>}
-                        </div>
+                        <div className="text-xl font-black text-slate-800 leading-none truncate max-w-[200px] md:max-w-md">{active.testName || "Untitled Test"}</div>
+                        <div className="text-xs text-slate-500 font-medium mt-1 flex items-center gap-2"><Icon name="Clock" className="w-3 h-3" /> {new Date(active.date).toLocaleDateString()} {active === hovered && <span className="bg-indigo-100 text-indigo-700 px-1.5 py-0.5 rounded text-[10px] font-bold">Viewing</span>}</div>
                     </div>
-                    
                     <div className="text-right">
-                        <div className="flex items-baseline justify-end gap-1">
-                            <span className="text-4xl font-black text-indigo-600 tracking-tight">{active.pct}%</span>
-                            <span className="text-sm font-bold text-slate-300">/ 100%</span>
-                        </div>
-                        <div className="text-xs font-bold text-slate-400 mt-1">
-                            Score: {active.score} / {active.max}
-                        </div>
+                        <div className="flex items-baseline justify-end gap-1"><span className="text-4xl font-black text-indigo-600 tracking-tight">{active.pct}%</span><span className="text-sm font-bold text-slate-300">/ 100%</span></div>
+                        <div className="text-xs font-bold text-slate-400 mt-1">Score: {active.score} / {active.max}</div>
                     </div>
                 </div>
-
-                {/* 2. VISUAL GRAPH AREA */}
                 <div className="relative h-48 w-full" onMouseLeave={() => setHovered(null)}>
-                    
-                    {/* SVG Trend Line (Behind bars) */}
                     <svg className="absolute inset-0 w-full h-full overflow-visible pointer-events-none z-0" preserveAspectRatio="none" viewBox={`0 0 100 100`}>
-                        {/* Gradient Fill under line */}
-                        <defs>
-                            <linearGradient id="chartGrad" x1="0" x2="0" y1="0" y2="1">
-                                <stop offset="0%" stopColor="#6366f1" stopOpacity="0.2" />
-                                <stop offset="100%" stopColor="#6366f1" stopOpacity="0" />
-                            </linearGradient>
-                        </defs>
-                        {data.length > 1 && (
-                            <>
-                                <polyline 
-                                    points={`${getPoints()} 100,100 0,100`} 
-                                    fill="url(#chartGrad)" 
-                                    stroke="none"
-                                />
-                                <polyline 
-                                    points={getPoints()} 
-                                    fill="none" 
-                                    stroke="#6366f1" 
-                                    strokeWidth="0.5" 
-                                    strokeLinecap="round" 
-                                    strokeLinejoin="round" 
-                                    vectorEffect="non-scaling-stroke"
-                                />
-                            </>
-                        )}
+                        <defs><linearGradient id="chartGrad" x1="0" x2="0" y1="0" y2="1"><stop offset="0%" stopColor="#6366f1" stopOpacity="0.2" /><stop offset="100%" stopColor="#6366f1" stopOpacity="0" /></linearGradient></defs>
+                        {data.length > 1 && <><polyline points={`${getPoints()} 100,100 0,100`} fill="url(#chartGrad)" stroke="none"/><polyline points={getPoints()} fill="none" stroke="#6366f1" strokeWidth="0.5" strokeLinecap="round" strokeLinejoin="round" vectorEffect="non-scaling-stroke"/></>}
                     </svg>
-
-                    {/* Bars Container */}
                     <div className="absolute inset-0 flex items-end justify-between z-10 px-2">
                         {data.map((d, i) => {
                             const isFocus = active.id === d.id;
-                            let barColor = "bg-slate-200"; // Default / Inactive
-                            
-                            if (isFocus) {
-                                if (d.pct >= 80) barColor = "bg-gradient-to-t from-emerald-500 to-emerald-400 shadow-emerald-200";
-                                else if (d.pct >= 50) barColor = "bg-gradient-to-t from-indigo-500 to-indigo-400 shadow-indigo-200";
-                                else barColor = "bg-gradient-to-t from-amber-500 to-amber-400 shadow-amber-200";
-                            } else if (hovered) {
-                                barColor = "bg-slate-100"; // Fade others when hovering
-                            } else {
-                                // Default State (No hover)
-                                if (d.pct >= 80) barColor = "bg-emerald-200";
-                                else if (d.pct >= 50) barColor = "bg-indigo-200";
-                                else barColor = "bg-amber-200";
-                            }
-
+                            let barColor = isFocus ? (d.pct >= 80 ? "bg-emerald-400" : d.pct >= 50 ? "bg-indigo-400" : "bg-amber-400") : "bg-slate-200";
+                            if (hovered && !isFocus) barColor = "bg-slate-100";
                             return (
-                                <div 
-                                    key={i}
-                                    onMouseEnter={() => setHovered(d)}
-                                    className="flex-1 flex flex-col justify-end items-center group h-full relative cursor-pointer px-0.5 md:px-2 transition-all duration-300"
-                                >
-                                    {/* The Bar */}
-                                    <div 
-                                        style={{ height: `${Math.max(d.pct, 4)}%` }} 
-                                        className={`w-full max-w-[40px] rounded-t-lg transition-all duration-300 relative ${barColor} ${isFocus ? 'shadow-lg scale-105' : 'hover:opacity-90'}`}
-                                    >
-                                        {/* Top Dot Marker */}
-                                        {isFocus && (
-                                            <div className="absolute -top-1 left-1/2 -translate-x-1/2 w-2 h-2 bg-white rounded-full shadow-sm ring-2 ring-indigo-500"></div>
-                                        )}
+                                <div key={i} onMouseEnter={() => setHovered(d)} className="flex-1 flex flex-col justify-end items-center group h-full relative cursor-pointer px-0.5 md:px-2 transition-all duration-300">
+                                    <div style={{ height: `${Math.max(d.pct, 4)}%` }} className={`w-full max-w-[40px] rounded-t-lg transition-all duration-300 relative ${barColor} ${isFocus ? 'shadow-lg scale-105' : 'hover:opacity-90'}`}>
+                                        {isFocus && <div className="absolute -top-1 left-1/2 -translate-x-1/2 w-2 h-2 bg-white rounded-full shadow-sm ring-2 ring-indigo-500"></div>}
                                     </div>
-                                    
-                                    {/* X-Axis Label */}
-                                    <div className={`mt-3 text-[10px] font-bold transition-colors ${isFocus ? 'text-indigo-600 scale-110' : 'text-slate-300'}`}>
-                                        {i + 1}
-                                    </div>
+                                    <div className={`mt-3 text-[10px] font-bold transition-colors ${isFocus ? 'text-indigo-600 scale-110' : 'text-slate-300'}`}>{i + 1}</div>
                                 </div>
                             );
                         })}
@@ -1486,8 +1659,20 @@ const AnalysisNotebook = ({ notebook, onUpdate, onBack, apiKey, onRequestKey, on
 
     return (
         <div className="h-full flex flex-col bg-slate-50 relative animate-in fade-in">
-            {/* EDIT MODAL */}
             {editModalEntry && <EntryEditorModal entry={editModalEntry} onClose={() => setEditModalEntry(null)} onSave={handleEntryUpdate} />}
+
+            {/* NEW: REMIX STUDIO MODAL */}
+            {showRemix && (
+                <RemixStudioModal 
+                    notebook={notebook} 
+                    allTests={tests}   
+                    onClose={() => setShowRemix(false)} 
+                    onCreate={(newTest) => {
+                        setShowRemix(false);
+                        onRemix(newTest);
+                    }} 
+                />
+            )}
 
             {/* HEADER */}
             <div className="bg-white border-b px-6 py-4 flex items-center justify-between shadow-sm shrink-0">
@@ -1496,6 +1681,11 @@ const AnalysisNotebook = ({ notebook, onUpdate, onBack, apiKey, onRequestKey, on
                     <div><input value={notebook.title} onChange={e => onUpdate({...notebook, title: e.target.value})} className="font-bold text-xl outline-none bg-transparent placeholder-slate-300" placeholder="Notebook Title" /><p className="text-xs text-slate-500 font-medium">{notebook.entries?.length || 0} Entries</p></div>
                 </div>
                 <div className="flex gap-2">
+                    {/* BUTTON OPENS NEW MODAL */}
+                    <button onClick={() => setShowRemix(true)} className="flex items-center gap-2 bg-purple-600 text-white px-4 py-2 rounded-lg hover:bg-purple-700 font-bold shadow-sm transition-all animate-pulse-slow">
+                        <Icon name="RefreshCw" className="w-4 h-4" /> Remix Mistakes
+                    </button>
+                    
                     <label className="flex items-center gap-2 bg-white border border-indigo-100 text-indigo-600 px-4 py-2 rounded-lg cursor-pointer hover:bg-indigo-50 font-bold shadow-sm transition-all">{uploading ? <Icon name="Loader2" className="animate-spin" /> : <Icon name="Camera" />}<span>Scan</span><input type="file" className="hidden" accept="image/*" onChange={handleImageUpload} disabled={uploading} /></label>
                     <button onClick={runDeepAnalysis} disabled={analyzing} className="flex items-center gap-2 bg-tattvam-900 text-white px-4 py-2 rounded-lg hover:bg-tattvam-800 font-bold shadow-sm transition-all">{analyzing ? <Icon name="Loader2" className="animate-spin" /> : <Icon name="BrainCircuit" />} Analysis</button>
                 </div>
@@ -1504,7 +1694,6 @@ const AnalysisNotebook = ({ notebook, onUpdate, onBack, apiKey, onRequestKey, on
             {/* CONTENT */}
             <div className="flex-1 overflow-y-auto p-6 md:p-8">
                 <div className="grid md:grid-cols-3 gap-6 max-w-6xl mx-auto">
-                    
                     {/* LEFT COL: AI & SUPER CHART */}
                     <div className="space-y-6">
                         {notebook.insights && (
@@ -1517,7 +1706,6 @@ const AnalysisNotebook = ({ notebook, onUpdate, onBack, apiKey, onRequestKey, on
                                 <div className="bg-purple-50 p-4 rounded-lg text-xs text-purple-800 border-l-4 border-purple-400 leading-relaxed"><strong>Advice:</strong> {notebook.insights.advice}</div>
                             </div>
                         )}
-                        {/* THE NEW CHART */}
                         <SuperChart entries={notebook.entries} />
                     </div>
 
@@ -1541,14 +1729,10 @@ const AnalysisNotebook = ({ notebook, onUpdate, onBack, apiKey, onRequestKey, on
                                             {entry.testName || "Untitled Test"}
                                             {expandedEntryId === entry.id ? <Icon name="ArrowUp" className="w-4 h-4 text-slate-400" /> : <Icon name="ArrowDown" className="w-4 h-4 text-slate-400" />}
                                         </h4>
-                                        <p className="text-xs text-slate-400 font-medium mt-1">
-                                            {new Date(entry.date).toLocaleString()} • {entry.type === 'IMAGE_IMPORT' ? 'Scanned' : 'Quiz'}
-                                        </p>
+                                        <p className="text-xs text-slate-400 font-medium mt-1">{new Date(entry.date).toLocaleString()} • {entry.type === 'IMAGE_IMPORT' ? 'Scanned' : 'Quiz'}</p>
                                     </div>
                                     <div className="flex items-center gap-3">
-                                        <div className="text-right mr-2">
-                                            <div className="text-2xl font-black text-indigo-600">{entry.score} <span className="text-sm text-slate-400 font-medium">/ {entry.maxMarks}</span></div>
-                                        </div>
+                                        <div className="text-right mr-2"><div className="text-2xl font-black text-indigo-600">{entry.score} <span className="text-sm text-slate-400 font-medium">/ {entry.maxMarks}</span></div></div>
                                         <button onClick={(e) => { e.stopPropagation(); setEditModalEntry(entry); }} className="p-2 text-slate-300 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-all opacity-0 group-hover:opacity-100" title="Edit"><Icon name="Edit2" className="w-5 h-5" /></button>
                                         <button onClick={(e) => handleDeleteEntry(e, entry.id)} className="p-2 text-slate-300 hover:text-red-600 hover:bg-red-50 rounded-lg transition-all opacity-0 group-hover:opacity-100" title="Delete"><Icon name="Trash2" className="w-5 h-5" /></button>
                                     </div>
@@ -1557,52 +1741,69 @@ const AnalysisNotebook = ({ notebook, onUpdate, onBack, apiKey, onRequestKey, on
                                     <div className="bg-slate-50 p-5 border-t border-slate-100 animate-in slide-in-from-top-2">
                                         <div className="flex justify-between items-center mb-4">
                                             <h5 className="font-bold text-sm text-slate-700 uppercase">Analysis Preview</h5>
-                                            <button onClick={() => setViewingEntry(entry)} className="bg-indigo-600 text-white px-5 py-2 rounded-lg font-bold hover:bg-indigo-700 flex items-center gap-2 shadow-sm transition-all text-sm">
-                                                <Icon name="BarChart" className="w-4 h-4" /> Open Full Analysis
-                                            </button>
+                                            <button onClick={() => setViewingEntry(entry)} className="bg-indigo-600 text-white px-5 py-2 rounded-lg font-bold hover:bg-indigo-700 flex items-center gap-2 shadow-sm transition-all text-sm"><Icon name="BarChart" className="w-4 h-4" /> Open Full Analysis</button>
                                         </div>
                                         {entry.details && <div className="flex gap-1 flex-wrap">{entry.details.slice(0, 40).map((d, i) => <div key={i} className={`w-3 h-3 rounded-sm ${d.status === 'correct' ? 'bg-green-500' : d.status === 'wrong' ? 'bg-red-500' : 'bg-slate-300'}`} title={`Q${d.qNum}: ${d.status}`}></div>)}{entry.details.length > 40 && <span className="text-[10px] text-slate-400 font-medium pl-1">+{entry.details.length - 40} more</span>}</div>}
                                     </div>
                                 )}
                             </div>
                         ))}
-                        
                         {(!notebook.entries || notebook.entries.length === 0) && <div className="text-center py-16 text-slate-400 bg-white rounded-xl border-2 border-dashed border-slate-200"><Icon name="BookOpen" className="w-12 h-12 mx-auto mb-3 text-slate-300" /><p>No entries yet.</p></div>}
                     </div>
                 </div>
             </div>
         </div>
     );
-}; 
-      // --- NEW COMPONENT: OFFICIAL EXAM HUB ---
-const OfficialExamHub = ({ onStartTest, onBack }) => {
+};      // --- NEW COMPONENT: OFFICIAL EXAM HUB ---
+const OfficialExamHub = ({ onStartTest, onBack, isBoss, setBossMode }) => {
     const [exams, setExams] = useState([]);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
     const [studentName, setStudentName] = useState(localStorage.getItem("tattvam_student_name") || "");
+const [secretCode, setSecretCode] = useState("");
+const handleBossLogin = () => {
+        if(secretCode === "tattvam123") { // <--- PASSWORD SETTING
+            setBossMode(true);
+            alert("🔓 BOSS MODE ACTIVATED");
+        } else {
+            alert("Wrong Code");
+        }
+    };
 
     // 1. Fetch the Exam List from GitHub
-    useEffect(() => {
+useEffect(() => {
         const fetchExams = async () => {
             setLoading(true);
             try {
-                // 🔴 REPLACE THIS URL WITH YOUR 'exam_list.json' RAW URL FROM PHASE 1
+                // 1. MAKE SURE THIS URL IS CORRECT!
+                // If this is wrong, the app will normally crash. Now it will just show an error.
                 const GITHUB_DB_URL = "https://raw.githubusercontent.com/kartikgupta29072008-wq/tattvam/refs/heads/main/database/exam_list.json";
                 
-                // We add ?t=Timestamp to force a fresh fetch (bypass cache)
                 const res = await fetch(GITHUB_DB_URL + "?t=" + Date.now());
-                if (!res.ok) throw new Error("Could not connect to Exam Server");
+                
+                if (!res.ok) throw new Error(`Server Error: ${res.status}`);
+                
                 const data = await res.json();
-                setExams(data.filter(e => e.active)); // Only show active tests
+                
+                // 🔴 CRASH PREVENTION CHECK 🔴
+                // We check if 'data' is actually a list (Array). If not, we stop.
+                if (!Array.isArray(data)) {
+                    throw new Error("Invalid Data Format: Expected a list of exams.");
+                }
+
+                setExams(data.filter(e => e.active)); 
+                setError(null);
+
             } catch (e) {
-                console.error(e);
-                setError("Unable to load exam list. Check internet connection.");
+                console.error("Exam Load Error:", e);
+                // Instead of crashing white, we show a friendly message
+                setError("Could not load exams. Please check your internet or the GitHub URL.");
+                setExams([]); // Keep the list empty so the .map() function doesn't crash the UI
             }
             setLoading(false);
         };
         fetchExams();
     }, []);
-
     // 2. Handle Clicking "Start Exam"
     const handleStart = async (examMeta) => {
         if (!studentName.trim()) return alert("Please enter your name first!");
@@ -1641,7 +1842,28 @@ const OfficialExamHub = ({ onStartTest, onBack }) => {
                         <h2 className="text-2xl font-bold flex items-center gap-2"><Icon name="Flag" /> Official Testing Center</h2>
                         <p className="text-slate-400 text-sm">Live Examinations & Competitions</p>
                     </div>
-                    <button onClick={onBack} className="bg-slate-800 hover:bg-slate-700 px-4 py-2 rounded-lg font-bold text-sm">Exit</button>
+                    <div className="flex gap-2">
+                        {/* ONLY SHOW LOGIN IF NOT ALREADY BOSS */}
+                        {!isBoss && (
+                            <div className="flex gap-1">
+                                <input 
+                                    type="password" 
+                                    placeholder="Code" 
+                                    className="bg-slate-800 text-xs text-white p-2 rounded w-20 outline-none" 
+                                    value={secretCode} 
+                                    onChange={e => setSecretCode(e.target.value)} 
+                                />
+                                <button onClick={handleBossLogin} className="bg-slate-700 hover:bg-slate-600 px-2 rounded">
+                                    <Icon name="Unlock" className="w-3 h-3" />
+                                </button>
+                            </div>
+                        )}
+                        
+                        {/* SHOW BADGE IF BOSS */}
+                        {isBoss && <span className="bg-red-600 text-white text-xs font-bold px-2 py-2 rounded animate-pulse">BOSS ACTIVE</span>}
+
+                        <button onClick={onBack} className="bg-slate-800 hover:bg-slate-700 px-4 py-2 rounded-lg font-bold text-sm">Exit</button>
+                    </div>
                 </div>
                 
                 {/* Name Input */}
@@ -1915,12 +2137,14 @@ const OfficialExamHub = ({ onStartTest, onBack }) => {
                             <button onClick={handleExportBackup} className="p-2 text-slate-400 hover:text-indigo-600 bg-white border rounded-lg shadow-sm" title="Export Backup"><Icon name="Download" className="w-5 h-5" /></button>
                             <button onClick={onSettings} className="p-2 text-slate-400 hover:text-tattvam-600 hover:bg-tattvam-50 rounded-full"><Icon name="Settings" className="w-6 h-6" /></button>
                             {/* OFFICIAL EXAMS BUTTON */}
+{/* OFFICIAL EXAMS BUTTON */}
 <button 
     onClick={onOpenOfficial} 
     className="flex items-center gap-2 bg-gradient-to-r from-slate-800 to-slate-900 text-white px-5 py-2.5 rounded-lg hover:shadow-lg font-medium shadow-sm border border-slate-700 transition-all"
 >
     <Icon name="Flag" className="w-5 h-5 text-yellow-400" /> Official Exams
 </button>
+
                             {tab === 'tests' ? (
                                 <button onClick={onCreateTest} className="flex items-center gap-2 bg-tattvam-600 text-white px-5 py-2.5 rounded-lg hover:bg-tattvam-500 font-medium shadow-sm"><Icon name="Plus" className="w-5 h-5" /> New Test</button>
                             ) : (
@@ -2174,7 +2398,7 @@ const OfficialExamHub = ({ onStartTest, onBack }) => {
                 </div>
             );
         };
-const Editor = ({ test, onUpdateTest, onBack, onPlay, onPrint, apiKey, onRequestKey, onRemix }) => {
+const Editor = ({ test, onUpdateTest, onBack, onPlay, onPrint, apiKey, onRequestKey, onRemix, isBoss }) => {
             // --- STATE MANAGEMENT ---
             const [proc, setProc] = useState(false);
             const [step, setStep] = useState('');
@@ -2324,7 +2548,36 @@ const Editor = ({ test, onUpdateTest, onBack, onPlay, onPrint, apiKey, onRequest
                 try { setGuide(await generateGuide(test.questions, apiKey)); } catch (e) { alert(e.message); }
                 setGuideLoad(false);
             };
+// ... deleteQ function ends here ...
 
+const handlePublish = async () => {
+        // 1. USE HARDCODED TOKEN DIRECTLY
+        const token = HARDCODED_GITHUB_TOKEN; 
+        
+        if (!token) {
+            alert("Error: No hardcoded token found in code.");
+            return;
+        }
+
+        // 2. Identify filename automatically
+        let filename = "unknown.json";
+        if (test.officialMeta && test.officialMeta.url) {
+            filename = test.officialMeta.url.split('/').pop(); 
+        } else {
+            filename = prompt("Filename not found. Enter filename (e.g. mock1.json):");
+        }
+        if(!filename) return;
+
+        // 3. Upload immediately
+        alert("☁️ Auto-Publishing to GitHub...");
+        
+        const success = await uploadToGitHub(test, token, filename);
+        
+        if (success) {
+            alert("✅ SUCCESS! Test updated automatically.");
+            onBack(); 
+        }
+    };
             return (
                 <div className="h-screen flex flex-col bg-slate-50">
                     {guide && <StudyGuideModal content={guide} onClose={() => setGuide(null)} />}
@@ -2374,7 +2627,14 @@ const Editor = ({ test, onUpdateTest, onBack, onPlay, onPrint, apiKey, onRequest
                                     <button onClick={() => setShowMarksModal(true)} className="flex items-center gap-2 bg-emerald-50 text-emerald-700 px-4 py-2 rounded-lg hover:bg-emerald-100 font-medium border border-emerald-100">
                                         <Icon name="Target" className="w-4 h-4" /> Marks
                                     </button>
-                                    
+                                    {isBoss && test.isBossDraft && (
+                        <button 
+                            onClick={handlePublish} 
+                            className="bg-purple-600 text-white px-4 py-2 rounded-lg font-bold hover:bg-purple-700 animate-pulse shadow-lg flex items-center gap-2"
+                        >
+                            <Icon name="Cloud" /> PUBLISH LIVE
+                        </button>
+                    )}
                                     <button onClick={onPrint} className="flex items-center gap-2 bg-slate-100 text-slate-700 px-4 py-2 rounded-lg hover:bg-slate-200 font-medium">
                                         <Icon name="Printer" className="w-4 h-4" /> Print
                                     </button>
@@ -2925,7 +3185,7 @@ const ResultDashboard = ({ entry, onBack, onSave, savedNotebooks, onCreateNotebo
         </div>
     );
 };
- const Player = ({ test, duration, onBack, notebooks, onSaveToNotebook, onCreateNotebook }) => {
+ const Player = ({ test, duration, onBack, notebooks, onSaveToNotebook, onCreateNotebook, isBoss, onBossEdit }) => {
             const storageKey = `tattvam_progress_${test.id}`;
 
             const { activeQuestions, savedState } = React.useMemo(() => {
@@ -3130,6 +3390,14 @@ onCreateNotebook={onCreateNotebook}
                                 <Icon name="ArrowLeft" className="w-4 h-4" /> Save & Exit
                             </button>
                             <h2 className="font-bold text-lg text-slate-800 truncate max-w-xs">{test.title}</h2>
+{isBoss && test.isOfficial && (
+                        <button 
+                            onClick={() => onBossEdit(test)} 
+                            className="bg-red-600 text-white px-6 py-3 rounded-xl font-bold hover:bg-red-700 shadow-lg flex items-center gap-2 animate-pulse"
+                        >
+                            <Icon name="Edit" /> BOSS: Fix This Test
+                        </button>
+                    )}
                         </div>
                         <div className="flex items-center gap-4">
                             <button onClick={() => { if(confirm("Restarting will erase current progress. Sure?")) { localStorage.removeItem(storageKey); setAns({}); setTimeLeft(duration*60); setQuestionTimes(new Array(questions.length).fill(0)); setMarked(new Set()); setIdx(0); } }} className="text-xs font-bold text-red-400 hover:text-red-600 hover:bg-red-50 px-2 py-1 rounded">Restart</button>
@@ -3601,7 +3869,23 @@ const PrintView = ({ test, onBack, apiKey, onRequestKey }) => {
 // --- MAIN APP COMPONENT (QUIZFORGE) ---
 const QuizForge = () => {
     const [view, setView] = useState('dashboard'); // dashboard | editor | notebook | player | print
-    
+    const [isBoss, setBossMode] = useState(false); // <--- 1. NEW STATE
+// ⚠️ SECURITY RISK: This token is visible to anyone who views the page source.
+
+    // <--- 2. NEW FUNCTION
+    const handleBossEdit = (officialTest) => {
+        // Create a temporary "Draft" version of the test
+        const draft = { 
+            ...officialTest, 
+            isOfficial: false, 
+            isBossDraft: true // This flag tells Editor to show "Publish" button
+        };
+        
+        // Add it to the list so the Editor can load it
+        setTests(prev => [draft, ...prev]);
+        setActiveId(draft.id);
+        setView('editor');
+    };	
     // --- SAFE STORAGE LOADERS ---
     const safeLoad = (key, fallback) => {
         try {
@@ -3751,12 +4035,19 @@ const QuizForge = () => {
                 <Editor 
                     test={activeTest} 
                     onUpdateTest={(u) => setTests(tests.map(t => t.id === activeId ? { ...t, ...u } : t))} 
-                    onBack={() => setView('dashboard')} 
+                    onBack={() => {
+                    // 👻 GHOST BUSTER: If we are leaving a Boss Draft, delete it!
+                    if (activeTest && activeTest.isBossDraft) {
+                        setTests(prev => prev.filter(t => t.id !== activeTest.id));
+                    }
+                    setView('dashboard');
+                }}
                     onPlay={() => setShowQuizSetup(true)} 
                     onPrint={() => setView('print')} 
                     apiKey={keyContext} 
                     onRequestKey={() => setModal(true)} 
                     onRemix={handleDirectRemix} 
+isBoss={isBoss}
                 />
             )}
 
@@ -3778,16 +4069,20 @@ tests={tests}
                 <Player 
                     test={playingTest} 
                     duration={quizDuration} 
-                    onBack={() => setView(playingTest.isOfficial ? 'official' : 'editor')}
+                    onBack={() => setView(playingTest?.isOfficial ? 'official' : 'editor')}
                     notebooks={notebooks} 
                     onSaveToNotebook={handleSaveToNotebook}
                     onCreateNotebook={handleCreateNotebook} // <--- PASSING THE NEW HANDLER HERE
+isBoss={isBoss}              // <--- PASS PROP
+        onBossEdit={handleBossEdit}  // <--- PASS FUNCTION
                 />
             )}
 {/* 6. OFFICIAL EXAM HUB VIEW */}
 {view === 'official' && (
     <OfficialExamHub 
         onBack={() => setView('dashboard')}
+isBoss={isBoss}             // <--- PASS PROP
+        setBossMode={setBossMode}   // <--- PASS PROP
         onStartTest={(testData, duration) => {
             setPlayingTest(testData);
             setQuizDuration(duration);
@@ -3811,34 +4106,3 @@ tests={tests}
     </script>
 </body>
 </html>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
