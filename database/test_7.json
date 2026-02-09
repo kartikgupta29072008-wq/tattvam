@@ -132,7 +132,7 @@
         "P$\\to$3; Q$\\to$1; R$\\to$5; S$\\to$4",
         "P$\\to$2; Q$\\to$2; R$\\to$4; S$\\to$4"
       ],
-      "correctIndex": 3,
+      "correctIndex": 2,
       "correctIndices": [],
       "correctNum": "",
       "marks": {
@@ -284,7 +284,7 @@
       "options": [],
       "correctIndex": -1,
       "correctIndices": [],
-      "correctNum": "80",
+      "correctNum": "30",
       "marks": {
         "pos": 4,
         "neg": 1
