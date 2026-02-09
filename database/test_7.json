@@ -164,7 +164,7 @@
     },
     {
       "id": "q_852emxxmldopcja",
-      "text": "Consider a system of linear equations $3x + y - z = 0, x - \\frac{py}{4} + z = 2$ and $2x - y + 2z = q$ where $p, q \\in I$ and $p, q \\in$, then identify the correct statement(s).<br><br><b>Column-I</b><br>(P) Number of ordered pairs $(p, q)$ for which system of equation has unique solution is<br>(Q) Number of ordered pairs $(p, q)$ for which system of equation has no solution is<br>(R) Number of ordered pairs $(p, q)$ for which system of equation has infinite solutions is<br>(S) Number of ordered pairs $(p, q)$ for which system of equation has atleast one solution is<br><br><b>Column-II</b><br>(1) 1<br>(2) 9<br>(3) 10<br>(4) 90<br>(5) 91",
+      "text": "Consider a system of linear equations $3x + y - z = 0, x - \\frac{py}{4} + z = 2$ and $2x - y + 2z = q$ where $p, q \\in I$ and $p, q \\in [1,10]$, then identify the correct statement(s).<br><br><b>Column-I</b><br>(P) Number of ordered pairs $(p, q)$ for which system of equation has unique solution is<br>(Q) Number of ordered pairs $(p, q)$ for which system of equation has no solution is<br>(R) Number of ordered pairs $(p, q)$ for which system of equation has infinite solutions is<br>(S) Number of ordered pairs $(p, q)$ for which system of equation has atleast one solution is<br><br><b>Column-II</b><br>(1) 1<br>(2) 9<br>(3) 10<br>(4) 90<br>(5) 91",
       "type": "SINGLE",
       "options": [
         "P$\\to$4; Q$\\to$2; R$\\to$1; S$\\to$5",
@@ -322,5 +322,15 @@
       "diagram": null,
       "explanation": "Source: Question 1000"
     }
-  ]
+  ],
+  "officialMeta": {
+    "id": "official_04",
+    "title": "test_7",
+    "date": "2026-02-08",
+    "duration": 60,
+    "marks": 64,
+    "url": "https://raw.githubusercontent.com/kartikgupta29072008-wq/tattvam/refs/heads/main/database/test_7.json",
+    "active": true
+  },
+  "studentName": "Kartik Gupta"
 }
