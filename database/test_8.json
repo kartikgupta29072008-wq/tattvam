@@ -173,7 +173,7 @@
       "correctNum": "4",
       "marks": {
         "pos": 4,
-        "neg": 0
+        "neg": 1
       },
       "diagram": null,
       "explanation": "Source: Question 813"
@@ -183,7 +183,7 @@
       "type": "NUMERICAL",
       "options": [],
       "marks": {
-        "pos": 3,
+        "pos": 4,
         "neg": 1
       },
       "difficulty": "Medium",
@@ -205,7 +205,7 @@
       "correctNum": "0",
       "marks": {
         "pos": 4,
-        "neg": 0
+        "neg": 1
       },
       "diagram": null,
       "explanation": "Source: Question 817"
@@ -220,7 +220,7 @@
       "correctNum": "25",
       "marks": {
         "pos": 4,
-        "neg": 0
+        "neg": 1
       },
       "diagram": null,
       "explanation": "Source: Question 818"
@@ -235,7 +235,7 @@
       "correctNum": "4",
       "marks": {
         "pos": 4,
-        "neg": 0
+        "neg": 1
       },
       "diagram": null,
       "explanation": "Source: Question 820"
@@ -250,7 +250,7 @@
       "correctNum": "1",
       "marks": {
         "pos": 4,
-        "neg": 0
+        "neg": 1
       },
       "diagram": null,
       "explanation": "Source: Question 832"
@@ -265,7 +265,7 @@
       "correctNum": "8",
       "marks": {
         "pos": 4,
-        "neg": 0
+        "neg": 1
       },
       "diagram": null,
       "explanation": "Source: Question 857"
@@ -280,7 +280,7 @@
       "correctNum": "20",
       "marks": {
         "pos": 4,
-        "neg": 0
+        "neg": 1
       },
       "diagram": null,
       "explanation": "Source: Question 865"
@@ -295,7 +295,7 @@
       "correctNum": "1",
       "marks": {
         "pos": 4,
-        "neg": 0
+        "neg": 1
       },
       "diagram": null,
       "explanation": "Source: Question 879"
@@ -310,7 +310,7 @@
       "correctNum": "30",
       "marks": {
         "pos": 4,
-        "neg": 0
+        "neg": 1
       },
       "diagram": null,
       "explanation": "Source: Question 988"
