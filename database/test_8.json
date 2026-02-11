@@ -302,7 +302,7 @@
     },
     {
       "id": "q_uw10u2zmli0kx1p",
-      "text": "In a triangle $ABC$, angle $A$ and $B$ and angle $C$ are in arithmetic progression and $\\sin A$, $\\sin^2 B$ and $\\sin C$ are also in arithmetic progression, where $A, B$ and $C$ are in degrees. Find the value of $|A-B|$.",
+      "text": "In a triangle $ABC$, angle $A$ and $B$ and angle $C$ are in arithmetic progression and $\\sin A$, $\\sin^2 B$ and $\\sin C$ are also in arithmetic progression, where $A, B$ and $C$ are in degrees. Find the value of $|A+B|$.",
       "type": "NUMERICAL",
       "options": [],
       "correctIndex": -1,
