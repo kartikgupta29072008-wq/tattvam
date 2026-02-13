@@ -147,8 +147,8 @@
       "matrix": null,
       "matrixAns": {},
       "marks": {
-        "pos": 3,
-        "neg": 1
+        "pos": 4,
+        "neg": 2
       },
       "difficulty": "Medium",
       "diagram_box": null,
@@ -161,30 +161,6 @@
       ],
       "correctNum": "",
       "explanation": "source question 355"
-    },
-    {
-      "id": "q_l6o93iymlkq1fq8",
-      "text": "Let $S$ be the set of all $3 \\times 3$ matrices having 3 entries equal to 1 and 6 entries equal to 0. A matrix $M$ is picked uniformly at random from the set $S$. Then the correct statement(s) is(are):",
-      "type": "MULTI",
-      "options": [
-        "total number of matrices in the set $S$ is 84",
-        "probability that $M$ is non-singular = $\\frac{1}{14}$",
-        "probability that $M$ is identity matrix = $\\frac{1}{14}$",
-        "probability that $M$ has trace equal to 0 = $\\frac{5}{21}$"
-      ],
-      "correctIndex": -1,
-      "correctIndices": [
-        0,
-        1,
-        3
-      ],
-      "correctNum": "",
-      "marks": {
-        "pos": 4,
-        "neg": 2
-      },
-      "diagram": null,
-      "explanation": "Source: Question 351"
     },
     {
       "id": "q_3tkdgh0mlkq1fq9",
