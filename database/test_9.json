@@ -65,7 +65,7 @@
     },
     {
       "id": "q_f8zno2omlkq1fq8",
-      "text": "Let $f(x) = e^{x^2} + \\int_{0}^{\\frac{\\pi x}{2}} \\sqrt{1+\\sin t} dt \\forall x \\in (0, \\infty)$, then:",
+      "text": "Let $f(x) = e^{-1/x^2} + \\int_{0}^{\\frac{\\pi x}{2}} \\sqrt{1+\\sin t} dt \\forall x \\in (0, \\infty)$, then:",
       "type": "MULTI",
       "options": [
         "$f'(x)$ exist and is continuous $\\forall x \\in (0, \\infty)$",
@@ -113,13 +113,13 @@
     },
     {
       "id": "q_v8cd0k8mlkq1fq8",
-      "text": "Let $f'(x)$ be a continuous function which maps from $ \\to [p(a), p(b)]$. If $p(x)$ is a differentiable function on $[a, b]$ such that $p(g(x)) = x, g(0)=a$ and $g(1)=b$, then which of the following is/are true?",
+      "text": "Let $f'(x)$ be a continuous function which maps from $ [0,1] \\to [p(a), p(b)]$. If $p(x)$ is a differentiable function on $[a, b]$ such that $p(g(x)) = x, g(0)=a$ and $g(1)=b$, then which of the following is/are true?",
       "type": "MULTI",
       "options": [
         "$f(0)+2 < f(1)$",
         "$f(1) \\le 1+f(0)$",
-        "$\\int_{0}^{1} f'(x) dx \\le p'(c)$ for some $c \\in (a, b)$",
-        "There exists $k \\in$ such that $f'(k)=k$"
+        "$\\int_{0}^{1} f'(x) dx / \\int_{0}^{1} g'(x) dx\\le p'(c)$ for some $c \\in (a, b)$",
+        "There exists $k \\in [0,1]$ such that $f'(k)=k$"
       ],
       "correctIndex": -1,
       "correctIndices": [
