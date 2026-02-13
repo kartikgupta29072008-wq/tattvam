@@ -5,7 +5,7 @@
   "questions": [
     {
       "id": "q_s4bjqa8mlkq1fq8",
-      "text": "Through a random point $(p, q)$ on the cartesian plane secants are drawn to the circle $x^2 + y^2 = r^2$. If the locus of mid-point of the secants to the circle is $x^2 + 2hxy + 2gy + 2fy + c = 0$. Then:",
+      "text": "Through a random point $(p, q)$ on the cartesian plane secants are drawn to the circle $x^2 + y^2 = r^2$. If the locus of mid-point of the secants to the circle is $x^2 + 2hxy + y^2 + 2gx + 2fy + c = 0$. Then:",
       "type": "SINGLE",
       "options": [
         "$h=pq$",
