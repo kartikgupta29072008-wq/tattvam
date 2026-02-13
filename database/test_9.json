@@ -25,7 +25,7 @@
     },
     {
       "id": "q_9a48e2vmlkq1fq8",
-      "text": "Let $\\mathbf{a}, \\mathbf{b}, \\mathbf{c}$ be three non-zero vectors satisfying $\\mathbf{a} \\times \\mathbf{b} \\times \\mathbf{c} + 2\\mathbf{b} = |\\mathbf{b}| = |\\mathbf{c}| = 2$ and $|\\mathbf{a}| \\le 4$. The sum of possible value(s) of $|2\\mathbf{a} + \\mathbf{b} + \\mathbf{c}|$ is:",
+      "text": "Let $\\mathbf{a}, \\mathbf{b}, \\mathbf{c}$ be three non-zero vectors satisfying $\\mathbf{a} = \\mathbf{b} \\times \\mathbf{c} + 2\\mathbf{b}$ , where $|\\mathbf{b}| = |\\mathbf{c}| = 2$ and $|\\mathbf{a}| \\le 4$. The sum of possible value(s) of $|2\\mathbf{a} + \\mathbf{b} + \\mathbf{c}|$ is:",
       "type": "SINGLE",
       "options": [
         "8",
