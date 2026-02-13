@@ -65,7 +65,7 @@
     },
     {
       "id": "q_f8zno2omlkq1fq8",
-      "text": "Let $f(x) = e^{-1/x^2} + \\int_{0}^{\\frac{\\pi x}{2}} \\sqrt{1+\\sin t} dt \\forall x \\in (0, \\infty)$, then:",
+      "text": "Let $f(x) = e^{x^2} + \\int_{0}^{\\frac{\\pi x}{2}} \\sqrt{1+\\sin t} dt \\forall x \\in (0, \\infty)$, then:",
       "type": "MULTI",
       "options": [
         "$f'(x)$ exist and is continuous $\\forall x \\in (0, \\infty)$",
@@ -89,7 +89,7 @@
     },
     {
       "id": "q_nc09mibmlkq1fq8",
-      "text": "Let $f: (0, \\infty) \\to R$ be a differentiable function satisfying the equation $2f(x) = f(x) + f\\left(\\frac{x}{y}\\right) \\forall x, y > 0$. If $f(1)=0$ and $f'(1)=1$, then:",
+      "text": "Let $f: (0, \\infty) \\to R$ be a differentiable function satisfying the equation $2f(x) = f(xy) + f\\left(\\frac{x}{y}\\right) \\forall x, y > 0$. If $f(1)=0$ and $f'(1)=1$, then:",
       "type": "MULTI",
       "options": [
         "$f(x)$ has no local maxima and no local minima.",
