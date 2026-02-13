@@ -1,1 +1,378 @@
-
+{
+  "id": "imported_single_ihj5ys2mlkq1fq8",
+  "title": "Test 9",
+  "created": "2026-01-29T11:00:00.000Z",
+  "questions": [
+    {
+      "id": "q_s4bjqa8mlkq1fq8",
+      "text": "Through a random point $(p, q)$ on the cartesian plane secants are drawn to the circle $x^2 + y^2 = r^2$. If the locus of mid-point of the secants to the circle is $x^2 + 2hxy + 2gy + 2fy + c = 0$. Then:",
+      "type": "SINGLE",
+      "options": [
+        "$h=pq$",
+        "$g=p$",
+        "$f=q$",
+        "$c=0$"
+      ],
+      "correctIndex": 3,
+      "correctIndices": [],
+      "correctNum": "",
+      "marks": {
+        "pos": 3,
+        "neg": 1
+      },
+      "diagram": null,
+      "explanation": "Source: Question 22"
+    },
+    {
+      "id": "q_9a48e2vmlkq1fq8",
+      "text": "Let $\\mathbf{a}, \\mathbf{b}, \\mathbf{c}$ be three non-zero vectors satisfying $\\mathbf{a} \\times \\mathbf{b} \\times \\mathbf{c} + 2\\mathbf{b} = |\\mathbf{b}| = |\\mathbf{c}| = 2$ and $|\\mathbf{a}| \\le 4$. The sum of possible value(s) of $|2\\mathbf{a} + \\mathbf{b} + \\mathbf{c}|$ is:",
+      "type": "SINGLE",
+      "options": [
+        "8",
+        "12",
+        "20",
+        "32"
+      ],
+      "correctIndex": 2,
+      "correctIndices": [],
+      "correctNum": "",
+      "marks": {
+        "pos": 3,
+        "neg": 1
+      },
+      "diagram": null,
+      "explanation": "Source: Question 253"
+    },
+    {
+      "id": "q_pnme24mmlkq1fq8",
+      "text": "Given that $m, n, s, t \\in (0, +\\infty), m+n=3, \\frac{m}{s} + \\frac{n}{t} = 1, m, n$ are constants and $m < n$. If the minimum value of $s+t$ is $3+2\\sqrt{2}$, point $(m, n)$ is the mid-point of a chord of the ellipse $\\frac{x^2}{4} + \\frac{y^2}{16} = 1$. Find the equation of the line where the chord lies:",
+      "type": "SINGLE",
+      "options": [
+        "$x+y-3=0$",
+        "$x-2y+3=0$",
+        "$2x+y-4=0$",
+        "$4x+2y-3=0$"
+      ],
+      "correctIndex": 2,
+      "correctIndices": [],
+      "correctNum": "",
+      "marks": {
+        "pos": 3,
+        "neg": 1
+      },
+      "diagram": null,
+      "explanation": "Source: Question 264"
+    },
+    {
+      "id": "q_f8zno2omlkq1fq8",
+      "text": "Let $f(x) = e^{x^2} + \\int_{0}^{\\frac{\\pi x}{2}} \\sqrt{1+\\sin t} dt \\forall x \\in (0, \\infty)$, then:",
+      "type": "MULTI",
+      "options": [
+        "$f'(x)$ exist and is continuous $\\forall x \\in (0, \\infty)$",
+        "$f''(x)$ exist $\\forall x \\in (0, \\infty)$",
+        "$f'(x)$ is bounded",
+        "there exist $\\alpha > 0$ such that $|f(x)| > |f'(x)| \\forall x \\in (\\alpha, \\infty)$"
+      ],
+      "correctIndex": -1,
+      "correctIndices": [
+        0,
+        2,
+        3
+      ],
+      "correctNum": "",
+      "marks": {
+        "pos": 4,
+        "neg": 2
+      },
+      "diagram": null,
+      "explanation": "Source: Question 301"
+    },
+    {
+      "id": "q_nc09mibmlkq1fq8",
+      "text": "Let $f: (0, \\infty) \\to R$ be a differentiable function satisfying the equation $2f(x) = f(x) + f\\left(\\frac{x}{y}\\right) \\forall x, y > 0$. If $f(1)=0$ and $f'(1)=1$, then:",
+      "type": "MULTI",
+      "options": [
+        "$f(x)$ has no local maxima and no local minima.",
+        "$\\lim_{x \\to 0^+} \\left[\\frac{f(x+1)}{x}\\right] = 0$",
+        "$f(x) = ex$ has no roots.",
+        "the equation $2e \\cdot f(x) = x$ has one distinct solution."
+      ],
+      "correctIndex": -1,
+      "correctIndices": [
+        0,
+        1,
+        2
+      ],
+      "correctNum": "",
+      "marks": {
+        "pos": 4,
+        "neg": 2
+      },
+      "diagram": null,
+      "explanation": "Source: Question 314"
+    },
+    {
+      "id": "q_v8cd0k8mlkq1fq8",
+      "text": "Let $f'(x)$ be a continuous function which maps from $ \\to [p(a), p(b)]$. If $p(x)$ is a differentiable function on $[a, b]$ such that $p(g(x)) = x, g(0)=a$ and $g(1)=b$, then which of the following is/are true?",
+      "type": "MULTI",
+      "options": [
+        "$f(0)+2 < f(1)$",
+        "$f(1) \\le 1+f(0)$",
+        "$\\int_{0}^{1} f'(x) dx \\le p'(c)$ for some $c \\in (a, b)$",
+        "There exists $k \\in$ such that $f'(k)=k$"
+      ],
+      "correctIndex": -1,
+      "correctIndices": [
+        1,
+        2,
+        3
+      ],
+      "correctNum": "",
+      "marks": {
+        "pos": 4,
+        "neg": 2
+      },
+      "diagram": null,
+      "explanation": "Source: Question 340"
+    },
+    {
+      "text": "For any $\\triangle ABC$, if the median through $\\angle A$ is $m_1$, the median through $\\angle B$ is $m_2$, the median through $\\angle C$ is $m_3$ and $\\begin{bmatrix} a^2 \\\\ b^2 \\\\ c^2 \\end{bmatrix} = M \\begin{bmatrix} m_1^2 \\\\ m_2^2 \\\\ m_3^2 \\end{bmatrix}$ for a certain $3 \\times 3$ matrix $M$. Then:",
+      "type": "MULTI",
+      "options": [
+        "trace of matrix $M$ is equal to -\\frac{4}{3}",
+        "$M$ is a symmetric matrix",
+        "det. $M$ is equal to \\frac{64}{81}",
+        "sum of all elements of matrix $M$ is 4"
+      ],
+      "matrix": null,
+      "matrixAns": {},
+      "marks": {
+        "pos": 3,
+        "neg": 1
+      },
+      "difficulty": "Medium",
+      "diagram_box": null,
+      "id": 0.6324552714323,
+      "correctIndex": -1,
+      "correctIndices": [
+        0,
+        1,
+        3
+      ],
+      "correctNum": "",
+      "explanation": "source question 355"
+    },
+    {
+      "id": "q_l6o93iymlkq1fq8",
+      "text": "Let $S$ be the set of all $3 \\times 3$ matrices having 3 entries equal to 1 and 6 entries equal to 0. A matrix $M$ is picked uniformly at random from the set $S$. Then the correct statement(s) is(are):",
+      "type": "MULTI",
+      "options": [
+        "total number of matrices in the set $S$ is 84",
+        "probability that $M$ is non-singular = $\\frac{1}{14}$",
+        "probability that $M$ is identity matrix = $\\frac{1}{14}$",
+        "probability that $M$ has trace equal to 0 = $\\frac{5}{21}$"
+      ],
+      "correctIndex": -1,
+      "correctIndices": [
+        0,
+        1,
+        3
+      ],
+      "correctNum": "",
+      "marks": {
+        "pos": 4,
+        "neg": 2
+      },
+      "diagram": null,
+      "explanation": "Source: Question 351"
+    },
+    {
+      "id": "q_3tkdgh0mlkq1fq9",
+      "text": "Paragraph for Question Nos. 583 and 584<br>Let $y = f(x)$ be a differentiable function passing through $(1, 0)$. Let slope of the tangent at the point $(x, f(x))$ be $m_1$ and slope of line joining the point and origin be $m_2$. Also $\\left|\\frac{\\log(m_1+m_2)}{\\log x}\\right| = \\frac{2}{1}$.<br>If $f_1(x)$ and $f_2(x)$ are 2 function satisfying the above property where $f_1(x)$ is an algebraic function and $f_2(x)$ is a transcendental function.<br><br>The value of $\\int_{-1}^{1} \\left(f_1(x) + \\frac{1}{4x}\\right) dx$ is equal to:",
+      "type": "SINGLE",
+      "options": [
+        "0",
+        "4",
+        "8",
+        "12"
+      ],
+      "correctIndex": 0,
+      "correctIndices": [],
+      "correctNum": "",
+      "marks": {
+        "pos": 3,
+        "neg": 1
+      },
+      "diagram": null,
+      "explanation": "Source: Question 583"
+    },
+    {
+      "id": "q_5if35ummlkq1fq9",
+      "text": "Paragraph for Question Nos. 583 and 584<br>Let $y = f(x)$ be a differentiable function passing through $(1, 0)$. Let slope of the tangent at the point $(x, f(x))$ be $m_1$ and slope of line joining the point and origin be $m_2$. Also $\\left|\\frac{\\log(m_1+m_2)}{\\log x}\\right| = \\frac{2}{1}$.<br>If $f_1(x)$ and $f_2(x)$ are 2 function satisfying the above property where $f_1(x)$ is an algebraic function and $f_2(x)$ is a transcendental function.<br><br>Which one of the following statement is correct?",
+      "type": "SINGLE",
+      "options": [
+        "$f_2(x)$ is an increasing function $\\forall x > 0$.",
+        "$f_2(x)$ is a decreasing function $\\forall x > e$.",
+        "$f_1(x)$ is a decreasing function $\\forall x > 0$.",
+        "$f_1(x)$ is an increasing function $\\forall x \\in R$."
+      ],
+      "correctIndex": 1,
+      "correctIndices": [],
+      "correctNum": "",
+      "marks": {
+        "pos": 3,
+        "neg": 1
+      },
+      "diagram": null,
+      "explanation": "Source: Question 584"
+    },
+    {
+      "id": "q_p0lv5gkmlkq1fq9",
+      "text": "Paragraph for Question Nos. 587 and 588<br>Let $f(x) = (c-1)x^2 + 2cx + c + 4$ and $g(x) = cx^2 + 2(c+1)x + (c+1)$, where $c \\in R$.<br><br>If $g(x)$ is always negative $\\forall x \\in (0, 1)$, then the number of integral values of $c$ in the interval $[-5, 5]$ is:",
+      "type": "SINGLE",
+      "options": [
+        "4",
+        "5",
+        "6",
+        "7"
+      ],
+      "correctIndex": 1,
+      "correctIndices": [],
+      "correctNum": "",
+      "marks": {
+        "pos": 3,
+        "neg": 1
+      },
+      "diagram": null,
+      "explanation": "Source: Question 587"
+    },
+    {
+      "id": "q_m19k5i2mlkq1fq9",
+      "text": "Paragraph for Question Nos. 587 and 588<br>Let $f(x) = (c-1)x^2 + 2cx + c + 4$ and $g(x) = cx^2 + 2(c+1)x + (c+1)$, where $c \\in R$.<br><br>If the system of equation $f(x) \\le 0$ and $g(x) \\ge 0$ has a unique solution then the sum of all real values of $c$ is equal to:",
+      "type": "SINGLE",
+      "options": [
+        "$\\frac{7}{12}$",
+        "$\\frac{1}{3}$",
+        "$\\frac{4}{3}$",
+        "$\\frac{3}{4}$"
+      ],
+      "correctIndex": 0,
+      "correctIndices": [],
+      "correctNum": "",
+      "marks": {
+        "pos": 3,
+        "neg": 1
+      },
+      "diagram": null,
+      "explanation": "Source: Question 588"
+    },
+    {
+      "text": "678. Match the items in Column-I with Column-II.",
+      "type": "MATRIX",
+      "options": [],
+      "matrix": {
+        "rows": [
+          "If $z_1$ and $z_2$ satisfy $z + \\bar{z} = 2|z - 1|$ and $\\arg(z_1 - z_2) = \\frac{\\pi}{4}$, then $\\operatorname{Im}(z_1 + z_2)$ is not less than",
+          "A tangent to $x^2 = 8y$ cuts the hyperbola $xy = c^2$ in two points $P$ and $Q$. Then length of latus rectum of locus of mid-point of $PQ$, is",
+          "If the equation $x^2 - 4x + \\log_{(\\frac{1}{2})} a = 0$ does not have distinct real roots, then number of integral value of $a$ is equal to"
+        ],
+        "cols": [
+          "0",
+          "1",
+          "2",
+          "4"
+        ]
+      },
+      "matrixAns": {
+        "0": [
+          2,
+          0,
+          1
+        ],
+        "1": [
+          1
+        ],
+        "2": [
+          0
+        ]
+      },
+      "marks": {
+        "pos": 6,
+        "neg": 0,
+        "perRow": 1
+      },
+      "difficulty": "Medium",
+      "diagram_box": null,
+      "id": 0.4253635055506747,
+      "correctIndex": -1,
+      "correctIndices": [],
+      "correctNum": "",
+      "explanation": ""
+    },
+    {
+      "id": "q_vxmrtsbmlkq1fq9",
+      "text": "Match the following:<br><br><b>List-I</b><br>(P) If $\\lim_{x \\to 0} \\frac{f(x)}{x} = 1$, then $\\lim_{x \\to 0} \\frac{f(x)}{x^2}$ is equal to<br>(Q) If $\\lim_{x \\to 0} \\frac{f(x)-5}{x} = 3$, then $\\lim_{x \\to 0} \\frac{f^2(x)-25}{\\sin x}$ is equal to<br>(R) If $\\lim_{x \\to 2} \\frac{\\sqrt{f(x)-2}-4}{x-2} = 1$ and $l = \\lim_{x \\to 2} \\frac{\\sqrt{f(x)}-3\\sqrt{2}}{x-2}$, then $9l^2$ is equal to<br>(S) If $\\lim_{x \\to 1} (f(x))^{\\frac{1}{x^2-1}} = e^2$, then $\\lim_{x \\to 1} \\frac{4(x^3-1)}{f(x)-1}$ is equal to<br><br><b>List-II</b><br>(1) 3<br>(2) 8<br>(3) 30<br>(4) Does not exist",
+      "type": "SINGLE",
+      "options": [
+        "P$\\to$4; Q$\\to$1; R$\\to$2; S$\\to$3",
+        "P$\\to$1; Q$\\to$2; R$\\to$3; S$\\to$4",
+        "P$\\to$3; Q$\\to$2; R$\\to$1; S$\\to$4",
+        "P$\\to$4; Q$\\to$3; R$\\to$2; S$\\to$1"
+      ],
+      "correctIndex": 3,
+      "correctIndices": [],
+      "correctNum": "",
+      "marks": {
+        "pos": 3,
+        "neg": 1
+      },
+      "diagram": null,
+      "explanation": "Source: Question 679"
+    },
+    {
+      "id": "q_q2npvopmlkq1fq9",
+      "text": "If $\\lim_{x \\to \\infty} \\frac{x^2}{t^2-x^2} = f_n(x)$ then find the value of $\\lim (\\lfloor f_2(x) \\rfloor + \\lfloor f_4(x) \\rfloor)$. [Note: $[k]$ denotes greatest integer function less than or equal to $k$]",
+      "type": "NUMERICAL",
+      "options": [],
+      "correctIndex": -1,
+      "correctIndices": [],
+      "correctNum": "3",
+      "marks": {
+        "pos": 4,
+        "neg": 1
+      },
+      "diagram": null,
+      "explanation": "Source: Question 978"
+    },
+    {
+      "id": "q_yjn3uagmlkq1fq9",
+      "text": "If complex number $z$ satisfies $(z-\\bar{z})^2 = 12|z|^2 - 4$ then find the maximum value of $3\\sqrt{3} \\text{Re}(z) + 8 \\text{Im}(z)$.",
+      "type": "NUMERICAL",
+      "options": [],
+      "correctIndex": -1,
+      "correctIndices": [],
+      "correctNum": "5",
+      "marks": {
+        "pos": 4,
+        "neg": 1
+      },
+      "diagram": null,
+      "explanation": "Source: Question 995"
+    },
+    {
+      "id": "q_0wikzbzmlkq1fq9",
+      "text": "Let $f$ be a real valued derivable function such that $f(x)f(y) = f(x+y)(f(y)+xf(y)), \\forall x, y \\in R$. If $f'(0)=2$ then find $\\lim_{x \\to 0} \\left[\\frac{f(x)}{\\sin x}\\right]$. [Note: $[ ]$ represents greatest integer function.]",
+      "type": "NUMERICAL",
+      "options": [],
+      "correctIndex": -1,
+      "correctIndices": [],
+      "correctNum": "2",
+      "marks": {
+        "pos": 4,
+        "neg": 1
+      },
+      "diagram": null,
+      "explanation": "Source: Question 997"
+    }
+  ]
+}
