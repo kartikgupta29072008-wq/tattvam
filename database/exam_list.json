@@ -15,7 +15,7 @@
     "duration": 60,
     "marks": 63,
     "url": "https://raw.githubusercontent.com/kartikgupta29072008-wq/tattvam/refs/heads/main/database/Test%205%20.json",
-    "active": true
+    "active": false
   },
   {
     "id": "official_03",
@@ -24,7 +24,7 @@
     "duration": 60,
     "marks": 59,
     "url": "https://raw.githubusercontent.com/kartikgupta29072008-wq/tattvam/refs/heads/main/database/test_6.json",
-    "active": true
+    "active": false
   },
   {
     "id": "official_04",
@@ -49,9 +49,9 @@
     "title": "test_9",
     "date": "2026-02-10",
     "duration": 60,
-    "marks": 62,
+    "marks": 61,
     "url": "https://raw.githubusercontent.com/kartikgupta29072008-wq/tattvam/refs/heads/main/database/test_9.json",
-    "active": false
+    "active": true
   },
   {
     "id": "official_07",
