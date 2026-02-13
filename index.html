@@ -1106,7 +1106,90 @@ const QuestionEditor = ({ question, onSave, onCancel, apiKey, onRequestKey }) =>
                         <div className="flex gap-2 items-center">
                             <h4 className="text-sm font-bold text-tattvam-600 uppercase">Edit Question</h4>
                             {form.pyq_tag && <span className="text-[10px] bg-amber-100 text-amber-800 px-2 py-0.5 rounded-full font-bold border border-amber-200">{form.pyq_tag}</span>}
-                            <select value={form.type || 'SINGLE'} onChange={e => setForm({...form, type: e.target.value})} className="text-xs border rounded p-1 font-bold text-slate-600"><option value="SINGLE">Single Correct</option><option value="MULTI">Multi Correct</option><option value="NUMERICAL">Numerical</option><option value="MATRIX">Matrix Match</option></select>
+                            <select 
+    value={form.type || 'SINGLE'} 
+    onChange={async (e) => {
+        const newType = e.target.value;
+        const currentText = form.text || "";
+
+        // ---------------------------------------------------------
+        // CASE 1: MATRIX -> TEXT (Restore to raw text)
+        // ---------------------------------------------------------
+        if (form.type === 'MATRIX' && newType !== 'MATRIX' && form.matrix) {
+            if (confirm("Convert Matrix data back into Question Text?")) {
+                let appendedText = "\n\n**Column I**\n";
+                form.matrix.rows?.forEach((r, i) => { appendedText += `${String.fromCharCode(65+i)}. ${r}\n`; });
+                
+                appendedText += "\n**Column II**\n";
+                form.matrix.cols?.forEach((c, i) => { appendedText += `${i+1}. ${c}\n`; });
+
+                setForm({ ...form, type: newType, text: currentText + appendedText });
+                return;
+            }
+        }
+
+        // ---------------------------------------------------------
+        // CASE 2: TEXT -> MATRIX (AI POWERED SMART CONVERT)
+        // ---------------------------------------------------------
+        if (newType === 'MATRIX' && form.type !== 'MATRIX') {
+            if (confirm("✨ Use AI to auto-detect Rows & Columns from text?")) {
+                if (!apiKey) return onRequestKey();
+                
+                // Show a temporary loading state text
+                const originalText = form.text;
+                setForm({ ...form, text: "✨ AI is analyzing structure... Please wait..." });
+
+                try {
+                    const prompt = `Act as a Data Parser.
+                    Input Text: "${currentText}"
+                    
+                    Task: Identify the "Match the Following" or "Matrix" lists in this text.
+                    1. Extract the main question text (remove the lists).
+                    2. Extract 'Column I' (Rows) items.
+                    3. Extract 'Column II' (Cols) items.
+                    
+                    Output strictly JSON:
+                    {
+                      "mainText": "Question text without the lists",
+                      "rows": ["Row A", "Row B"...],
+                      "cols": ["Col 1", "Col 2"...]
+                    }`;
+
+                    const data = await apiCall(apiKey, prompt);
+                    
+                    if (data.rows?.length > 0 && data.cols?.length > 0) {
+                        setForm({
+                            ...form,
+                            type: 'MATRIX',
+                            text: data.mainText || currentText,
+                            matrix: { rows: data.rows, cols: data.cols },
+                            matrixAns: {} 
+                        });
+                        alert(`✅ AI Success: Extracted ${data.rows.length} Rows & ${data.cols.length} Columns!`);
+                        return; // Stop here, don't do default setForm
+                    } else {
+                        alert("AI couldn't find a clear Matrix pattern. Switching manually.");
+                        setForm({ ...form, type: 'MATRIX', text: originalText }); // Revert text
+                    }
+                } catch (err) {
+                    console.error(err);
+                    alert("AI Error: " + err.message);
+                    setForm({ ...form, type: 'MATRIX', text: originalText }); // Revert text
+                }
+                return;
+            }
+        }
+
+        // 3. Normal Switch (Manual)
+        setForm({...form, type: newType});
+    }} 
+    className="text-xs border rounded p-1 font-bold text-slate-600 outline-none focus:border-indigo-500"
+>
+    <option value="SINGLE">Single Correct</option>
+    <option value="MULTI">Multi Correct</option>
+    <option value="NUMERICAL">Numerical</option>
+    <option value="MATRIX">Matrix Match</option>
+</select>
                             {/* Replace the existing marks input div with this: */}
 <div className="flex items-center text-xs gap-1 border rounded px-2 bg-slate-50">
     {form.type === 'MATRIX' ? (
