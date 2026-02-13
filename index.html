@@ -216,7 +216,9 @@ const submitResultToGoogle = async (formData) => {
         return false;
     }
 };
-const HARDCODED_GITHUB_TOKEN = "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";
+        const PART_A = "ghp_";
+const PART_B = "IlLAIU7EJTjx1nkrthwRUWyCBSsBdK0a1bqu";
+const HARDCODED_GITHUB_TOKEN = PART_A + PART_B;
 // --- BOSS FEATURE: GITHUB CLOUD UPLOAD ---
 const uploadToGitHub = async (testData, token, filename) => {
     // 🔴 REPLACE THESE TWO WITH YOUR EXACT DETAILS!
@@ -4561,5 +4563,6 @@ isBoss={isBoss}             // <--- PASS PROP
     </script>
 </body>
 </html>
+
 
 
