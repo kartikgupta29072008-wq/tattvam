@@ -1,1 +1,326 @@
-
+{
+  "title": "Test 11",
+  "questions": [
+    {
+      "id": "q_0plcumymlntwlnd",
+      "text": "If $f(x) + g(x) + h(x) = 2 \\forall x \\in R$, then the value of the expression $\\int_{0}^{3/4} (f^2(x) + g^2(x) + h^2(x)) dx$, can be:",
+      "type": "MULTI",
+      "options": [
+        "$\\frac{1}{2}$",
+        "1",
+        "$\\frac{3}{2}$",
+        "4"
+      ],
+      "correctIndex": -1,
+      "correctIndices": [
+        1,
+        2,
+        3
+      ],
+      "correctNum": "",
+      "marks": {
+        "pos": 4,
+        "neg": -1
+      },
+      "diagram": null,
+      "explanation": "Source: Question 399"
+    },
+    {
+      "id": "q_q5cwy4xmlntwlnd",
+      "text": "Let $a, b, c$ denotes side lengths of $\\Delta ABC$. If $a, b, c$ are the roots of $8x^3 + (\\lambda+2)x^2 - (2k+\\lambda)x - 27 = 0$ such that $\\lambda^2 + 2\\lambda(k+1) + 4k = 2^3 \\cdot 3^5$, then which of the following is(are) correct?",
+      "type": "MULTI",
+      "options": [
+        "Circumradius of triangle $ABC$ is $\\frac{\\sqrt{3}}{2}$.",
+        "Distance between orthocentre and side $AB$ is $\\frac{\\sqrt{3}}{4}$.",
+        "Distance between orthocentre and circumcentre of $\\Delta ABC$ is $\\frac{\\sqrt{3}}{4}$.",
+        "Distance between orthocentre and side $BC$ is $\\frac{\\sqrt{3}}{2}$."
+      ],
+      "correctIndex": -1,
+      "correctIndices": [
+        0,
+        1
+      ],
+      "correctNum": "",
+      "marks": {
+        "pos": 4,
+        "neg": -1
+      },
+      "diagram": null,
+      "explanation": "Source: Question 400"
+    },
+    {
+      "id": "q_mtdj8v1mlntwlnd",
+      "text": "$A$ and $B$ shoot independently until each shoots their target. They have probabilities $\\frac{3}{5}$ and $\\frac{5}{7}$ respectively of hitting the target at each shot. Then:",
+      "type": "MULTI",
+      "options": [
+        "probability that $B$ require more shots than $A$ is $\\frac{6}{31}$.",
+        "probability that $B$ require less shots than $A$ is $\\frac{10}{31}$.",
+        "probability that $A$ and $B$ require same number of shots is $\\frac{15}{31}$.",
+        "probability that $B$ require more shots than $A$ is same as probability that $A$ require more shots than $B$."
+      ],
+      "correctIndex": -1,
+      "correctIndices": [
+        0,
+        1,
+        2
+      ],
+      "correctNum": "",
+      "marks": {
+        "pos": 4,
+        "neg": -1
+      },
+      "diagram": null,
+      "explanation": "Source: Question 401"
+    },
+    {
+      "id": "q_nfm4af7mlntwlnd",
+      "text": "Let $P$ be a point on the line segment joining $A(5\\cos\\alpha, 5\\sin\\alpha)$ and $B(5\\cos\\beta, 5\\sin\\beta)$ such that $3PA = 2PB$ then the locus of $P$ is:",
+      "type": "MULTI",
+      "options": [
+        "$x^2 + y^2 = 13$ if $|\\alpha-\\beta| = \\pi/2$",
+        "$x^2 + y^2 = 19$ if $|\\alpha-\\beta| = \\pi/3$",
+        "$x^2 + y^2 = 1$ if $|\\alpha-\\beta| = \\pi$",
+        "$x^2 + y^2 = 25$ if $|\\alpha-\\beta| = \\pi/6$"
+      ],
+      "correctIndex": -1,
+      "correctIndices": [
+        0,
+        1,
+        2
+      ],
+      "correctNum": "",
+      "marks": {
+        "pos": 4,
+        "neg": -1
+      },
+      "diagram": null,
+      "explanation": "Source: Question 431"
+    },
+    {
+      "id": "q_qetpe37mlntwlnd",
+      "text": "Paragraph for Question Nos. 593 and 594<br>Answer the following by appropriately matching the lists based on the information given in the paragraph. List-I contains function and List-II contains range.<br><br>| List - I | List-II |<br>| :--- | :--- |<br>| (I) $f(x) = \\cos^{-1}\\left(\\frac{1-x^2}{1+x^2}\\right)$ | (P) $\\left(\\frac{-\\pi}{2}, \\frac{\\pi}{2}\\right)$ |<br>| (II) $g(x) = \\tan^{-1}\\left(\\frac{3x-x^3}{1-3x^2}\\right)$ | (Q) $[0, \\pi]$ |<br>| (III) $h(x) = \\pi\\left(\\frac{\\sqrt{x+7}-4}{x-9}\\right)$ | (R) $[-\\pi, \\pi]$ |<br>| (IV) $k(x) = \\frac{\\pi}{\\sqrt{2}} (\\sin\\sqrt{x^2} + \\cos\\sqrt{x^2})$ | (S) $\\left[0, \\frac{\\pi}{4}\\right] - \\left\\{\\frac{\\pi}{8}\\right\\}$ |<br><br>Which of the following option is the only **correct** combination?",
+      "type": "SINGLE",
+      "options": [
+        "(I) (Q)",
+        "(III) (P)",
+        "(IV) (R)",
+        "(II) (S)"
+      ],
+      "correctIndex": 2,
+      "correctIndices": [],
+      "correctNum": "",
+      "marks": {
+        "pos": 3,
+        "neg": 1
+      },
+      "diagram": null,
+      "explanation": "Source: Question 593"
+    },
+    {
+      "id": "q_29rtj7cmlntwlnd",
+      "text": "Paragraph for Question Nos. 593 and 594<br>Answer the following by appropriately matching the lists based on the information given in the paragraph. List-I contains function and List-II contains range.<br><br>| List - I | List-II |<br>| :--- | :--- |<br>| (I) $f(x) = \\cos^{-1}\\left(\\frac{1-x^2}{1+x^2}\\right)$ | (P) $\\left(\\frac{-\\pi}{2}, \\frac{\\pi}{2}\\right)$ |<br>| (II) $g(x) = \\tan^{-1}\\left(\\frac{3x-x^3}{1-3x^2}\\right)$ | (Q) $[0, \\pi]$ |<br>| (III) $h(x) = \\pi\\left(\\frac{\\sqrt{x+7}-4}{x-9}\\right)$ | (R) $[-\\pi, \\pi]$ |<br>| (IV) $k(x) = \\frac{\\pi}{\\sqrt{2}} (\\sin\\sqrt{x^2} + \\cos\\sqrt{x^2})$ | (S) $\\left[0, \\frac{\\pi}{4}\\right] - \\left\\{\\frac{\\pi}{8}\\right\\}$ |<br><br>Which of the following option is the only **incorrect** combination?",
+      "type": "SINGLE",
+      "options": [
+        "(II) (P)",
+        "(I) (Q)",
+        "(III) (S)",
+        "(IV) (R)"
+      ],
+      "correctIndex": 1,
+      "correctIndices": [],
+      "correctNum": "",
+      "marks": {
+        "pos": 3,
+        "neg": 1
+      },
+      "diagram": null,
+      "explanation": "Source: Question 594"
+    },
+    {
+      "id": "q_bwq2oelmlntwlnd",
+      "text": "Paragraph for Question Nos. 595 and 596<br>A quadratic polynomial $f(x)$ with positive leading coefficient such that $g(x) = f(\\ln x) \\forall x > 0$. Also the curve $y=g(x)$ satisfy the following condition.<br>(a) There is exactly one value for a positive number $p$ such that $(p, g(p))$ is its extremum point and $(p^2, g(p^2))$ is its inflection point.<br>(b) Exactly one tangent line can be drawn from the point $(0, 0)$ to the curve $y=g(x)$.<br><br>The value of $\\frac{f(10)}{f(2)}$ equals:",
+      "type": "SINGLE",
+      "options": [
+        "25",
+        "36",
+        "41",
+        "64"
+      ],
+      "correctIndex": 2,
+      "correctIndices": [],
+      "correctNum": "",
+      "marks": {
+        "pos": 3,
+        "neg": 1
+      },
+      "diagram": null,
+      "explanation": "Source: Question 595"
+    },
+    {
+      "id": "q_wdxus44mlntwlnd",
+      "text": "Paragraph for Question Nos. 595 and 596<br>A quadratic polynomial $f(x)$ with positive leading coefficient such that $g(x) = f(\\ln x) \\forall x > 0$. Also the curve $y=g(x)$ satisfy the following condition.<br>(a) There is exactly one value for a positive number $p$ such that $(p, g(p))$ is its extremum point and $(p^2, g(p^2))$ is its inflection point.<br>(b) Exactly one tangent line can be drawn from the point $(0, 0)$ to the curve $y=g(x)$.<br><br>The value of definite integral $\\int_{1}^{2} \\frac{f(0}{f(x)} dx$ equals:",
+      "type": "SINGLE",
+      "options": [
+        "$\\frac{\\pi}{6}$",
+        "$\\frac{\\pi}{3}$",
+        "$\\frac{\\pi}{4}$",
+        "$\\frac{\\pi}{2}$"
+      ],
+      "correctIndex": 3,
+      "correctIndices": [],
+      "correctNum": "",
+      "marks": {
+        "pos": 3,
+        "neg": 1
+      },
+      "diagram": null,
+      "explanation": "Source: Question 596"
+    },
+    {
+      "id": "q_5w1u2w1mlntwlnd",
+      "text": "Paragraph for Question Nos. 652 and 653<br>Let $A$ be a variable point on locus of feet of perpendicular drawn from focus upon any tangent to the curve $|z-2|+|z+2|=6$ and $B$ be a variable point on $(1-i)z + (1+i)\\bar{z} = 10\\sqrt{2}$, then<br><br>Minimum value of $AB$ is:",
+      "type": "SINGLE",
+      "options": [
+        "1",
+        "2",
+        "3",
+        "4"
+      ],
+      "correctIndex": 1,
+      "correctIndices": [],
+      "correctNum": "",
+      "marks": {
+        "pos": 3,
+        "neg": 1
+      },
+      "diagram": null,
+      "explanation": "Source: Question 652"
+    },
+    {
+      "id": "q_79wsqaamlntwlne",
+      "text": "Paragraph for Question Nos. 652 and 653<br>Let $A$ be a variable point on locus of feet of perpendicular drawn from focus upon any tangent to the curve $|z-2|+|z+2|=6$ and $B$ be a variable point on $(1-i)z + (1+i)\\bar{z} = 10\\sqrt{2}$, then<br><br>If a variable circle touches both the loci on which $A$ and $B$ externally lie then latus rectum of locus of centre of variable circle is:",
+      "type": "SINGLE",
+      "options": [
+        "2",
+        "4",
+        "8",
+        "16"
+      ],
+      "correctIndex": 3,
+      "correctIndices": [],
+      "correctNum": "",
+      "marks": {
+        "pos": 3,
+        "neg": 1
+      },
+      "diagram": null,
+      "explanation": "Source: Question 653"
+    },
+    {
+      "id": "q_wv2oephmlntwlne",
+      "text": "If tangent drawn to the parabola $y^2 = -ax (a>0)$ from a point $A(1, 0)$ which also touches the hyperbola $\\frac{x^2}{4} - \\frac{y^2}{b^2} = 1$ at $B$ such that $\\angle ASB = 90^\\circ$, where $S$ is the focus of the hyperbola then find the value of $(a+b^2)$.",
+      "type": "NUMERICAL",
+      "options": [],
+      "correctIndex": -1,
+      "correctIndices": [],
+      "correctNum": "28",
+      "marks": {
+        "pos": 4,
+        "neg": 0
+      },
+      "diagram": null,
+      "explanation": "Source: Question 931"
+    },
+    {
+      "id": "q_ptawe96mlntwlne",
+      "text": "Let a line parallel to z-axis passing through a point $P(3, 4, a)$ intersects the plane $x - 2y + 2z = a^2 + 4a + 1$ at $Q$ where $a \\in R$. If least area of $\\Delta OPQ$ is equal to $\\left(\\frac{p}{q}\\right)$ where $p$ and $q$ are co-prime numbers, then find the value of $(p+q)$.",
+      "type": "NUMERICAL",
+      "options": [],
+      "correctIndex": -1,
+      "correctIndices": [],
+      "correctNum": "29",
+      "marks": {
+        "pos": 4,
+        "neg": 0
+      },
+      "diagram": null,
+      "explanation": "Source: Question 954"
+    },
+    {
+      "id": "q_d06x30cmlntwlne",
+      "text": "Let $z_1, z_2 \\in C$ and satisfy the equation $|z+1|^2+|z-1|^2+2|z|=6$. If maximum value of $(2|z_1-2| + |2z_2+1|)$ is equal to $\\lambda$, then find the value of $4\\lambda$.",
+      "type": "NUMERICAL",
+      "options": [],
+      "correctIndex": -1,
+      "correctIndices": [],
+      "correctNum": "36",
+      "marks": {
+        "pos": 4,
+        "neg": 0
+      },
+      "diagram": null,
+      "explanation": "Source: Question 956"
+    },
+    {
+      "id": "q_szxcjxomlntwlne",
+      "text": "If the tangent at any point of an ellipse $\\frac{x^2}{a^2} + \\frac{y^2}{b^2} = 1$, where $a > b$, makes an angle $\\alpha = \\frac{5\\pi}{6}$ with the major axis and angle $\\beta = \\frac{\\pi}{3}$ with the focal radius of the point of contact then find the $1/e^2$ of the ellipse.",
+      "type": "NUMERICAL",
+      "options": [],
+      "correctIndex": -1,
+      "correctIndices": [],
+      "correctNum": "3",
+      "marks": {
+        "pos": 4,
+        "neg": 0
+      },
+      "diagram": null,
+      "explanation": "Source: Question 964"
+    },
+    {
+      "id": "q_epjs8ifmlntwlne",
+      "text": "$\\left| 2\\left(x^2 + \\frac{1}{x^2}\\right) + |1-x^2| \\right| = 4\\left(\\frac{3}{2} - 2^{x^2-3} - \\frac{1}{2^{x^2+1}}\\right)$. If $x_1$ and $x_2$, where $x_1 < x_2$, are two values of $x$ satisfying the equation above, find the value of $\\int_{x_1-x_2}^{3x_2-x_1} \\left\\{ \\frac{x}{4} \\right\\}\\left\\{ 1 + \\left[ \\tan\\left(\\frac{\\{x\\}}{1+\\{x\\}}\\right) \\right] \\right\\} dx$.<br>[Note: $|\\cdot|$ denotes absolute value, $\\{\\cdot\\}$ denotes fraction part function, $[\\cdot]$ denotes floor function]",
+      "type": "NUMERICAL",
+      "options": [],
+      "correctIndex": -1,
+      "correctIndices": [],
+      "correctNum": "2",
+      "marks": {
+        "pos": 4,
+        "neg": 0
+      },
+      "diagram": null,
+      "explanation": "Source: Question 965"
+    },
+    {
+      "id": "q_5l5fbfdmlntwlne",
+      "text": "Let $f(x)$ be a thrice differentiable function $[a, b]$ and $a < \\alpha_1 < \\alpha_2 < \\alpha_3 < \\alpha_4 < \\alpha_5 < b$ and if $f(a) = f(b) = -2$, $f(\\alpha_1) = f(\\alpha_3) = 3$, $f(\\alpha_2) = f(\\alpha_4) = -3$, $f(\\alpha_5) = -1$, then what is the minimum number of roots of the equation $f(x)f'''(x) + f'(x)f''(x) = 0$ for $x \\in [a, b]$?",
+      "type": "NUMERICAL",
+      "options": [],
+      "correctIndex": -1,
+      "correctIndices": [],
+      "correctNum": "4",
+      "marks": {
+        "pos": 4,
+        "neg": 0
+      },
+      "diagram": null,
+      "explanation": "Source: Question 967"
+    },
+    {
+      "id": "q_uia4l12mlntwlne",
+      "text": "$R - \\{0\\} \\to R$ is a differentiable function such that: $\\int_{1}^{xy} f(t) dt = y \\int_{1}^{x} f(t) dt + x \\int_{1}^{y} f(t) dt \\forall x, y \\in (R - \\{0\\})$ and $f(1) = 1$. Function $g(x)$ is defined as: $g(x) = -\\left( e^{f(x^2)-1} + \\left( e^{f(1/x^2)-1} \\right) \\right)$. If $I(P) = \\int_{P}^{1/P} e^{g(x)} dx$ then, the value of $\\lim_{P \\to 0^+} I(P) = \\frac{\\sqrt{a}}{b}$ ($a$ and $b \\in R$). Find the value of $[a+b]$. (You may use $\\int_{-\\infty}^{\\infty} e^{-t^2} dt = \\sqrt{\\pi}$). [Note: $[k]$ denotes greatest integer function less than or equal to $k$.]",
+      "type": "NUMERICAL",
+      "options": [],
+      "correctIndex": -1,
+      "correctIndices": [],
+      "correctNum": "10",
+      "marks": {
+        "pos": 4,
+        "neg": 0
+      },
+      "diagram": null,
+      "explanation": "Source: Question 990"
+    }
+  ],
+  "id": "imported_single_hb3dxhnmlntwlnd"
+}
