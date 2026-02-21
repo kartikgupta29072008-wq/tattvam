@@ -2155,23 +2155,15 @@ useEffect(() => {
 };  
 // --- EMERGENCY CONTACT SYSTEM (GITHUB DATABASE) ---
 const fetchEmergencyMsgs = async () => {
-    let currentSha = null;
     try {
         const url = `https://api.github.com/repos/kartikgupta29072008-wq/tattvam/contents/database/emergency.json?t=${Date.now()}`;
         const res = await fetch(url, { headers: { "Authorization": `Bearer ${HARDCODED_GITHUB_TOKEN}` } });
-        
         if (!res.ok) return { msgs: [], sha: null }; 
-        
         const data = await res.json();
-        currentSha = data.sha; // Fix: Grab the ID instantly!
-        
         const content = decodeURIComponent(escape(atob(data.content)));
-        const parsed = JSON.parse(content);
-        return { msgs: Array.isArray(parsed) ? parsed : [], sha: currentSha };
+        return { msgs: JSON.parse(content), sha: data.sha };
     } catch(e) { 
-        console.warn("File is empty or corrupt. Overwriting it.");
-        // Return the ID anyway so GitHub lets us fix the empty file
-        return { msgs: [], sha: currentSha }; 
+        return { msgs: [], sha: null }; 
     }
 };
 
@@ -2183,20 +2175,17 @@ const saveEmergencyMsgs = async (newMsgs, sha) => {
         content: content,
         ...(sha && { sha }) 
     };
-    
-    const res = await fetch(url, {
-        method: "PUT",
-        headers: { "Authorization": `Bearer ${HARDCODED_GITHUB_TOKEN}`, "Content-Type": "application/json" },
-        body: JSON.stringify(body)
-    });
-    
-    if (!res.ok) {
-        const err = await res.json();
-        throw new Error(err.message || "GitHub API Blocked Save");
+    try {
+        const res = await fetch(url, {
+            method: "PUT",
+            headers: { "Authorization": `Bearer ${HARDCODED_GITHUB_TOKEN}`, "Content-Type": "application/json" },
+            body: JSON.stringify(body)
+        });
+        return res.ok;
+    } catch (e) {
+        return false;
     }
-    return true;
 };
-
 // --- EMERGENCY UI MODAL ---
 const EmergencyContactModal = ({ onClose, isBoss }) => {
     const [msgs, setMsgs] = useState([]);
@@ -2221,6 +2210,7 @@ const EmergencyContactModal = ({ onClose, isBoss }) => {
 
     useEffect(() => { load(); }, []);
 
+    // 1. Student asking a question
     const handleAsk = async () => {
         if(!text.trim()) return;
         setLoading(true);
@@ -2229,6 +2219,7 @@ const EmergencyContactModal = ({ onClose, isBoss }) => {
             user: studentName,
             question: text,
             status: "Pending", 
+            type: "question", // Standard question
             date: new Date().toLocaleString()
         };
         const updated = [newMsg, ...msgs];
@@ -2243,6 +2234,46 @@ const EmergencyContactModal = ({ onClose, isBoss }) => {
         }
     };
 
+    // 2. Boss broadcasting a notice
+    const handleBroadcastNotice = async () => {
+        if(!text.trim()) return;
+        setLoading(true);
+        const newMsg = {
+            id: Date.now().toString(),
+            user: "ADMIN NOTICE",
+            question: text,
+            status: "Pinned", 
+            type: "notice", // Special Notice flag
+            date: new Date().toLocaleString()
+        };
+        // Put notices at the very top
+        const updated = [newMsg, ...msgs];
+        
+        try {
+            await saveEmergencyMsgs(updated, sha);
+            setText("");
+            await load();
+        } catch (err) {
+            alert("GitHub Error: " + err.message);
+            setLoading(false);
+        }
+    };
+
+    // 3. Boss deleting a message
+    const handleDeleteMsg = async (id) => {
+        if (!confirm("Are you sure you want to delete this message?")) return;
+        setLoading(true);
+        const updated = msgs.filter(m => m.id !== id);
+        try {
+            await saveEmergencyMsgs(updated, sha);
+            await load();
+        } catch (err) {
+            alert("GitHub Error: " + err.message);
+            setLoading(false);
+        }
+    };
+
+    // 4. Boss replying to a question
     const handleAdminReply = async (id, reply) => {
         setLoading(true);
         const updated = msgs.map(m => m.id === id ? { ...m, status: reply } : m);
@@ -2259,12 +2290,15 @@ const EmergencyContactModal = ({ onClose, isBoss }) => {
         if(status === 'Yes') return "bg-emerald-100 text-emerald-800 border-emerald-300";
         if(status === 'No') return "bg-red-100 text-red-800 border-red-300";
         if(status === 'Declined') return "bg-slate-200 text-slate-600 border-slate-300";
+        if(status === 'Pinned') return "bg-amber-500 text-white border-amber-600 shadow-sm";
         return "bg-amber-100 text-amber-800 border-amber-300 animate-pulse";
     };
 
     return (
         <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-[200] flex items-center justify-center p-4 animate-in zoom-in-95">
             <div className="bg-white rounded-2xl w-full max-w-lg shadow-2xl overflow-hidden flex flex-col h-[80vh] md:h-[600px]">
+                
+                {/* HEADER */}
                 <div className="bg-red-600 p-4 flex justify-between items-center text-white shrink-0">
                     <div>
                         <h3 className="font-bold flex items-center gap-2"><Icon name="AlertTriangle" /> Emergency Contact</h3>
@@ -2273,6 +2307,7 @@ const EmergencyContactModal = ({ onClose, isBoss }) => {
                     <button onClick={onClose} className="hover:bg-red-700 p-1.5 rounded transition-colors"><Icon name="X" /></button>
                 </div>
 
+                {/* MESSAGE LIST */}
                 <div className="flex-1 overflow-y-auto p-4 bg-slate-50 space-y-3">
                     {loading && <div className="text-center py-6"><Icon name="Loader2" className="w-8 h-8 animate-spin mx-auto text-red-500" /></div>}
                     
@@ -2283,29 +2318,48 @@ const EmergencyContactModal = ({ onClose, isBoss }) => {
                         </div>
                     )}
 
-                    {!loading && msgs.map(m => (
-                        <div key={m.id} className="bg-white p-4 rounded-xl shadow-sm border border-slate-200">
-                            <div className="flex justify-between items-start mb-3">
-                                <div>
-                                    <span className="font-bold text-slate-800 text-sm">{m.user}</span>
-                                    <div className="text-[10px] font-bold text-slate-400 mt-0.5">{m.date}</div>
+                    {!loading && msgs.map(m => {
+                        const isNotice = m.type === 'notice';
+                        
+                        return (
+                            <div key={m.id} className={`p-4 rounded-xl shadow-sm border transition-all ${isNotice ? 'bg-amber-50 border-amber-300' : 'bg-white border-slate-200'}`}>
+                                <div className="flex justify-between items-start mb-3">
+                                    <div className="flex items-center gap-2">
+                                        {isNotice && <Icon name="AlertTriangle" className="w-4 h-4 text-amber-500" />}
+                                        <div>
+                                            <span className={`font-bold text-sm ${isNotice ? 'text-amber-800' : 'text-slate-800'}`}>{m.user}</span>
+                                            <div className="text-[10px] font-bold text-slate-400 mt-0.5">{m.date}</div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div className="flex items-center gap-2">
+                                        <span className={`text-[10px] font-bold px-2.5 py-1 rounded border uppercase tracking-wide ${getStatusStyle(m.status)}`}>
+                                            {isNotice ? '📌 NOTICE' : m.status}
+                                        </span>
+                                        {/* BOSS DELETE BUTTON */}
+                                        {isBoss && (
+                                            <button onClick={() => handleDeleteMsg(m.id)} className="text-slate-300 hover:text-red-600 hover:bg-red-50 p-1 rounded transition-colors" title="Delete Message">
+                                                <Icon name="Trash2" className="w-4 h-4" />
+                                            </button>
+                                        )}
+                                    </div>
                                 </div>
-                                <span className={`text-[10px] font-bold px-2.5 py-1 rounded border uppercase tracking-wide ${getStatusStyle(m.status)}`}>
-                                    {m.status}
-                                </span>
-                            </div>
-                            <p className="text-sm text-slate-700 font-medium leading-relaxed bg-slate-50 p-3 rounded-lg border border-slate-100">{m.question}</p>
+                                
+                                <p className={`text-sm font-medium leading-relaxed p-3 rounded-lg border ${isNotice ? 'bg-white text-amber-900 border-amber-200 shadow-sm' : 'bg-slate-50 text-slate-700 border-slate-100'}`}>
+                                    {m.question}
+                                </p>
 
-                            {/* BOSS CONTROLS */}
-                            {isBoss && m.status === 'Pending' && (
-                                <div className="flex gap-2 mt-3 pt-3 border-t border-slate-100">
-                                    <button onClick={() => handleAdminReply(m.id, 'Yes')} className="flex-1 bg-emerald-500 hover:bg-emerald-600 text-white text-xs font-bold py-2 rounded-lg transition-colors shadow-sm">Say Yes</button>
-                                    <button onClick={() => handleAdminReply(m.id, 'No')} className="flex-1 bg-red-500 hover:bg-red-600 text-white text-xs font-bold py-2 rounded-lg transition-colors shadow-sm">Say No</button>
-                                    <button onClick={() => handleAdminReply(m.id, 'Declined')} className="flex-1 bg-slate-700 hover:bg-slate-800 text-white text-xs font-bold py-2 rounded-lg transition-colors shadow-sm">Decline</button>
-                                </div>
-                            )}
-                        </div>
-                    ))}
+                                {/* BOSS REPLY CONTROLS (Hide for notices) */}
+                                {isBoss && !isNotice && m.status === 'Pending' && (
+                                    <div className="flex gap-2 mt-3 pt-3 border-t border-slate-100">
+                                        <button onClick={() => handleAdminReply(m.id, 'Yes')} className="flex-1 bg-emerald-500 hover:bg-emerald-600 text-white text-xs font-bold py-2 rounded-lg transition-colors shadow-sm">Say Yes</button>
+                                        <button onClick={() => handleAdminReply(m.id, 'No')} className="flex-1 bg-red-500 hover:bg-red-600 text-white text-xs font-bold py-2 rounded-lg transition-colors shadow-sm">Say No</button>
+                                        <button onClick={() => handleAdminReply(m.id, 'Declined')} className="flex-1 bg-slate-700 hover:bg-slate-800 text-white text-xs font-bold py-2 rounded-lg transition-colors shadow-sm">Decline</button>
+                                    </div>
+                                )}
+                            </div>
+                        );
+                    })}
                 </div>
 
                 {/* USER INPUT BOX */}
@@ -2323,6 +2377,26 @@ const EmergencyContactModal = ({ onClose, isBoss }) => {
                             className="w-full bg-red-600 text-white font-bold py-3 rounded-xl hover:bg-red-700 disabled:opacity-50 flex justify-center items-center gap-2 shadow-lg hover:shadow-xl transition-all active:scale-95"
                         >
                             {loading ? <Icon name="Loader2" className="animate-spin w-5 h-5" /> : "Send to Admin"}
+                        </button>
+                    </div>
+                )}
+
+                {/* BOSS NOTICE BROADCAST BOX */}
+                {isBoss && (
+                    <div className="p-4 bg-amber-50 border-t border-amber-200 shrink-0">
+                        <textarea 
+                            value={text} 
+                            onChange={e => setText(e.target.value)}
+                            placeholder="Broadcast a Global Notice to all students..." 
+                            className="w-full border-2 border-amber-200 rounded-xl p-3 text-sm font-medium focus:border-amber-500 outline-none resize-none h-16 mb-2 bg-white transition-colors"
+                        />
+                        <button 
+                            onClick={handleBroadcastNotice} 
+                            disabled={loading || !text.trim()}
+                            className="w-full bg-amber-500 text-white font-bold py-2.5 rounded-xl hover:bg-amber-600 disabled:opacity-50 flex justify-center items-center gap-2 shadow-sm transition-all active:scale-95 text-sm"
+                        >
+                            {loading ? <Icon name="Loader2" className="animate-spin w-4 h-4" /> : <Icon name="AlertTriangle" className="w-4 h-4" />}
+                            Pin Global Notice
                         </button>
                     </div>
                 )}
