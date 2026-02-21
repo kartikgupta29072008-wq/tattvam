@@ -1989,7 +1989,7 @@ const OfficialExamHub = ({ onStartTest, onBack, isBoss, setBossMode }) => {
     const [studentName, setStudentName] = useState(localStorage.getItem("tattvam_student_name") || "");
 const [secretCode, setSecretCode] = useState("");
 const handleBossLogin = () => {
-        if(secretCode === "tattvam123") { // <--- PASSWORD SETTING
+        if(secretCode === "123Tattvam@") { // <--- PASSWORD SETTING
             setBossMode(true);
             alert("🔓 BOSS MODE ACTIVATED");
         } else {
@@ -4870,6 +4870,7 @@ isBoss={isBoss}             // <--- PASS PROP
     </script>
 </body>
 </html>
+
 
 
 
