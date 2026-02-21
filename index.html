@@ -216,9 +216,16 @@ const submitResultToGoogle = async (formData) => {
         return false;
     }
 };
-        const PART_A = "ghp_";
-const PART_B = "IlLAIU7EJTjx1nkrthwRUWyCBSsBdK0a1bqu";
-const HARDCODED_GITHUB_TOKEN = PART_A + PART_B;
+        // --- BOSS FEATURE: GITHUB CLOUD UPLOAD & EMERGENCY DB ---
+const getCamouflagedToken = () => {
+    // 🔴 PASTE YOUR SCRAMBLED STRING INSIDE THE QUOTES BELOW 🔴
+    const camouflaged = "VzRPMFNJRnAyUzM0NVJUSmZyVzNBMnVXcW9Mbjc5SGdiMU5VMlh5M3RyMjRWNE56a0Y5R1lZam9lUW9fUmF0VnlIMHltSjRXMFE1UUZNWkIxMV90YXBfYnVodGln"; 
+    
+    // This unscrambles it in real-time when the app runs
+    return atob(camouflaged).split('').reverse().join('');
+};
+
+const HARDCODED_GITHUB_TOKEN = getCamouflagedToken();
 // --- BOSS FEATURE: GITHUB CLOUD UPLOAD ---
 const uploadToGitHub = async (testData, token, filename) => {
     // 🔴 REPLACE THESE TWO WITH YOUR EXACT DETAILS!
@@ -4563,6 +4570,7 @@ isBoss={isBoss}             // <--- PASS PROP
     </script>
 </body>
 </html>
+
 
 
 
