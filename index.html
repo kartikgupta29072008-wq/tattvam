@@ -4731,14 +4731,25 @@ const [showEmergency, setShowEmergency] = useState(false);
     const [storageWarning, setStorageWarning] = useState(false);
 
     // --- PERSISTENCE EFFECTS ---
+   // --- PERSISTENCE EFFECTS (WITH FIXED STORAGE WARNINGS) ---
     useEffect(() => { 
         try { 
             localStorage.setItem('quizforge_tests', JSON.stringify(tests)); 
             setStorageWarning(false); 
-        } catch (e) { setStorageWarning(true); } 
+        } catch (e) { 
+            console.error("Test Storage Full:", e);
+            setStorageWarning(true); 
+        } 
     }, [tests]);
 
-    useEffect(() => { try { localStorage.setItem('quizforge_notebooks', JSON.stringify(notebooks)); } catch(e) {} }, [notebooks]);
+    useEffect(() => { 
+        try { 
+            localStorage.setItem('quizforge_notebooks', JSON.stringify(notebooks)); 
+        } catch(e) { 
+            console.error("Notebook Storage Full:", e);
+            setStorageWarning(true); // <--- THIS WAS MISSING!
+        } 
+    }, [notebooks]);
     useEffect(() => { try { localStorage.setItem('tattvam_key_context', JSON.stringify(keyContext)); } catch(e) {} }, [keyContext]);
     useEffect(() => { localStorage.setItem('tattvam_user_notes', userNotes); }, [userNotes]);
     useEffect(() => { if(appLogo !== "./logo.png") localStorage.setItem('tattvam_app_logo', appLogo); }, [appLogo]);
@@ -4937,6 +4948,7 @@ isBoss={isBoss}             // <--- PASS PROP
     </script>
 </body>
 </html>
+
 
 
 
