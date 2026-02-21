@@ -235,19 +235,6 @@ const uploadToGitHub = async (testData, token, filename) => {
     const FILE_PATH = `database/${filename}`; 
     const API_URL = `https://api.github.com/repos/${USERNAME}/${REPO_NAME}/contents/${FILE_PATH}`;
 // --- EMERGENCY CONTACT SYSTEM (GITHUB DATABASE) ---
-const fetchEmergencyMsgs = async () => {
-    try {
-        const url = `https://api.github.com/repos/kartikgupta29072008-wq/tattvam/contents/database/emergency.json?t=${Date.now()}`;
-        const res = await fetch(url, { headers: { "Authorization": `Bearer ${HARDCODED_GITHUB_TOKEN}` } });
-        if (!res.ok) return { msgs: [], sha: null }; 
-        const data = await res.json();
-        const content = decodeURIComponent(escape(atob(data.content)));
-        return { msgs: JSON.parse(content), sha: data.sha };
-    } catch(e) { 
-        return { msgs: [], sha: null }; 
-    }
-};
-
 const saveEmergencyMsgs = async (newMsgs, sha) => {
     const url = `https://api.github.com/repos/kartikgupta29072008-wq/tattvam/contents/database/emergency.json`;
     const content = btoa(unescape(encodeURIComponent(JSON.stringify(newMsgs, null, 2))));
@@ -259,15 +246,28 @@ const saveEmergencyMsgs = async (newMsgs, sha) => {
     try {
         const res = await fetch(url, {
             method: "PUT",
-            headers: { "Authorization": `Bearer ${HARDCODED_GITHUB_TOKEN}`, "Content-Type": "application/json" },
+            headers: { 
+                "Authorization": `Bearer ${HARDCODED_GITHUB_TOKEN}`, 
+                "Content-Type": "application/json",
+                "Accept": "application/vnd.github.v3+json"
+            },
             body: JSON.stringify(body)
         });
-        return res.ok;
+        
+        // IF GITHUB REJECTS IT, SHOW THE REAL REASON:
+        if (!res.ok) {
+            const errorData = await res.json();
+            console.error("GitHub Rejected the Save:", errorData);
+            alert(`GitHub Error (${res.status}): ${errorData.message}`);
+            return false;
+        }
+        
+        return true;
     } catch (e) {
+        alert("Network Error: " + e.message);
         return false;
     }
 };
-
     try {
         // 1. Get current file info (we need the 'SHA' ID to update it)
         const getRes = await fetch(API_URL, {
@@ -2153,6 +2153,51 @@ useEffect(() => {
         </div>
     );
 };  
+// --- EMERGENCY CONTACT SYSTEM (GITHUB DATABASE) ---
+const fetchEmergencyMsgs = async () => {
+    let currentSha = null;
+    try {
+        const url = `https://api.github.com/repos/kartikgupta29072008-wq/tattvam/contents/database/emergency.json?t=${Date.now()}`;
+        const res = await fetch(url, { headers: { "Authorization": `Bearer ${HARDCODED_GITHUB_TOKEN}` } });
+        
+        if (!res.ok) return { msgs: [], sha: null }; 
+        
+        const data = await res.json();
+        currentSha = data.sha; // Fix: Grab the ID instantly!
+        
+        const content = decodeURIComponent(escape(atob(data.content)));
+        const parsed = JSON.parse(content);
+        return { msgs: Array.isArray(parsed) ? parsed : [], sha: currentSha };
+    } catch(e) { 
+        console.warn("File is empty or corrupt. Overwriting it.");
+        // Return the ID anyway so GitHub lets us fix the empty file
+        return { msgs: [], sha: currentSha }; 
+    }
+};
+
+const saveEmergencyMsgs = async (newMsgs, sha) => {
+    const url = `https://api.github.com/repos/kartikgupta29072008-wq/tattvam/contents/database/emergency.json`;
+    const content = btoa(unescape(encodeURIComponent(JSON.stringify(newMsgs, null, 2))));
+    const body = {
+        message: "Emergency Contact Update",
+        content: content,
+        ...(sha && { sha }) 
+    };
+    
+    const res = await fetch(url, {
+        method: "PUT",
+        headers: { "Authorization": `Bearer ${HARDCODED_GITHUB_TOKEN}`, "Content-Type": "application/json" },
+        body: JSON.stringify(body)
+    });
+    
+    if (!res.ok) {
+        const err = await res.json();
+        throw new Error(err.message || "GitHub API Blocked Save");
+    }
+    return true;
+};
+
+// --- EMERGENCY UI MODAL ---
 const EmergencyContactModal = ({ onClose, isBoss }) => {
     const [msgs, setMsgs] = useState([]);
     const [sha, setSha] = useState(null);
@@ -2163,10 +2208,15 @@ const EmergencyContactModal = ({ onClose, isBoss }) => {
 
     const load = async () => {
         setLoading(true);
-        const { msgs: fetched, sha: fileSha } = await fetchEmergencyMsgs();
-        setMsgs(fetched);
-        setSha(fileSha);
-        setLoading(false);
+        try {
+            const { msgs: fetched, sha: fileSha } = await fetchEmergencyMsgs();
+            setMsgs(fetched);
+            setSha(fileSha);
+        } catch (error) {
+            console.error(error);
+        } finally {
+            setLoading(false);
+        }
     };
 
     useEffect(() => { load(); }, []);
@@ -2182,12 +2232,13 @@ const EmergencyContactModal = ({ onClose, isBoss }) => {
             date: new Date().toLocaleString()
         };
         const updated = [newMsg, ...msgs];
-        const success = await saveEmergencyMsgs(updated, sha);
-        if(success) {
+        
+        try {
+            await saveEmergencyMsgs(updated, sha);
             setText("");
             await load();
-        } else {
-            alert("Failed to send message. Please check internet connection.");
+        } catch (err) {
+            alert("GitHub Error: " + err.message);
             setLoading(false);
         }
     };
@@ -2195,8 +2246,13 @@ const EmergencyContactModal = ({ onClose, isBoss }) => {
     const handleAdminReply = async (id, reply) => {
         setLoading(true);
         const updated = msgs.map(m => m.id === id ? { ...m, status: reply } : m);
-        await saveEmergencyMsgs(updated, sha);
-        await load();
+        try {
+            await saveEmergencyMsgs(updated, sha);
+            await load();
+        } catch (err) {
+            alert("GitHub Error: " + err.message);
+            setLoading(false);
+        }
     };
 
     const getStatusStyle = (status) => {
