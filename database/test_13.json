@@ -1,0 +1,336 @@
+{
+  "id": "imported_single_5c0moy2mlxyyfru",
+  "title": "Test 13",
+  "created": "2026-02-22T12:30:00.000Z",
+  "questions": [
+    {
+      "id": "q_ajz4ikkmlxyyfru",
+      "text": "The point of intersection of the plane $\\mathbf{r} \\cdot (3\\hat{i} - 5\\hat{j} + 2\\hat{k}) = 6$ with the straight line passing through the origin and perpendicular to the plane $2x - y - z = 4$, is $(x_0, y_0, z_0)$. The value of $(2x_0 - 3y_0 + z_0)$, is:",
+      "type": "SINGLE",
+      "options": [
+        "0",
+        "2",
+        "3",
+        "4"
+      ],
+      "correctIndex": 3,
+      "correctIndices": [],
+      "correctNum": "",
+      "marks": {
+        "pos": 3,
+        "neg": 1
+      },
+      "diagram": null,
+      "explanation": "Source: Question 297"
+    },
+    {
+      "id": "q_htbf0h1mlxyyfru",
+      "text": "In throwing a dice thrice, getting numbers in order denoted by $a, b, c$, satisfying $a^2 + 4b^2 + 4c^2 - 2ab - 4bc - 2ac = 0$. If probability such that point $(a, b, c)$ lies inside the tetrahedron formed by the plane $x + y + z = 10$ and co-ordinate planes is $\\frac{6}{\\lambda}$, where $\\lambda \\in N$, then $\\lambda$ is:",
+      "type": "SINGLE",
+      "options": [
+        "9",
+        "12",
+        "25",
+        "27"
+      ],
+      "correctIndex": 0,
+      "correctIndices": [],
+      "correctNum": "",
+      "marks": {
+        "pos": 3,
+        "neg": 1
+      },
+      "diagram": null,
+      "explanation": "Source: Question 293"
+    },
+    {
+      "id": "q_4zpdox8mlxyyfru",
+      "text": "The value of the expression $\\frac{\\sin^2 \\frac{2\\pi}{7}}{\\sin^2 \\frac{\\pi}{7}} + \\frac{\\sin^2 \\frac{4\\pi}{7}}{\\sin^2 \\frac{2\\pi}{7}} + \\frac{\\sin^2 \\frac{\\pi}{7}}{\\sin^2 \\frac{4\\pi}{7}}$ is equal to:",
+      "type": "SINGLE",
+      "options": [
+        "3",
+        "4",
+        "5",
+        "6"
+      ],
+      "correctIndex": 2,
+      "correctIndices": [],
+      "correctNum": "",
+      "marks": {
+        "pos": 3,
+        "neg": 1
+      },
+      "diagram": null,
+      "explanation": "Source: Question 286"
+    },
+    {
+      "id": "q_38ye9g0mlxyyfru",
+      "text": "Suppose that $f: R \\to R$ is a continuous function and satisfies the equation $f(x)f(f(x)) = 1$ for all $x \\in R$. Further, if $f(1000) = 999$, then which of the following options are necessarily true?<br>1. $f(500) = \\frac{1}{500}$<br>2. $f(199) = \\frac{1}{199}$<br>3. $f(2000) = \\frac{1}{2000}$<br>4. $f(235) = \\frac{1}{235}$<br>5. $f(1099) = \\frac{1}{1099}$<br>6. $f(x) = \\frac{1}{x} \\forall x \\in R - \\{0, 1000\\}$<br>7. No such function exists<br>Enter the product of the number of all correct options. For example, if correct options are 2 and 3, then enter 6.",
+      "type": "SINGLE",
+      "options": [
+        "2",
+        "4",
+        "6",
+        "8"
+      ],
+      "correctIndex": 3,
+      "correctIndices": [],
+      "correctNum": "",
+      "marks": {
+        "pos": 3,
+        "neg": 1
+      },
+      "diagram": null,
+      "explanation": "Source: Question 282"
+    },
+    {
+      "id": "q_dpwfjd7mlxyyfru",
+      "text": "$ABCD$ is a rectangle with vertices $A(0, 0), B(m, 0), C(m, n)$ and $D(0, n)$ with $m, n \\in N$. Points are chosen starting from $A_0(0, 0) \\to A_1(x_1, y_1) \\to A_2(x_2, y_2)$ and so on. Such that for $A_k(x_k, y_k) \\to A_{k+1}(x_{k+1}, y_{k+1})$, exactly one of the following result holds:<br>(i) $x_{k+1} = x_k + a$ and $y_{k+1} = y_k$<br>(ii) $x_{k+1} = x_k$ and $y_{k+1} = y_k + b$<br>for some $a, b, k \\in N$<br>If $m=n=6$, number of paths from $A_0$ to $(m, n)$ consisting of exactly two perpendicular path with $a, b \\in \\{1, 2\\}$.",
+      "type": "SINGLE",
+      "options": [
+        "50",
+        "128",
+        "338",
+        "882"
+      ],
+      "correctIndex": 2,
+      "correctIndices": [],
+      "correctNum": "",
+      "marks": {
+        "pos": 3,
+        "neg": 1
+      },
+      "diagram": null,
+      "explanation": "Source: Question 275"
+    },
+    {
+      "id": "q_e4wpqbamlxyyfru",
+      "text": "On the coordinate plane, point $A$ is on the ellipse : $\\frac{x^2}{a^2} + \\frac{y^2}{b^2} = 1(a > b > 0)$. Point $F$ is the right focus point of the ellipse. Point $A, B$ are symmetry about the origin point $O$, and $AF \\perp BF$. $e$ is the eccentricity of the ellipse. If $\\angle ABF$ ranges from $\\left[ \\frac{\\pi}{6}, \\frac{\\pi}{4} \\right]$, then find the range of $e$.",
+      "type": "SINGLE",
+      "options": [
+        "$\\left[ \\frac{\\sqrt{2}}{2}, 1 \\right]$",
+        "$\\left[ \\frac{\\sqrt{2}}{2}, \\sqrt{3} - 1 \\right]$",
+        "$\\left[ \\frac{\\sqrt{3}}{3}, \\frac{\\sqrt{6}}{3} \\right]$",
+        "$\\left[ \\frac{\\sqrt{2}}{2}, \\frac{\\sqrt{3}}{2} \\right]$"
+      ],
+      "correctIndex": 1,
+      "correctIndices": [],
+      "correctNum": "",
+      "marks": {
+        "pos": 3,
+        "neg": 1
+      },
+      "diagram": null,
+      "explanation": "Source: Question 277"
+    },
+    {
+      "id": "q_3xr1mhdmlxyyfru",
+      "text": "Let $f: (1, \\infty) \\to R$ be a differentiable function such that $\\int_{2}^{150} (x-1) \\ln(x-1) (2f(x) - (x-1)\\ln(x-1)) dx = \\int_{2}^{150} f^2(x) dx$. Then:",
+      "type": "MULTI",
+      "options": [
+        "area bounded by the curve and x-axis is equal to 1/2.",
+        "$f(x)$ is strictly decreasing in $\\left(1, 1+\\frac{1}{e}\\right)$.",
+        "number of solutions of the equation $f(x) = 2$ is 2.",
+        "$f(x)$ is monotonic in $\\left(1+\\frac{1}{e}, \\infty\\right)$."
+      ],
+      "correctIndex": -1,
+      "correctIndices": [
+        1,
+        3
+      ],
+      "correctNum": "",
+      "marks": {
+        "pos": 4,
+        "neg": 2
+      },
+      "diagram": null,
+      "explanation": "Source: Question 352"
+    },
+    {
+      "id": "q_hcivbprmlxyyfru",
+      "text": "Which of the following statement(s) is(are) incorrect?",
+      "type": "MULTI",
+      "options": [
+        "The equation $\\sin x - x = 0$ has a real root in $\\left( \\frac{\\pi}{4}, \\frac{\\pi}{2} \\right)$.",
+        "The equation $\\tan x - x = 0$ has a real root in $\\left( \\frac{\\pi}{6}, \\frac{\\pi}{3} \\right)$.",
+        "If $f$ is continuous function in $[a, b]$, then there exists atleast one $c \\in [a, b]$ such that $f(c) = \\frac{2f(a) + 3f(b)}{5}$.",
+        "If $f(a)$ and $f(b)$ are of opposite signs then equation $f(x) = 0$ has necessarily atleast one root in $(a, b)$."
+      ],
+      "correctIndex": -1,
+      "correctIndices": [
+        0,
+        1,
+        3
+      ],
+      "correctNum": "",
+      "marks": {
+        "pos": 4,
+        "neg": 2
+      },
+      "diagram": null,
+      "explanation": "Source: Question 367"
+    },
+    {
+      "id": "q_9r0iaummlxyyfru",
+      "text": "Let $P(x) = x^3 + ax^2 + bx$ be a polynomial whose roots are non-negative and are in arithmetic progression. If the sum of coefficients of $P(x)$ is 10, then:",
+      "type": "MULTI",
+      "options": [
+        "sum of the roots of $P(x)$ is equal to 9.",
+        "sum of the roots of $P(x)$ is equal to 18.",
+        "the value of $(b-a)$ is equal to 9.",
+        "the value of $(b-a)$ is equal to 27."
+      ],
+      "correctIndex": -1,
+      "correctIndices": [
+        0,
+        3
+      ],
+      "correctNum": "",
+      "marks": {
+        "pos": 4,
+        "neg": 2
+      },
+      "diagram": null,
+      "explanation": "Source: Question 372"
+    },
+    {
+      "id": "q_oclmnkimlxyyfru",
+      "text": "Let $g: R \\to (-\\infty, -1]$ be a function defined as: $g(x) = (pq + 2p - q - 2)x^5 - (p^3 - 2p + 1)x^3 + (p^2 - 2p - 3)x^2 + (p^2 + 2q)x - 5$ where $p, q$ are rational numbers. If $g(x)$ is surjective, then the possible value of $(p+q)$ is(are):",
+      "type": "MULTI",
+      "options": [
+        "$\\frac{9}{2}$",
+        "$\\frac{7}{2}$",
+        "$\\frac{-7}{2}$",
+        "$\\frac{-9}{2}$"
+      ],
+      "correctIndex": -1,
+      "correctIndices": [
+        0,
+        2,
+        3
+      ],
+      "correctNum": "",
+      "marks": {
+        "pos": 4,
+        "neg": 2
+      },
+      "diagram": null,
+      "explanation": "Source: Question 376"
+    },
+    {
+      "id": "q_ks5dbpimlxyyfru",
+      "text": "Consider $f(x) = k^2(2-x) + k(x-1)^2 + 2x^2 - 6$. Match the following conditions in Column I with values in Column II.<br><br><b>List-I</b><br>(P) Number of integral value(s) of $k$ for which equation $f(x)=0$ has exactly one real solution (identical real roots) is(are)<br>(Q) Number of integral value(s) of $k$ for which equation $f(x)=0$ has more than 2 solutions is(are)<br>(R) Least positive integral value of $k$ for which equation $f(x)=0$ has two solutions (two distinct real roots) is<br>(S) Largest integral value of $k$ for which equation $f(x)=0$ has both imaginary roots, is<br><br><b>List-II</b><br>(1) 1<br>(2) 2<br>(3) 5<br>(4) 7",
+      "type": "SINGLE",
+      "options": [
+        "P$\\to$3; Q$\\to$1; R$\\to$1; S$\\to$2",
+        "P$\\to$2; Q$\\to$4; R$\\to$4; S$\\to$3",
+        "P$\\to$2; Q$\\to$1; R$\\to$1; S$\\to$3",
+        "P$\\to$3; Q$\\to$4; R$\\to$4; S$\\to$2"
+      ],
+      "correctIndex": 2,
+      "correctIndices": [],
+      "correctNum": "",
+      "marks": {
+        "pos": 3,
+        "neg": 1
+      },
+      "diagram": null,
+      "explanation": "Source: Question 682"
+    },
+    {
+      "id": "q_8wifufamlxyyfru",
+      "text": "If $a, b, c$ and $d$ are the positive roots of the equation $x^4 - px^3 + qx^2 - rx + \\frac{15}{32} = 0$ such that $\\frac{a}{2} + \\frac{b}{3} + \\frac{c}{4} + \\frac{d}{5} = 1$, then:<br><br><b>List-I</b><br>(P) $a=$<br>(Q) $b=$<br>(R) $c=$<br>(S) $d=$<br><br><b>List-II</b><br>(1) $\\frac{3}{4}$<br>(2) $\\frac{7}{2}$<br>(3) $\\frac{1}{2}$<br>(4) $\\frac{9}{2}$<br>(5) 1",
+      "type": "SINGLE",
+      "options": [
+        "P$\\to$5; Q$\\to$3; R$\\to$1; S$\\to$4",
+        "P$\\to$3; Q$\\to$5; R$\\to$4; S$\\to$1",
+        "P$\\to$3; Q$\\to$1; R$\\to$5; S$\\to$2",
+        "P$\\to$4; Q$\\to$2; R$\\to$3; S$\\to$5"
+      ],
+      "correctIndex": 2,
+      "correctIndices": [],
+      "correctNum": "",
+      "marks": {
+        "pos": 3,
+        "neg": 1
+      },
+      "diagram": null,
+      "explanation": "Source: Question 686"
+    },
+    {
+      "id": "q_0b7ptpvmlxyyfru",
+      "text": "Find the value of $S = \\frac{2+6}{4^{100}} + \\frac{2+2(6)}{4^{99}} + \\frac{2+3(6)}{4^{98}} + \\dots + \\frac{2+99(6)}{4^2} + \\frac{2+100(6)}{4}$.",
+      "type": "NUMERICAL",
+      "options": [],
+      "correctIndex": -1,
+      "correctIndices": [],
+      "correctNum": "600",
+      "marks": {
+        "pos": 4,
+        "neg": 1
+      },
+      "diagram": null,
+      "explanation": "Source: Question 779"
+    },
+    {
+      "id": "q_a6mzm9pmlxyyfru",
+      "text": "If the inequality $1+\\log_5(x^2+1) \\ge \\log_5(ax^2+4x+a)$ holds $\\forall x \\in R$, then the range of $a$ is $(p, q]$, find $(p+q)$.",
+      "type": "NUMERICAL",
+      "options": [],
+      "correctIndex": -1,
+      "correctIndices": [],
+      "correctNum": "5",
+      "marks": {
+        "pos": 4,
+        "neg": 1
+      },
+      "diagram": null,
+      "explanation": "Source: Question 770"
+    },
+    {
+      "id": "q_bg5fgfnmlxyyfru",
+      "text": "Let $f(n) = \\ln(n^2 - 1) - \\ln(n^2 + 2n), n \\in N, n \\ge 2$. If $L = \\lim_{m \\to \\infty} \\left( e^{\\sum_{n=2}^{m} f(n)} - 1 \\right) m^\\alpha$ exists and has non-zero finite value, then find the value of $(\\alpha + L)$.",
+      "type": "NUMERICAL",
+      "options": [],
+      "correctIndex": -1,
+      "correctIndices": [],
+      "correctNum": "5",
+      "marks": {
+        "pos": 4,
+        "neg": 1
+      },
+      "diagram": null,
+      "explanation": "Source: Question 786"
+    },
+    {
+      "id": "q_jn4mxj6mlxyyfru",
+      "text": "If $\\int \\frac{\\sin^2 x \\cos^2 x}{(\\sin^3 x + \\cos^3 x)^2} dx = -\\frac{1}{3} \\frac{\\cos^3 x}{(A \\cos x + B \\sin x)(1 - \\sin x \\cos x)} + C$<br>for constants $A$ and $B$, where $C$ denotes the arbitrary constant of integration. Then find the value of $(A + B)$.",
+      "type": "NUMERICAL",
+      "options": [],
+      "correctIndex": -1,
+      "correctIndices": [],
+      "correctNum": "2",
+      "marks": {
+        "pos": 4,
+        "neg": 1
+      },
+      "diagram": null,
+      "explanation": "Source: Question 796"
+    },
+    {
+      "id": "q_1pw7ijvmlxyyfru",
+      "text": "If $\\mathbf{a}, \\mathbf{b}, \\mathbf{c}$ are three vectors such that $|\\mathbf{a}| = |\\mathbf{c}| = 1$, $|\\mathbf{b}| = 4$, $|\\mathbf{b} \\times \\mathbf{c}| = 2$, $2\\mathbf{b} = \\mathbf{c} + \\lambda \\mathbf{a}$ where $\\lambda$ is a scalar. If the value of $\\lambda$ is equal to $\\sqrt{\\alpha - \\beta\\sqrt{3}}$ where $\\alpha$ and $\\beta$ are natural numbers, then find the value of $\\alpha + \\beta$.",
+      "type": "NUMERICAL",
+      "options": [],
+      "correctIndex": -1,
+      "correctIndices": [],
+      "correctNum": "73",
+      "marks": {
+        "pos": 4,
+        "neg": 1
+      },
+      "diagram": null,
+      "explanation": "Source: Question 804"
+    }
+  ]
+}
