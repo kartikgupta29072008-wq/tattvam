@@ -1554,6 +1554,9 @@ const EntryEditorModal = ({ entry, onSave, onClose }) => {
 
 // --- NEW: REMIX STUDIO PRO (With Cross-Test Library) ---
 // --- IMPROVED: REMIX STUDIO PRO (Fixed Icons & All Questions) ---
+// ==========================================
+// REMIX STUDIO PRO (With Select All Feature)
+// ==========================================
 const RemixStudioModal = ({ notebook, allTests, onClose, onCreate }) => {
     const [tab, setTab] = useState('notebook'); // 'notebook' | 'library'
     const [cart, setCart] = useState([]); 
@@ -1581,25 +1584,17 @@ const RemixStudioModal = ({ notebook, allTests, onClose, onCreate }) => {
         return Array.from(unique.values());
     }, [notebook, filterType]);
 
-    // 2. SEARCH GLOBAL LIBRARY
     // 2. SEARCH GLOBAL LIBRARY (CRASH PROOF VERSION)
     const libraryQuestions = React.useMemo(() => {
-        if (!search || search.length < 2) return []; // Wait for 2 chars
-        
-        console.log("Searching in tests:", allTests?.length); // Debugging Log
+        if (!search || search.length < 2) return []; 
         
         const results = [];
         const term = search.toLowerCase();
 
         (allTests || []).forEach(test => {
-            // Safety: Skip if test has no questions
             if (!test.questions || !Array.isArray(test.questions)) return;
-
             test.questions.forEach(q => {
-                // Safety: Ensure text exists before checking
                 const qText = (q.text || "").toLowerCase();
-                
-                // Search in Question Text
                 if (qText.includes(term)) {
                     results.push({ ...q, _source: `From: ${test.title}` });
                 }
@@ -1608,10 +1603,32 @@ const RemixStudioModal = ({ notebook, allTests, onClose, onCreate }) => {
         return results.slice(0, 50);
     }, [allTests, search]);
 
+    // --- NEW: Identify the currently active list ---
+    const currentList = tab === 'notebook' ? notebookQuestions : libraryQuestions;
+
     const toggleCart = (q) => {
         if (cart.find(c => c.text === q.text)) setCart(cart.filter(c => c.text !== q.text));
         else setCart([...cart, { ...q, id: Date.now() + Math.random() }]);
     };
+
+    // --- NEW: SELECT ALL VISIBLE ---
+    const handleSelectAll = () => {
+        if (currentList.length === 0) return;
+        const newCart = [...cart];
+        let addedCount = 0;
+        
+        currentList.forEach(q => {
+            // Only add if it's not already in the cart
+            if (!newCart.find(c => c.text === q.text)) {
+                newCart.push({ ...q, id: Date.now() + Math.random() });
+                addedCount++;
+            }
+        });
+        
+        setCart(newCart);
+    };
+
+    const handleClearCart = () => setCart([]);
 
     const handleFinish = () => {
         if (cart.length === 0) return alert("Select at least one question!");
@@ -1659,28 +1676,45 @@ const RemixStudioModal = ({ notebook, allTests, onClose, onCreate }) => {
                             </button>
                         </div>
 
-                        {/* FILTERS OR SEARCH BAR */}
-                        <div className="p-4 border-b bg-white shadow-sm z-10">
+                        {/* FILTERS & QUICK ACTIONS */}
+                        <div className="p-4 border-b bg-white shadow-sm z-10 flex flex-col xl:flex-row xl:items-center justify-between gap-3">
                             {tab === 'notebook' ? (
                                 <div className="flex gap-2">
-                                    {/* 🔴 NEW FILTERS HERE */}
                                     <button onClick={() => setFilterType('mistakes')} className={`px-4 py-2 rounded-full text-xs font-bold uppercase transition-all border ${filterType==='mistakes' ? 'bg-red-100 text-red-700 border-red-200' : 'bg-white text-slate-500 border-slate-200'}`}>Mistakes</button>
                                     <button onClick={() => setFilterType('correct')} className={`px-4 py-2 rounded-full text-xs font-bold uppercase transition-all border ${filterType==='correct' ? 'bg-green-100 text-green-700 border-green-200' : 'bg-white text-slate-500 border-slate-200'}`}>Correct</button>
                                     <button onClick={() => setFilterType('all')} className={`px-4 py-2 rounded-full text-xs font-bold uppercase transition-all border ${filterType==='all' ? 'bg-slate-800 text-white border-slate-900' : 'bg-white text-slate-500 border-slate-200'}`}>Show All</button>
                                 </div>
                             ) : (
-                                <div className="relative">
+                                <div className="relative flex-1 max-w-sm">
                                     <div className="absolute left-3 top-3 text-slate-400">
                                         <Icon name="Search" className="w-4 h-4" />
                                     </div>
                                     <input autoFocus value={search} onChange={e => setSearch(e.target.value)} placeholder="Search for any question..." className="w-full pl-9 p-2.5 bg-slate-100 rounded-lg text-sm font-bold focus:ring-2 focus:ring-indigo-500 outline-none" />
                                 </div>
                             )}
+
+                            {/* --- THE NEW SELECT ALL BUTTONS --- */}
+                            <div className="flex gap-2 shrink-0">
+                                <button 
+                                    onClick={handleSelectAll} 
+                                    className="text-xs font-bold text-indigo-700 bg-indigo-50 hover:bg-indigo-100 border border-indigo-200 px-3 py-2 rounded-lg flex items-center gap-1 transition-all shadow-sm active:scale-95"
+                                >
+                                    <Icon name="CheckCircle2" className="w-4 h-4" /> Select All {currentList.length > 0 ? `(${currentList.length})` : ''}
+                                </button>
+                                {cart.length > 0 && (
+                                    <button 
+                                        onClick={handleClearCart} 
+                                        className="text-xs font-bold text-red-700 bg-red-50 hover:bg-red-100 border border-red-200 px-3 py-2 rounded-lg flex items-center gap-1 transition-all shadow-sm active:scale-95"
+                                    >
+                                        <Icon name="Trash2" className="w-4 h-4" /> Clear
+                                    </button>
+                                )}
+                            </div>
                         </div>
 
                         {/* QUESTION LIST */}
                         <div className="flex-1 overflow-y-auto p-4 space-y-3">
-                            {(tab === 'notebook' ? notebookQuestions : libraryQuestions).map((q, i) => {
+                            {currentList.map((q, i) => {
                                 const isSelected = cart.some(c => c.text === q.text);
                                 return (
                                     <div key={i} onClick={() => toggleCart(q)} className={`p-4 rounded-xl border-2 cursor-pointer transition-all hover:scale-[1.01] flex gap-4 ${isSelected ? 'border-purple-500 bg-purple-50 shadow-md' : 'border-slate-200 bg-white hover:border-purple-300'}`}>
@@ -1699,7 +1733,7 @@ const RemixStudioModal = ({ notebook, allTests, onClose, onCreate }) => {
                                 )
                             })}
                             {tab === 'library' && !search && <div className="text-center py-10 text-slate-400 font-bold">Type to search...</div>}
-                            {tab === 'notebook' && notebookQuestions.length === 0 && <div className="text-center py-10 text-slate-400 font-bold">No questions found for this filter.</div>}
+                            {tab === 'notebook' && currentList.length === 0 && <div className="text-center py-10 text-slate-400 font-bold">No questions found for this filter.</div>}
                         </div>
                     </div>
 
@@ -1826,42 +1860,38 @@ const AnalysisNotebook = ({ notebook, onUpdate, onBack, apiKey, onRequestKey, on
         setAnalyzing(false);
     };
 
-    // --- CHART COMPONENT ---
+// --- UPGRADED CHART COMPONENT (WITH ZOOM & HORIZONTAL SCROLL) ---
     const SuperChart = ({ entries }) => {
         const [hovered, setHovered] = useState(null);
+        const [isExpanded, setIsExpanded] = useState(false);
+
         if (!entries || entries.length === 0) return <div className="h-40 flex items-center justify-center text-slate-400 border-2 border-dashed rounded-xl bg-slate-50/50">No data available.</div>;
 
-        const data = [...entries].sort((a, b) => new Date(a.date) - new Date(b.date)).map(e => {
+        // 1. Process all data
+        const allData = [...entries].sort((a, b) => new Date(a.date) - new Date(b.date)).map(e => {
             const max = e.maxMarks || 100;
             const pct = Math.min(100, Math.max(0, Math.round((e.score / max) * 100)));
             return { ...e, pct, max };
         });
-        const active = hovered || data[data.length - 1];
-        const getPoints = () => {
-            if (data.length < 2) return "";
-            const step = 100 / (data.length - 1 || 1);
-            return data.map((d, i) => `${i * step},${100 - d.pct}`).join(" ");
+
+        const active = hovered || allData[allData.length - 1];
+        
+        // 2. Limit the mini-view to the last 15 tests
+        const miniData = allData.length > 15 ? allData.slice(-15) : allData;
+
+        // SVG Drawing Math
+        const getPoints = (dataArray) => {
+            if (dataArray.length < 2) return "";
+            const step = 100 / (dataArray.length - 1 || 1);
+            return dataArray.map((d, i) => `${i * step},${100 - d.pct}`).join(" ");
         };
 
-        return (
-            <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 transition-all hover:shadow-md">
-                <div className="flex justify-between items-end mb-8 h-16">
-                    <div>
-                        <div className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-1 flex items-center gap-2">
-                            <Icon name="Target" className="w-4 h-4 text-indigo-500" /> Performance Spotlight
-                        </div>
-                        <div className="text-xl font-black text-slate-800 leading-none truncate max-w-[200px] md:max-w-md">{active.testName || "Untitled Test"}</div>
-                        <div className="text-xs text-slate-500 font-medium mt-1 flex items-center gap-2"><Icon name="Clock" className="w-3 h-3" /> {new Date(active.date).toLocaleDateString()} {active === hovered && <span className="bg-indigo-100 text-indigo-700 px-1.5 py-0.5 rounded text-[10px] font-bold">Viewing</span>}</div>
-                    </div>
-                    <div className="text-right">
-                        <div className="flex items-baseline justify-end gap-1"><span className="text-4xl font-black text-indigo-600 tracking-tight">{active.pct}%</span><span className="text-sm font-bold text-slate-300">/ 100%</span></div>
-                        <div className="text-xs font-bold text-slate-400 mt-1">Score: {active.score} / {active.max}</div>
-                    </div>
-                </div>
-                <div className="relative h-48 w-full" onMouseLeave={() => setHovered(null)}>
+        const renderChart = (data, expanded) => (
+            <div className={`relative w-full h-full ${expanded ? 'overflow-x-auto overflow-y-hidden pb-4' : ''}`} onMouseLeave={() => setHovered(null)}>
+                <div className="relative h-full" style={{ minWidth: expanded ? `${Math.max(100, data.length * 60)}px` : '100%', width: '100%' }}>
                     <svg className="absolute inset-0 w-full h-full overflow-visible pointer-events-none z-0" preserveAspectRatio="none" viewBox={`0 0 100 100`}>
                         <defs><linearGradient id="chartGrad" x1="0" x2="0" y1="0" y2="1"><stop offset="0%" stopColor="#6366f1" stopOpacity="0.2" /><stop offset="100%" stopColor="#6366f1" stopOpacity="0" /></linearGradient></defs>
-                        {data.length > 1 && <><polyline points={`${getPoints()} 100,100 0,100`} fill="url(#chartGrad)" stroke="none"/><polyline points={getPoints()} fill="none" stroke="#6366f1" strokeWidth="0.5" strokeLinecap="round" strokeLinejoin="round" vectorEffect="non-scaling-stroke"/></>}
+                        {data.length > 1 && <><polyline points={`${getPoints(data)} 100,100 0,100`} fill="url(#chartGrad)" stroke="none"/><polyline points={getPoints(data)} fill="none" stroke="#6366f1" strokeWidth="0.5" strokeLinecap="round" strokeLinejoin="round" vectorEffect="non-scaling-stroke"/></>}
                     </svg>
                     <div className="absolute inset-0 flex items-end justify-between z-10 px-2">
                         {data.map((d, i) => {
@@ -1869,11 +1899,13 @@ const AnalysisNotebook = ({ notebook, onUpdate, onBack, apiKey, onRequestKey, on
                             let barColor = isFocus ? (d.pct >= 80 ? "bg-emerald-400" : d.pct >= 50 ? "bg-indigo-400" : "bg-amber-400") : "bg-slate-200";
                             if (hovered && !isFocus) barColor = "bg-slate-100";
                             return (
-                                <div key={i} onMouseEnter={() => setHovered(d)} className="flex-1 flex flex-col justify-end items-center group h-full relative cursor-pointer px-0.5 md:px-2 transition-all duration-300">
-                                    <div style={{ height: `${Math.max(d.pct, 4)}%` }} className={`w-full max-w-[40px] rounded-t-lg transition-all duration-300 relative ${barColor} ${isFocus ? 'shadow-lg scale-105' : 'hover:opacity-90'}`}>
+                                <div key={d.id} onMouseEnter={() => setHovered(d)} className="flex-1 flex flex-col justify-end items-center group h-full relative cursor-pointer px-0.5 md:px-2 transition-all duration-300">
+                                    <div style={{ height: `${Math.max(d.pct, 4)}%` }} className={`w-full ${expanded ? 'max-w-[50px]' : 'max-w-[40px]'} rounded-t-lg transition-all duration-300 relative ${barColor} ${isFocus ? 'shadow-lg scale-105' : 'hover:opacity-90'}`}>
                                         {isFocus && <div className="absolute -top-1 left-1/2 -translate-x-1/2 w-2 h-2 bg-white rounded-full shadow-sm ring-2 ring-indigo-500"></div>}
                                     </div>
-                                    <div className={`mt-3 text-[10px] font-bold transition-colors ${isFocus ? 'text-indigo-600 scale-110' : 'text-slate-300'}`}>{i + 1}</div>
+                                    <div className={`mt-3 text-[10px] font-bold transition-colors ${isFocus ? 'text-indigo-600 scale-110' : 'text-slate-300'} ${expanded ? 'w-full text-center truncate px-1' : ''}`}>
+                                        {expanded ? (d.testName ? d.testName.substring(0,6) + '..' : `T${i+1}`) : (i + 1 + (allData.length > 15 ? allData.length - 15 : 0))}
+                                    </div>
                                 </div>
                             );
                         })}
@@ -1881,8 +1913,72 @@ const AnalysisNotebook = ({ notebook, onUpdate, onBack, apiKey, onRequestKey, on
                 </div>
             </div>
         );
-    };
 
+        return (
+            <>
+                {/* 1. STANDARD MINI VIEW */}
+                <div 
+                    onClick={() => setIsExpanded(true)}
+                    className="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 transition-all hover:shadow-md cursor-pointer relative overflow-hidden"
+                >
+                    <div className="flex justify-between items-end mb-8 h-16 relative z-10">
+                        <div>
+                            <div className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-1 flex items-center gap-2">
+                                <Icon name="Target" className="w-4 h-4 text-indigo-500" /> Performance Spotlight
+                            </div>
+                            <div className="text-xl font-black text-slate-800 leading-none truncate max-w-[200px] md:max-w-md">{active.testName || "Untitled Test"}</div>
+                            <div className="text-xs text-slate-500 font-medium mt-1 flex items-center gap-2"><Icon name="Clock" className="w-3 h-3" /> {new Date(active.date).toLocaleDateString()} {active === hovered && <span className="bg-indigo-100 text-indigo-700 px-1.5 py-0.5 rounded text-[10px] font-bold">Viewing</span>}</div>
+                        </div>
+                        <div className="text-right">
+                            <div className="flex items-baseline justify-end gap-1"><span className="text-4xl font-black text-indigo-600 tracking-tight">{active.pct}%</span><span className="text-sm font-bold text-slate-300">/ 100%</span></div>
+                            <div className="text-xs font-bold text-slate-400 mt-1">Score: {active.score} / {active.max}</div>
+                        </div>
+                    </div>
+                    
+                    <div className="h-48">
+                        {renderChart(miniData, false)}
+                    </div>
+                    
+                    {allData.length > 15 && <div className="text-center text-[10px] text-slate-400 mt-2 font-bold uppercase tracking-wider">Showing last 15 tests</div>}
+                </div>
+
+                {/* 2. EXPANDED ZOOM MODAL */}
+                {isExpanded && (
+                    <div className="fixed inset-0 bg-black/80 z-[200] flex items-center justify-center p-4 backdrop-blur-sm animate-in zoom-in-95" onClick={() => setIsExpanded(false)}>
+                        <div className="bg-white rounded-2xl shadow-2xl w-full max-w-6xl p-6 relative flex flex-col h-[60vh]" onClick={e => e.stopPropagation()}>
+                            
+                            <div className="flex justify-between items-end mb-8 shrink-0 border-b border-slate-100 pb-4">
+                                <div>
+                                    <div className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-1 flex items-center gap-2">
+                                        <Icon name="BarChart" className="w-4 h-4 text-indigo-500" /> Full Performance History ({allData.length} Tests)
+                                    </div>
+                                    <div className="text-2xl font-black text-slate-800 leading-none truncate max-w-sm md:max-w-xl">{active.testName || "Untitled Test"}</div>
+                                    <div className="text-sm text-slate-500 font-medium mt-1 flex items-center gap-2"><Icon name="Clock" className="w-4 h-4" /> {new Date(active.date).toLocaleDateString()}</div>
+                                </div>
+                                <div className="flex items-center gap-6">
+                                    <div className="text-right hidden sm:block">
+                                        <div className="flex items-baseline justify-end gap-1"><span className="text-5xl font-black text-indigo-600 tracking-tight">{active.pct}%</span><span className="text-lg font-bold text-slate-300">/ 100%</span></div>
+                                        <div className="text-sm font-bold text-slate-400 mt-1">Score: {active.score} / {active.max}</div>
+                                    </div>
+                                    <button onClick={() => setIsExpanded(false)} className="bg-slate-100 hover:bg-red-50 text-slate-600 hover:text-red-600 p-3 rounded-xl transition-colors">
+                                        <Icon name="X" className="w-6 h-6" />
+                                    </button>
+                                </div>
+                            </div>
+                            
+                            <div className="flex-1 overflow-hidden relative">
+                                {renderChart(allData, true)}
+                            </div>
+                            
+                            <div className="text-center text-xs text-slate-400 mt-4 font-bold uppercase tracking-wider shrink-0 flex items-center justify-center gap-2">
+                                <Icon name="ArrowLeft" className="w-3 h-3" /> Scroll horizontally to view older tests <Icon name="ArrowRight" className="w-3 h-3" />
+                            </div>
+                        </div>
+                    </div>
+                )}
+            </>
+        );
+    };
     if (viewingEntry) return <ResultDashboard entry={viewingEntry} onBack={() => setViewingEntry(null)} onUpdateEntry={handleEntryUpdate} allTests={tests} apiKey={apiKey} />;
 
     return (
