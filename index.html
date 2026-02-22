@@ -14,6 +14,7 @@
     
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/localforage/1.10.0/localforage.min.js"></script>
     <script>
         tailwind.config = {
             theme: {
@@ -4697,18 +4698,42 @@ const [showEmergency, setShowEmergency] = useState(false);
         setActiveId(draft.id);
         setView('editor');
     };	
-    // --- SAFE STORAGE LOADERS ---
-    const safeLoad = (key, fallback) => {
-        try {
-            const item = localStorage.getItem(key);
-            return item ? JSON.parse(item) : fallback;
-        } catch (e) { console.error(`Failed to load ${key}`, e); return fallback; }
-    };
-
-    // --- STATE MANAGEMENT ---
-    const [tests, setTests] = useState(() => safeLoad('quizforge_tests', []));
-    const [notebooks, setNotebooks] = useState(() => safeLoad('quizforge_notebooks', []));
+// --- STATE MANAGEMENT ---
+    const [tests, setTests] = useState([]);
+    const [notebooks, setNotebooks] = useState([]);
     const [playingTest, setPlayingTest] = useState(null);
+    const [isAppReady, setIsAppReady] = useState(false); // Tells the app when the massive DB is loaded
+
+    // --- ASYNC STORAGE ENGINE & AUTO-MIGRATION ---
+    useEffect(() => {
+        const initMassiveStorage = async () => {
+            try {
+                // 1. Try to fetch from the new Gigabyte-tier IndexedDB
+                let dbTests = await localforage.getItem('quizforge_tests');
+                let dbNotebooks = await localforage.getItem('quizforge_notebooks');
+
+                // 2. SMART MIGRATION: If IndexedDB is empty, check the old 5MB localStorage.
+                // If old data exists, copy it over to the new massive database instantly!
+                if (!dbTests && localStorage.getItem('quizforge_tests')) {
+                    dbTests = JSON.parse(localStorage.getItem('quizforge_tests'));
+                    await localforage.setItem('quizforge_tests', dbTests);
+                }
+                if (!dbNotebooks && localStorage.getItem('quizforge_notebooks')) {
+                    dbNotebooks = JSON.parse(localStorage.getItem('quizforge_notebooks'));
+                    await localforage.setItem('quizforge_notebooks', dbNotebooks);
+                }
+
+                // 3. Set the state and unlock the app
+                setTests(dbTests || []);
+                setNotebooks(dbNotebooks || []);
+                setIsAppReady(true);
+            } catch (e) {
+                console.error("Massive Storage Init Error:", e);
+                setIsAppReady(true); // Let them in even if it fails
+            }
+        };
+        initMassiveStorage();
+    }, []);
 
     // API Keys & Settings
     const [keyContext, setKeyContext] = useState(() => {
@@ -4731,25 +4756,24 @@ const [showEmergency, setShowEmergency] = useState(false);
     const [storageWarning, setStorageWarning] = useState(false);
 
     // --- PERSISTENCE EFFECTS ---
-   // --- PERSISTENCE EFFECTS (WITH FIXED STORAGE WARNINGS) ---
+// --- MASSIVE PERSISTENCE EFFECTS (NO MORE 5MB LIMIT) ---
     useEffect(() => { 
-        try { 
-            localStorage.setItem('quizforge_tests', JSON.stringify(tests)); 
-            setStorageWarning(false); 
-        } catch (e) { 
-            console.error("Test Storage Full:", e);
-            setStorageWarning(true); 
-        } 
-    }, [tests]);
+        if (isAppReady) {
+            localforage.setItem('quizforge_tests', tests).catch(e => {
+                console.error("IndexedDB Save Error:", e);
+                setStorageWarning(true); 
+            });
+        }
+    }, [tests, isAppReady]);
 
     useEffect(() => { 
-        try { 
-            localStorage.setItem('quizforge_notebooks', JSON.stringify(notebooks)); 
-        } catch(e) { 
-            console.error("Notebook Storage Full:", e);
-            setStorageWarning(true); // <--- THIS WAS MISSING!
-        } 
-    }, [notebooks]);
+        if (isAppReady) {
+            localforage.setItem('quizforge_notebooks', notebooks).catch(e => {
+                console.error("IndexedDB Save Error:", e);
+                setStorageWarning(true); 
+            });
+        }
+    }, [notebooks, isAppReady]);
     useEffect(() => { try { localStorage.setItem('tattvam_key_context', JSON.stringify(keyContext)); } catch(e) {} }, [keyContext]);
     useEffect(() => { localStorage.setItem('tattvam_user_notes', userNotes); }, [userNotes]);
     useEffect(() => { if(appLogo !== "./logo.png") localStorage.setItem('tattvam_app_logo', appLogo); }, [appLogo]);
@@ -4811,7 +4835,15 @@ const [showEmergency, setShowEmergency] = useState(false);
         setTests(prev => [...newTests, ...prev]);
         setNotebooks(prev => [...newNotebooks, ...prev]);
     };
-
+// Block the UI for a split second while the database boots up
+    if (!isAppReady) {
+        return (
+            <div className="h-screen flex flex-col items-center justify-center bg-slate-50">
+                <Icon name="Loader2" className="w-12 h-12 animate-spin text-indigo-600 mb-4" />
+                <h2 className="text-xl font-bold text-slate-700">Connecting to Local Database...</h2>
+            </div>
+        );
+    }
     // --- RENDER ---
     return (
         <div className="font-sans h-screen flex flex-col relative">
@@ -4948,7 +4980,6 @@ isBoss={isBoss}             // <--- PASS PROP
     </script>
 </body>
 </html>
-
 
 
 
