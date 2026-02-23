@@ -306,18 +306,21 @@
       "explanation": "Source: Question 679"
     },
     {
-      "id": "q_q2npvopmlkq1fq9",
-      "text": "If $\\lim_{x \\to \\infty} \\frac{x^2}{t^2-x^2} = f_n(x)$ then find the value of $\\lim (\\lfloor f_2(x) \\rfloor + \\lfloor f_4(x) \\rfloor)$. [Note: $[k]$ denotes greatest integer function less than or equal to $k$]",
+      "text": "If $\\lim_{t \\to x} \\frac{\\int_{x}^{t} \\sin^{-1} (nz) dz}{t^2 - x^2} = f_n (x)$ then find the value of $\\lim_{x \\to 0} ([f_2 (x)] + [f_4 (x)])$\n[Note: $[k]$ denotes greatest integer function less than or equal to $k$]",
       "type": "NUMERICAL",
       "options": [],
+      "matrix": null,
+      "matrixAns": {},
+      "marks": {
+        "pos": 3,
+        "neg": 1
+      },
+      "difficulty": "Medium",
+      "diagram_box": null,
+      "id": 0.2600103942038652,
       "correctIndex": -1,
       "correctIndices": [],
       "correctNum": "3",
-      "marks": {
-        "pos": 4,
-        "neg": 1
-      },
-      "diagram": null,
       "explanation": "Source: Question 978"
     },
     {
@@ -337,7 +340,7 @@
     },
     {
       "id": "q_0wikzbzmlkq1fq9",
-      "text": "Let $f$ be a real valued derivable function such that $f(x)f(y) = f(x+y)(f(y)+xf(y)), \\forall x, y \\in R$. If $f'(0)=2$ then find $\\lim_{x \\to 0} \\left[\\frac{f(x)}{\\sin x}\\right]$. [Note: $[ ]$ represents greatest integer function.]",
+      "text": "Let $f$ be a real valued derivable function such that $f(x)f(y) = (yf(x)+xf(y)), \\forall x, y \\in R$. If $f'(0)=2$ then find $\\lim_{x \\to 0} \\left[\\frac{f(x)}{\\sin x}\\right]$. [Note: $[ ]$ represents greatest integer function.]",
       "type": "NUMERICAL",
       "options": [],
       "correctIndex": -1,
@@ -360,5 +363,5 @@
     "url": "https://raw.githubusercontent.com/kartikgupta29072008-wq/tattvam/refs/heads/main/database/test_9.json",
     "active": true
   },
-  "studentName": "Kartik Gupta"
+  "studentName": "Arpit Aadarsh"
 }
