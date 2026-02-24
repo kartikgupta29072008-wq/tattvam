@@ -321,6 +321,7 @@ const saveEmergencyMsgs = async (newMsgs, sha) => {
         const cropDiagram = (base64Image, box) => new Promise((resolve) => {
             if (!box || box.length !== 4) return resolve(null);
             const img = new window.Image();
+img.onerror = () => resolve(null);
             img.onload = () => {
                 const canvas = document.createElement('canvas');
                 const [ymin, xmin, ymax, xmax] = box;
@@ -374,7 +375,7 @@ const saveEmergencyMsgs = async (newMsgs, sha) => {
                         contents: [{ 
                             parts: [
                                 { text: prompt }, 
-                                ...(imageData ? [{ inlineData: { mimeType: "image/png", data: imageData } }] : [])
+                               ...(imageData ? [{ inlineData: { mimeType: imageData.startsWith("JVBER") ? "application/pdf" : "image/png", data: imageData } }] : [])
                             ] 
                         }],
                         // --- FIX: ADDED CIVIC INTEGRITY & EXPLICIT BYPASS ---
@@ -492,12 +493,13 @@ const saveEmergencyMsgs = async (newMsgs, sha) => {
         };
 
         const transcribeImage = async (base64, apiKey) => {
+const isPDF = base64.startsWith("JVBER");
             const prompt = `Analyze this page. Identify exam questions. 
             Rules for Transcription:
             1. **MATH:** Use LaTeX for all math. Example: $x^2 + y^2$.
             2. **CHEMISTRY:** Use \\ce{...} for chemical formulas. Example: $\\ce{H2SO4}$, $\\ce{2H2 + O2 -> 2H2O}$.
             3. **ESCAPING:** You must escape backslashes in JSON strings. Use \\\\frac instead of \\frac.
-            4. **Diagrams:** Detect if a specific diagram/graph exists for the question.
+            4. **Diagrams:** Detect if a specific diagram/graph exists for the question. ${isPDF ? "(IGNORE DIAGRAMS FOR PDF FILES. ALWAYS return null for diagram_box)" : ""}
 5. **MATRIX MATCH:** If a question has "Column I" and "Column II" (or List-I/List-II):
                - Set "type" to "MATRIX".
                - Extract "Column I" items into "matrix": { "rows": ["A text", "B text"] }.
@@ -521,7 +523,7 @@ const saveEmergencyMsgs = async (newMsgs, sha) => {
             const results = await apiCall(apiKey, prompt, base64);
             if (Array.isArray(results)) {
                 for (let q of results) {
-                    if (q.diagram_box) { 
+                    if (q.diagram_box && !isPDF) { 
                         q.diagram = await cropDiagram(base64, q.diagram_box); 
                         delete q.diagram_box; 
                     }
@@ -540,6 +542,15 @@ const saveEmergencyMsgs = async (newMsgs, sha) => {
         };
 
         const generateDistractors = async (q, k) => apiCall(k, `Q: "${q.text}". Generate 3 wrong options. JSON: ["A", "B", "C"]`);
+const scanOptionsImage = async (base64, k) => {
+            const prompt = `Analyze this image containing multiple-choice options. Extract the text for each option. 
+            Rules:
+            1. Remove prefixes like (A), A., (a), (1), 1., etc. (Return ONLY the option content).
+            2. Use LaTeX $...$ for math.
+            3. Return strictly a JSON array of strings.
+            Example output: ["First option", "Second option", "Third option", "Fourth option"]`;
+            return await apiCall(k, prompt, base64);
+        };
         
         const generateRemix = async (q, k) => apiCall(k, `Remix this question. Q: "${q.text}". Output JSON: { "text": "New Q", "options": ["A","B","C","D"] }`);
         
@@ -1127,6 +1138,18 @@ const QuestionEditor = ({ question, onSave, onCancel, apiKey, onRequestKey }) =>
                     reader.readAsDataURL(file);
                 }
             };
+const handleOptionScan = async (file) => {
+                if (!apiKey) return onRequestKey();
+                run('Scanning Options...', async () => {
+                    const b64 = await fileToBase64(file);
+                    const opts = await scanOptionsImage(b64, apiKey);
+                    if (Array.isArray(opts) && opts.length > 0) {
+                        setForm(p => ({ ...p, options: opts }));
+                    } else {
+                        throw new Error("No options recognized in the image.");
+                    }
+                });
+            };
 
             return (
                 <div className="bg-white rounded-xl shadow-lg border-2 border-tattvam-100 p-6 relative">
@@ -1332,7 +1355,8 @@ const QuestionEditor = ({ question, onSave, onCancel, apiKey, onRequestKey }) =>
                                         {/* SPECIFIC UPLOAD BUTTON - Only this triggers file manager */}
                                         <label className="pointer-events-auto cursor-pointer bg-white border border-slate-200 text-slate-600 text-[10px] px-3 py-1.5 rounded-md font-bold hover:border-tattvam-500 hover:text-tattvam-600 shadow-sm transition-all flex items-center gap-1">
                                             <Icon name="Upload" className="w-3 h-3" /> Browse File
-                                            <input type="file" accept="image/*" className="hidden" onChange={handleImageUpload} />
+                                           {/* ADD application/pdf to the accept attribute! */}
+<input type="file" className="hidden" multiple accept="image/*,application/pdf" onChange={handleUpload} />
                                         </label>
                                     </div>
                                 )}
@@ -1340,7 +1364,59 @@ const QuestionEditor = ({ question, onSave, onCancel, apiKey, onRequestKey }) =>
                     </div>
 
                     <div className="mb-4">
-                        <div className="flex justify-between items-center mb-1"><label className="block text-xs font-semibold text-slate-500">Answer Key</label>{(form.type === 'SINGLE' || form.type === 'MULTI') && <button onClick={() => run('Options...', async () => { const o = await generateDistractors(form, apiKey); setForm(p => ({...p, options: [...(p.options||[]), ...o]})); })} className="text-[10px] font-bold text-tattvam-600 bg-tattvam-50 hover:bg-tattvam-100 px-2 py-1 rounded-full flex items-center gap-1"><Icon name="Sparkles" className="w-3 h-3" /> Auto-Fill</button>}</div>
+                        <div className="flex justify-between items-center mb-1">
+    <label className="block text-xs font-semibold text-slate-500">Answer Key</label>
+    <div className="flex gap-2 items-center">
+        
+        {/* --- UPGRADED: SCAN OPTIONS WITH PASTE (CTRL+V) & DROP --- */}
+        {(form.type === 'SINGLE' || form.type === 'MULTI') && (
+            <div 
+                className="text-[10px] font-bold text-indigo-600 bg-indigo-50 px-1.5 py-0.5 rounded-full flex items-center gap-1 transition-colors border border-indigo-200 border-dashed hover:border-indigo-400 focus:ring-2 focus:ring-indigo-500 outline-none cursor-text"
+                tabIndex={0}
+                title="Click here to focus, then press Ctrl+V to paste a screenshot!"
+                onDragOver={(e) => e.preventDefault()}
+                onDrop={(e) => {
+                    e.preventDefault();
+                    const file = e.dataTransfer.files[0];
+                    if (file && file.type.startsWith('image/')) handleOptionScan(file);
+                }}
+                onPaste={(e) => {
+                    const items = e.clipboardData?.items;
+                    if (!items) return;
+                    for (let i = 0; i < items.length; i++) {
+                        if (items[i].type.indexOf('image') !== -1) {
+                            e.preventDefault();
+                            e.stopPropagation(); // Stops the main diagram from stealing the paste
+                            const file = items[i].getAsFile();
+                            handleOptionScan(file);
+                            break;
+                        }
+                    }
+                }}
+            >
+                <span className="px-1 text-indigo-500/70 pointer-events-none flex items-center gap-1">
+                    <Icon name="Image" className="w-3 h-3" /> Paste / Drop or
+                </span>
+                
+                {/* Specific Upload Button */}
+                <label className="cursor-pointer bg-white border border-indigo-200 px-2 py-0.5 rounded-full hover:bg-indigo-100 text-indigo-700 shadow-sm flex items-center gap-1">
+                    Upload
+                    <input type="file" className="hidden" accept="image/*" onChange={(e) => {
+                        if(e.target.files[0]) handleOptionScan(e.target.files[0]);
+                        e.target.value = null; // reset input
+                    }} />
+                </label>
+            </div>
+        )}
+        
+        {/* EXISTING AUTO-FILL BUTTON */}
+        {(form.type === 'SINGLE' || form.type === 'MULTI') && (
+            <button onClick={() => run('Options...', async () => { const o = await generateDistractors(form, apiKey); setForm(p => ({...p, options: [...(p.options||[]), ...o]})); })} className="text-[10px] font-bold text-tattvam-600 bg-tattvam-50 hover:bg-tattvam-100 px-2 py-1 rounded-full flex items-center gap-1">
+                <Icon name="Sparkles" className="w-3 h-3" /> Auto-Fill
+            </button>
+        )}
+    </div>
+</div>
                         {(form.type === 'SINGLE' || form.type === 'MULTI' || !form.type) && <div className="space-y-2">{form.options?.map((opt, idx) => (
                             <div key={idx} className="flex items-center gap-2">
                                 <input type={form.type === 'MULTI' ? 'checkbox' : 'radio'} name="correctAnswer" checked={form.type === 'MULTI' ? form.correctIndices?.includes(idx) : form.correctIndex === idx} onChange={() => { if(form.type === 'MULTI') { const cur = form.correctIndices || []; setForm({...form, correctIndices: cur.includes(idx) ? cur.filter(x=>x!==idx) : [...cur, idx]}); } else { setForm({...form, correctIndex: idx}); } }} className="w-4 h-4 text-tattvam-600" />
@@ -3238,10 +3314,11 @@ const handlePublish = async () => {
                                 onClick={(e) => e.currentTarget.focus()}
                                 onDragOver={(e) => e.preventDefault()}
                                 onDrop={(e) => {
-                                    e.preventDefault();
-                                    const files = Array.from(e.dataTransfer.files).filter(f => f.type.startsWith('image/'));
-                                    if(files.length) processFiles(files);
-                                }}
+    e.preventDefault();
+    // ADD application/pdf to the allowed filter list below!
+    const files = Array.from(e.dataTransfer.files).filter(f => f.type.startsWith('image/') || f.type === 'application/pdf');
+    if(files.length) processFiles(files);
+}}
                                 onPaste={(e) => {
                                     const items = e.clipboardData?.items;
                                     if (!items) return;
@@ -5117,6 +5194,5 @@ isBoss={isBoss}             // <--- PASS PROP
     </script>
 </body>
 </html>
-
 
 
