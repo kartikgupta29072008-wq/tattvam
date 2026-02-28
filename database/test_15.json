@@ -1,0 +1,287 @@
+{
+  "id": "imported_single_6p82981mm6dbykf",
+  "title": "Test 15",
+  "created": "2026-02-28T13:30:00.000Z",
+  "questions": [
+    {
+      "id": "q_9fg1jywmm6dbykf",
+      "text": "If $\\frac{\\cos x + \\cos y + \\cos z}{\\cos(x+y+z)} = 2$ and $\\frac{\\sin x + \\sin y + \\sin z}{\\sin(x+y+z)} = 2$, then the value of $\\cos(x+y) + \\cos(y+z) + \\cos(z+x)$ is equal to: (where $x, y, z \\in R$)",
+      "type": "SINGLE",
+      "options": [
+        "3",
+        "1",
+        "2",
+        "-1"
+      ],
+      "correctIndex": 2,
+      "correctIndices": [],
+      "correctNum": "",
+      "marks": {
+        "pos": 3,
+        "neg": 1
+      },
+      "diagram": null,
+      "explanation": "Source: Question 241"
+    },
+    {
+      "id": "q_8cumskimm6dbykf",
+      "text": "If roots of the equation $\\frac{1}{x-a} + \\frac{1}{x-b} + \\frac{1}{x-c} + \\frac{1}{x-d} + \\frac{(x-2)(x^2+2x+4)}{(x-a)(x-b)(x-c)(x-d)} = 0$ are $\\alpha, \\beta$ and $\\gamma$, then sum of the roots of the equation $5(x-\\alpha)(x-\\beta)(x-\\gamma) + 8 - x^3 = 0$ is:",
+      "type": "SINGLE",
+      "options": [
+        "$a+b+c+d$",
+        "$\\frac{3}{4}(abc+bcd+cda+dab)$",
+        "$abc+bcd+cda+dab$",
+        "$\\frac{3}{4}(a+b+c+d)$"
+      ],
+      "correctIndex": 3,
+      "correctIndices": [],
+      "correctNum": "",
+      "marks": {
+        "pos": 3,
+        "neg": 1
+      },
+      "diagram": null,
+      "explanation": "Source: Question 245"
+    },
+    {
+      "id": "q_5kmb44hmm6dbykf",
+      "text": "Let $f(x, y)$ be a locus of a point $P(x, y)$ satisfying $\\alpha(2x - y + 1) + \\beta(3x - y) + \\gamma(2x + y - 5) = 0 \\ \\forall \\alpha, \\beta, \\gamma \\in R$. The least distance between the curve $f(x, y)$ and straight line $3x - 4y + 19 = 0$ is:",
+      "type": "SINGLE",
+      "options": [
+        "3",
+        "2",
+        "$\\frac{7}{5}$",
+        "$\\frac{26}{5}$"
+      ],
+      "correctIndex": 1,
+      "correctIndices": [],
+      "correctNum": "",
+      "marks": {
+        "pos": 3,
+        "neg": 1
+      },
+      "diagram": null,
+      "explanation": "Source: Question 251"
+    },
+    {
+      "id": "q_rzk6yiymm6dbykf",
+      "text": "If $A = \\begin{bmatrix} a & x & y \\\\ x & b & z \\\\ y & z & c \\end{bmatrix}$ where $a, b, c, x, y, z \\in \\{1, 2, 3, 4, 5, 6\\}$ and also $a, b, c, x, y, z$ are distinct then number of matrices in $A$ with trace equal to 10 are:",
+      "type": "SINGLE",
+      "options": [
+        "$3(3!)^2$",
+        "$2(3!)^2$",
+        "$(3!)^2$",
+        "$(3!)^3$"
+      ],
+      "correctIndex": 0,
+      "correctIndices": [],
+      "correctNum": "",
+      "marks": {
+        "pos": 3,
+        "neg": 1
+      },
+      "diagram": null,
+      "explanation": "Source: Question 258"
+    },
+    {
+      "id": "q_c159ey8mm6dbykf",
+      "text": "$F_1, F_2$ are left and right focus points of the hyperbola $C: \\frac{x^2}{a^2} - \\frac{y^2}{b^2} = 1 \\ (a > 0, b > 0)$. Point $O$ is the origin of the coordinate, $M$ is an arbitrary point on $C$ and above the x-axis. $H$ is a point of $MF_1$. Given that $MF_2 \\perp F_1F_2$, $MF_1 \\perp OH$, $|OH| = \\lambda|OF_2|$, where $\\lambda \\in \\left(\\frac{1}{3}, \\frac{1}{2}\\right)$. Find the range of the eccentricity of the hyperbola $C$.",
+      "type": "SINGLE",
+      "options": [
+        "$(1, \\sqrt{3})$",
+        "$(1, \\sqrt{2})$",
+        "$(\\sqrt{2}, \\sqrt{3})$",
+        "$(\\sqrt{2}, 2)$"
+      ],
+      "correctIndex": 2,
+      "correctIndices": [],
+      "correctNum": "",
+      "marks": {
+        "pos": 3,
+        "neg": 1
+      },
+      "diagram": null,
+      "explanation": "Source: Question 263"
+    },
+    {
+      "id": "q_rdabgmlmm6dbykf",
+      "text": "$\\{a_n\\}$ and $\\{b_n\\}$ are arithmetic progressions and their sums of the first $n$ terms are $A_n$ and $B_n$ respectively. If $\\frac{A_n}{B_n} = \\frac{n-1}{2n}$ for all positive integers $n$, then the value of $\\frac{a_3+a_5+a_7}{3(b_3+b_9)} + \\frac{a_4+a_{10}}{2(b_2+b_{10})}$ is:",
+      "type": "SINGLE",
+      "options": [
+        "$\\frac{10}{21}$",
+        "$\\frac{7}{15}$",
+        "$\\frac{10}{23}$",
+        "$\\frac{5}{11}$"
+      ],
+      "correctIndex": 3,
+      "correctIndices": [],
+      "correctNum": "",
+      "marks": {
+        "pos": 3,
+        "neg": 1
+      },
+      "diagram": null,
+      "explanation": "Source: Question 272"
+    },
+    {
+      "id": "q_ja41ojrmm6dbykg",
+      "text": "If $I_1 = \\int_{0}^{1} \\frac{x^{7/2}(1-x)^{9/2}}{30} dx$ and $I_2 = \\int_{0}^{1} \\frac{x^{7/2}(1-x)^{9/2}}{(x+5)^{10}} dx$ and $\\frac{I_1}{I_2} = 5a^3\\sqrt{a}$, where $a \\in N$, then the value of $a$ is:",
+      "type": "SINGLE",
+      "options": [
+        "24",
+        "26",
+        "28",
+        "30"
+      ],
+      "correctIndex": 3,
+      "correctIndices": [],
+      "correctNum": "",
+      "marks": {
+        "pos": 3,
+        "neg": 1
+      },
+      "diagram": null,
+      "explanation": "Source: Question 273"
+    },
+    {
+      "id": "q_ou36p3wmm6dbykg",
+      "text": "On a coordinate plane, ellipse $C_1 : \\frac{x^2}{a_1^2} + \\frac{y^2}{b_1^2} = 1 \\ (a_1 > b_1 > 0)$ and hyperbola $C_2 : \\frac{x^2}{a_2^2} - \\frac{y^2}{b_2^2} = 1 \\ (a_2, b_2 > 0)$ has the same focus point $F_1, F_2$. Point $P$ is the intersection point of $C_1$ and $C_2$ in the first quadrant and $|F_1F_2| = 2|PF_2| \\cdot e_1$ is the eccentricity of $C_1$ and $e_2$ is the eccentricity of $C_2$. Find the range of $e_2 - e_1$.",
+      "type": "SINGLE",
+      "options": [
+        "$\\left(\\frac{1}{3}, \\infty\\right)$",
+        "$\\left(\\frac{1}{2}, \\infty\\right)$",
+        "$(1, \\infty)$",
+        "$\\left[\\frac{1}{2}, \\infty\\right)$"
+      ],
+      "correctIndex": 1,
+      "correctIndices": [],
+      "correctNum": "",
+      "marks": {
+        "pos": 3,
+        "neg": 1
+      },
+      "diagram": null,
+      "explanation": "Source: Question 278"
+    },
+    {
+      "id": "q_wdlmqwdmm6dbykg",
+      "text": "Let $S_n = \\sum_{x=1}^{n} x!, n \\ge 6, T = \\arcsin\\left(\\sin\\left(S_n - 7\\left[\\frac{S_n}{7}\\right]\\right)\\right)$. If $\\int_{0}^{1} \\frac{T}{\\sqrt{1-x^2}} dx = \\frac{a\\pi}{b} - \\pi^c$ where $a, b, c \\in W; b \\neq 0$, then find $\\left(\\frac{b}{c} + a\\right)$.",
+      "type": "NUMERICAL",
+      "options": [],
+      "correctIndex": -1,
+      "correctIndices": [],
+      "correctNum": "6",
+      "marks": {
+        "pos": 4,
+        "neg": 0
+      },
+      "diagram": null,
+      "explanation": "Source: Question 712"
+    },
+    {
+      "id": "q_t43j61umm6dbykg",
+      "text": "Let $a$ denotes the number of non-negative values of $p$ for which the equation $p2^x + 2^{-x} = 5$ possess a unique solution. If $a, \\alpha_1, \\alpha_2, \\dots, \\alpha_{20}, 6$ are in H.P. and $a, \\beta_1, \\beta_2, \\dots, \\beta_{20}, 6$ are in A.P., find $\\alpha_{18}\\beta_3$.",
+      "type": "NUMERICAL",
+      "options": [],
+      "correctIndex": -1,
+      "correctIndices": [],
+      "correctNum": "12",
+      "marks": {
+        "pos": 4,
+        "neg": 0
+      },
+      "diagram": null,
+      "explanation": "Source: Question 749"
+    },
+    {
+      "id": "q_u998l1kmm6dbykg",
+      "text": "Consider the following statements about positive function $f(x)$ and $g(x)$ whose limits to infinity exists.\nStatement-A : $\\lim_{x \\to \\infty} f(x) = \\lim_{x \\to \\infty} g(x)$\nStatement-B : $\\lim_{x \\to \\infty} (f(x) - g(x)) = 0$\nStatement-C : $\\lim_{x \\to \\infty} \\sqrt{f(x)} = \\lim_{x \\to \\infty} \\sqrt{g(x)} $\nHow many of the following six statements are true: $A \\Rightarrow B$, $B \\Rightarrow C$, $C \\Rightarrow A$, $A \\Rightarrow C$, $B \\Rightarrow A$, $C \\Rightarrow B$.",
+      "type": "NUMERICAL",
+      "options": [],
+      "correctIndex": -1,
+      "correctIndices": [],
+      "correctNum": "6",
+      "marks": {
+        "pos": 4,
+        "neg": 0
+      },
+      "diagram": null,
+      "explanation": "Source: Question 753"
+    },
+    {
+      "id": "q_d5d29fbmm6dbykg",
+      "text": "Let $S = \\sum_{n=1}^{\\infty} \\frac{1}{\\sum_{r=1}^{n} a_r a_{r+1} a_{r+2} a_{r+3}}$ where $a_n = \\int_{0}^{\\pi/2} \\frac{1-\\cos 2nx}{1-\\cos 2x} dx$. Then find the value of $24\\pi^4 \\cdot S$.",
+      "type": "NUMERICAL",
+      "options": [],
+      "correctIndex": -1,
+      "correctIndices": [],
+      "correctNum": "20",
+      "marks": {
+        "pos": 4,
+        "neg": 0
+      },
+      "diagram": null,
+      "explanation": "Source: Question 764"
+    },
+    {
+      "id": "q_d81btgbmm6dbykg",
+      "text": "Let $f(x)$ and $g(x)$ be continuous on $R$ (set of real numbers).\nIf $\\lim_{x \\to 0} \\frac{f(x)}{\\sin^2 x} = 8$, $\\lim_{x \\to 0} \\frac{g(x)}{2\\cos x - xe^x + x^3 + x - 2} = \\lambda$ and $\\lim_{x \\to 0} (1+2f(x))^{1/g(x)} = \\frac{1}{e}$, then find the value of $\\lambda$.",
+      "type": "NUMERICAL",
+      "options": [],
+      "correctIndex": -1,
+      "correctIndices": [],
+      "correctNum": "8",
+      "marks": {
+        "pos": 4,
+        "neg": 0
+      },
+      "diagram": null,
+      "explanation": "Source: Question 775"
+    },
+    {
+      "id": "q_21fsvtamm6dbykg",
+      "text": "Let $\\alpha = \\sum_{k=1}^{20} \\frac{\\sin\\left(\\frac{\\pi}{3} k\\right)}{4\\cos^2\\left(\\frac{k\\pi}{9}\\right) - 1}$ and $\\beta = \\sum_{k=1}^{20} \\frac{\\cos\\left(\\frac{\\pi}{3} k\\right)}{1 - 4\\sin^2\\left(\\frac{k\\pi}{9}\\right)}$.\nIf $\\beta^2 - \\alpha^2 = 1 + \\cos\\lambda^\\circ$ then find the value of $\\lambda$.",
+      "type": "NUMERICAL",
+      "options": [],
+      "correctIndex": -1,
+      "correctIndices": [],
+      "correctNum": "20",
+      "marks": {
+        "pos": 4,
+        "neg": 0
+      },
+      "diagram": null,
+      "explanation": "Source: Question 785"
+    },
+    {
+      "id": "q_5pof4klmm6dbykg",
+      "text": "If the sum of the infinite geometric series $\\frac{a}{b} + \\frac{a}{b^2} + \\frac{a}{b^3} + \\dots \\infty$ is 4, then find the sum of $\\frac{a}{(a+b)} + \\frac{a}{(a+b)^2} + \\frac{a}{(a+b)^3} + \\dots \\infty = \\frac{p}{q}$ where $p$ and $q$ are co-prime, then find the value of $(p+q)$.",
+      "type": "NUMERICAL",
+      "options": [],
+      "correctIndex": -1,
+      "correctIndices": [],
+      "correctNum": "9",
+      "marks": {
+        "pos": 4,
+        "neg": 0
+      },
+      "diagram": null,
+      "explanation": "Source: Question 809"
+    },
+    {
+      "id": "q_itxp9vjmm6dbykg",
+      "text": "A letter is known to have either from \"TATA NAGAR\" or from \"CALCUTTA\". On the envelope, just two consecutive letters TA are visible. If the probability that the letter came from \"TATA NAGAR\" is in the form $\\frac{p}{q}$, where $p$ and $q$ are co-prime positive integers, then find the value of $(p+q)$.",
+      "type": "NUMERICAL",
+      "options": [],
+      "correctIndex": -1,
+      "correctIndices": [],
+      "correctNum": "18",
+      "marks": {
+        "pos": 4,
+        "neg": 0
+      },
+      "diagram": null,
+      "explanation": "Source: Question 812"
+    }
+  ]
+}
