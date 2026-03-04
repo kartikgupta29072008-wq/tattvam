@@ -1,0 +1,346 @@
+{
+  "id": "imported_single_vkxfm7zmmbv7o3m",
+  "title": "Test 16",
+  "created": "2026-03-04T13:42:42.000Z",
+  "questions": [
+    {
+      "id": "q_umufrwcmmbv7o3m",
+      "text": "Let $A = [a_{ij}]_{2 \\times 2}$ be a matrix where $a_{ij} \\in \\{2, 3\\}$. If determinant of matrix $A$ is non-negative, then probability that it is invertible is:",
+      "type": "SINGLE",
+      "options": [
+        "$\\frac{1}{2}$",
+        "$\\frac{5}{11}$",
+        "$\\frac{5}{16}$",
+        "$\\frac{3}{16}$"
+      ],
+      "correctIndex": 1,
+      "correctIndices": [],
+      "correctNum": "",
+      "marks": {
+        "pos": 3,
+        "neg": 1
+      },
+      "diagram": null,
+      "explanation": "Source: Question 255"
+    },
+    {
+      "id": "q_x9h379xmmbv7o3m",
+      "text": "Variable pairs of chords at right angles and drawn through a point $P$ (with eccentric angle $\\frac{\\pi}{4}$) on the ellipse $\\frac{x^2}{4} + y^2 = 1$ to meet the ellipse at two points, say $A$ and $B$. If the line joining $A$ and $B$ passes through a fixed point $Q = (a, b)$ and the line value of $a^2 + b^2$ can be expressed as $\\frac{m}{n}$, where $m$ and $n$ are co-prime positive integer, submit your answer as $n - m$.",
+      "type": "SINGLE",
+      "options": [
+        "1",
+        "2",
+        "3",
+        "4"
+      ],
+      "correctIndex": 0,
+      "correctIndices": [],
+      "correctNum": "",
+      "marks": {
+        "pos": 3,
+        "neg": 1
+      },
+      "diagram": null,
+      "explanation": "Source: Question 269"
+    },
+    {
+      "id": "q_3tya9n6mmbv7o3m",
+      "text": "If $\\alpha, \\beta$ and $\\gamma$ are roots of $x^3 - 2x^2 + 6x - 1 = 0$, find the value of the following expression:<br>$\\alpha \\left(\\frac{\\alpha^2 + \\alpha + 1}{\\alpha^2 - \\alpha + 1}\\right) + \\beta \\left(\\frac{\\beta^2 + \\beta + 1}{\\beta^2 - \\beta + 1}\\right) + \\gamma \\left(\\frac{\\gamma^2 + \\gamma + 1}{\\gamma^2 - \\gamma + 1}\\right)$",
+      "type": "SINGLE",
+      "options": [
+        "1",
+        "6",
+        "7",
+        "8"
+      ],
+      "correctIndex": 2,
+      "correctIndices": [],
+      "correctNum": "",
+      "marks": {
+        "pos": 3,
+        "neg": 1
+      },
+      "diagram": null,
+      "explanation": "Source: Question 271"
+    },
+    {
+      "id": "q_yd3xpk2mmbv7o3m",
+      "text": "Given $S_A = 2m + (2m+1) + (2m+2) + \\dots + 4m$ and $S_B = (2m+1) + (2m+3) + (2m+5) + \\dots + (4m-1)$. If $\\frac{S_A}{S_B} = k + \\frac{1}{l}$, find the value of $k + l$.",
+      "type": "SINGLE",
+      "options": [
+        "$2 + m$",
+        "$3 + m$",
+        "$1 + m$",
+        "$2m$"
+      ],
+      "correctIndex": 0,
+      "correctIndices": [],
+      "correctNum": "",
+      "marks": {
+        "pos": 3,
+        "neg": 1
+      },
+      "diagram": null,
+      "explanation": "Source: Question 281"
+    },
+    {
+      "id": "q_3u26rfpmmbv7o3m",
+      "text": "Let $M$ denote the matrix $\\begin{pmatrix} 0 & i \\\\ i & 0 \\end{pmatrix}$, where $i^2 = -1$, and let $I$ denote the identity matrix $\\begin{pmatrix} 1 & 0 \\\\ 0 & 1 \\end{pmatrix}$. Then the matrix $I + M + M^2 + M^3 + M^4 + \\dots + M^{2010}$ is equal to:",
+      "type": "SINGLE",
+      "options": [
+        "$\\begin{pmatrix} 0 & 0 \\\\ 0 & 0 \\end{pmatrix}$",
+        "$\\begin{pmatrix} 0 & i \\\\ i & 0 \\end{pmatrix}$",
+        "$\\begin{pmatrix} 1 & i \\\\ i & 1 \\end{pmatrix}$",
+        "$\\begin{pmatrix} -1 & 0 \\\\ 0 & -1 \\end{pmatrix}$"
+      ],
+      "correctIndex": 1,
+      "correctIndices": [],
+      "correctNum": "",
+      "marks": {
+        "pos": 3,
+        "neg": 1
+      },
+      "diagram": null,
+      "explanation": "Source: Question 295"
+    },
+    {
+      "id": "q_e31yx9pmmbv7o3m",
+      "text": "Let $\\mathbf{a}, \\mathbf{b}, \\mathbf{c}$ be three vectors of magnitude 2, 3, 5 respectively, satisfying $[\\mathbf{a}\\ \\mathbf{b}\\ \\mathbf{c}] = 30$. If $(2\\mathbf{a} + \\mathbf{b} + \\mathbf{c}) \\cdot ((\\mathbf{a} \\times \\mathbf{c}) \\times (\\mathbf{a} - \\mathbf{c}) + \\mathbf{b}) = k$, then the value of $\\left(\\frac{k}{103}\\right)$ is:",
+      "type": "SINGLE",
+      "options": [
+        "1",
+        "2",
+        "3",
+        "4"
+      ],
+      "correctIndex": 2,
+      "correctIndices": [],
+      "correctNum": "",
+      "marks": {
+        "pos": 3,
+        "neg": 1
+      },
+      "diagram": null,
+      "explanation": "Source: Question 299"
+    },
+    {
+      "id": "q_lvuthxpmmbv7o3m",
+      "text": "Let $f(x) = \\lim_{n \\to \\infty} \\frac{x^{2n-1} + ax^3 + bx^2}{x^{2n} + 1}$ is continuous for all $x \\in R$. If points $A(-a, 3)$ and $B((b+1), -1)$ are points of relative maximum and minimum of a cubic polynomial $y = g(x)$, then the value of $g(2)$ is:",
+      "type": "SINGLE",
+      "options": [
+        "1",
+        "2",
+        "3",
+        "4"
+      ],
+      "correctIndex": 2,
+      "correctIndices": [],
+      "correctNum": "",
+      "marks": {
+        "pos": 3,
+        "neg": 1
+      },
+      "diagram": null,
+      "explanation": "Source: Question 300"
+    },
+    {
+      "id": "q_tsckt0qmmbv7o3m",
+      "text": "For $x, t \\in R$, let $P_t(x) = (\\sin t)x^2 - (2\\cos t)x + \\sin t - \\frac{1}{3}$ be a family of quadratic polynomial in $x$, with variable coefficients. Also $A(t) = \\int_{0}^{1} (P_t(x)) dx$. Which of the following statement are true?",
+      "type": "MULTI",
+      "options": [
+        "$\\lim_{t \\to \\pi/2} (A(t))^{\\tan t}$ equals $e^{4/3}$.",
+        "$A(t)$ has infinitely many critical points.",
+        "$A(t) = 0$ for infinitely many $t$.",
+        "$A'(t) > 0$ for all $t$."
+      ],
+      "correctIndex": -1,
+      "correctIndices": [
+        1,
+        2
+      ],
+      "correctNum": "",
+      "marks": {
+        "pos": 4,
+        "neg": 2
+      },
+      "diagram": null,
+      "explanation": "Source: Question 386"
+    },
+    {
+      "id": "q_pojyccdmmbv7o3m",
+      "text": "Cards are drawn one by one without replacement from a well shuffled pack of 52 playing cards until 2 aces are obtained for the first time. If $N$ is the number of cards required to be drawn, then the probability $P(N=n) = \\frac{1}{k}(n-a)(n-b)(n-c)$, where $k, a, b, c \\in N$ with $a > b > c$. Then:",
+      "type": "MULTI",
+      "options": [
+        "the value of $a$ is 52.",
+        "the value of $b + c$ is 52.",
+        "the value of $a + c$ is 52.",
+        "17 is a factor of $k$."
+      ],
+      "correctIndex": -1,
+      "correctIndices": [
+        0,
+        1,
+        3
+      ],
+      "correctNum": "",
+      "marks": {
+        "pos": 4,
+        "neg": 2
+      },
+      "diagram": null,
+      "explanation": "Source: Question 392"
+    },
+    {
+      "id": "q_6sqzzrvmmbv7o3m",
+      "text": "If $f(p)$ is the number of common tangent lines of two parabolas $x^2 = 2y$ and $\\left(y + \\frac{1}{2}\\right)^2 = 4px$, then:",
+      "type": "MULTI",
+      "options": [
+        "$f(p) = 1$ if $p \\in \\left[-\\infty, \\frac{-1}{3\\sqrt{3}}\\right)$",
+        "$f(p) = 2$ if $p \\in \\left(\\frac{-1}{3\\sqrt{3}}, \\frac{1}{3\\sqrt{3}}\\right)$",
+        "$f(p) = 3$ if $p \\in \\left\\{\\frac{-1}{3\\sqrt{3}}, \\frac{1}{3\\sqrt{3}}\\right\\}$",
+        "$f(p) = 4$ if $p \\in \\left(\\frac{1}{3\\sqrt{3}}, \\infty\\right)$"
+      ],
+      "correctIndex": -1,
+      "correctIndices": [
+        0,
+        1,
+        2
+      ],
+      "correctNum": "",
+      "marks": {
+        "pos": 4,
+        "neg": 2
+      },
+      "diagram": null,
+      "explanation": "Source: Question 395"
+    },
+    {
+      "id": "q_kojo5kemmbv7o3m",
+      "text": "Let straight line $y = mx + 4$ meets the curve $3x^2 - (1-3a)xy - ay^2 = 0$ at two points $A$ and $B$ such that $\\angle AOB = 90^\\circ \\forall m \\in R - \\{m_1, m_2\\}$ where $m_1 < m_2$ and '$O$' is the origin. Identify which of the following statement(s) is/are correct?",
+      "type": "MULTI",
+      "options": [
+        "$m_1 + m_2 = \\frac{10}{3}$",
+        "$am_1 + m_2 = 2$",
+        "If $m = 2$, then area of $\\Delta AOB = \\frac{80}{7}$ sq. units",
+        "If $m = 2$, then area of $\\Delta AOB = \\frac{85}{7}$ sq. units"
+      ],
+      "correctIndex": -1,
+      "correctIndices": [
+        1,
+        2
+      ],
+      "correctNum": "",
+      "marks": {
+        "pos": 4,
+        "neg": 2
+      },
+      "diagram": null,
+      "explanation": "Source: Question 445"
+    },
+    {
+      "id": "q_gwkg50zmmbv7o3m",
+      "text": "Let $f(x) = \\cos^{-1}\\left(\\sqrt{\\sin^{-1}\\left(\\sec\\left(\\ln\\left(\\frac{2x^2 + 3x - 2}{x^2 - 3x + 2}\\right)\\right)\\right)}\\right)$. Find the value of $1 + \\left(\\sum \\alpha_i^2\\right)$ where $\\alpha_i$ represents the integers in the range of $f(x)$. If there are no integers in the range of $f(x)$, then enter your answer as zero.",
+      "type": "NUMERICAL",
+      "options": [],
+      "correctIndex": -1,
+      "correctIndices": [],
+      "correctNum": "0",
+      "marks": {
+        "pos": 4,
+        "neg": 1
+      },
+      "diagram": null,
+      "explanation": "Source: Question 703"
+    },
+    {
+      "id": "q_ryy53w9mmbv7o3m",
+      "text": "Let $f(x)$ be a function continuous for all $x \\in R$ except at $x=0$ such that<br>$\\bullet\\ \\ f'(x) < 0, \\forall x \\in (-\\infty, 0)$<br>$\\bullet\\ \\ f'(x) > 0, \\forall x \\in (0, \\infty)$<br>$\\bullet\\ \\ \\lim_{x \\to 0^+} f(x) = 2$<br>$\\bullet\\ \\ \\lim_{x \\to 0^-} f(x) = 3$<br>$\\bullet\\ \\ f(0) = 4$<br><br>If:<br>$2 \\lim_{x \\to 0} f(x^3 - x^2) = \\mu \\lim_{x \\to 0} f(2x^4 - x^5)$<br><br>$\\lim_{x \\to 0^+} \\frac{f(-x)x^2}{\\left[ \\frac{1 - \\cos x}{[f(x)]} \\right]} = \\lambda$<br><br>$\\lim_{x \\to 0^+} \\left( \\left[ 3f\\left( \\frac{x^3 - \\sin^3 x}{x^4} \\right) \\right] - f\\left( \\left[ \\frac{\\sin x^3}{x} \\right] \\right) \\right) = \\gamma$<br>Then find the value of $\\mu \\cdot \\lambda \\cdot \\gamma$.<br>*[Note: Where $[k]$ denotes greatest integer function less than or equal to $k$, $\\{k\\}$ denotes the fractional part function.]*",
+      "type": "NUMERICAL",
+      "options": [],
+      "correctIndex": -1,
+      "correctIndices": [],
+      "correctNum": "72",
+      "marks": {
+        "pos": 4,
+        "neg": 1
+      },
+      "diagram": null,
+      "explanation": "Source: Question 761"
+    },
+    {
+      "id": "q_73bqaeommbv7o3m",
+      "text": "Let $I_1 = \\int_{1}^{3} (x^2 + x + 3) f(x^3 - 2x^2 - 5x + 2020) dx$ and<br>$I_2 = \\int_{1}^{3} (4x^2 - 3x - 2) f(x^3 - 2x^2 - 5x + 2020) dx$.<br>If the value of $\\frac{2I_1}{3I_2} = \\frac{a}{b}$ where $a$ and $b$ are co-prime, then find the value of $(a+b)$.",
+      "type": "NUMERICAL",
+      "options": [],
+      "correctIndex": -1,
+      "correctIndices": [],
+      "correctNum": "5",
+      "marks": {
+        "pos": 4,
+        "neg": 1
+      },
+      "diagram": null,
+      "explanation": "Source: Question 799"
+    },
+    {
+      "id": "q_wcx6dlgmmbv7o3m",
+      "text": "Let $ABC$ be a triangle with $\\angle B = 45^\\circ$ and $c = 5$. A circle with center $A$ and radius $AB$ meets $BC$ at $D$. If altitude from vertex $A$ to the side $BC$ meet the circle at $E$ then area of $\\Delta BED$ is $\\frac{p}{2}(\\sqrt{q}-1)$. Find the value of $(p+q)$.",
+      "type": "NUMERICAL",
+      "options": [],
+      "correctIndex": -1,
+      "correctIndices": [],
+      "correctNum": "27",
+      "marks": {
+        "pos": 4,
+        "neg": 1
+      },
+      "diagram": null,
+      "explanation": "Source: Question 872"
+    },
+    {
+      "id": "q_lb1jv1hmmbv7o3m",
+      "text": "If $\\left(x - 2 + \\frac{1}{x}\\right)^{30} = n_0 x^{30} + n_1 x^{29} + \\dots + n_{29} x + n_{30} + n_{31} x^{-1} + \\dots + n_{60} x^{-30}$ and $C = n_0 + n_1 + n_2 + \\dots + n_{60}$. Find the value of $(a+b)$ if $C - n_{30} = -\\binom{a}{b}$.<br>*[Note: $\\binom{n}{r}$ denotes $^nC_r$.]*",
+      "type": "NUMERICAL",
+      "options": [],
+      "correctIndex": -1,
+      "correctIndices": [],
+      "correctNum": "90",
+      "marks": {
+        "pos": 4,
+        "neg": 1
+      },
+      "diagram": null,
+      "explanation": "Source: Question 893"
+    },
+    {
+      "id": "q_6giccsbmmbv7o3m",
+      "text": "Let $A$ and $B$ be two sets of complex numbers such that $A = \\{z : |z|^3 - 2|z|^2 + 3i|z| - 6i = 0\\}$ and $B = \\{z : |z^2 - 4| + |z^2 + 4| \\le 4|z|\\}$. Find the area of the figure enclosed by joining the points lying in $A \\cap B$.",
+      "type": "NUMERICAL",
+      "options": [],
+      "correctIndex": -1,
+      "correctIndices": [],
+      "correctNum": "8",
+      "marks": {
+        "pos": 4,
+        "neg": 1
+      },
+      "diagram": null,
+      "explanation": "Source: Question 927"
+    },
+    {
+      "id": "q_3fc6dzkmmbv7o3m",
+      "text": "On the coordinate plane, ellipse $C_1 : \\frac{x^2}{a_1^2} + \\frac{y^2}{b_1^2} = 1 \\ (a_1 > b_1 > 0)$ and hyperbola $C_2 : \\frac{x^2}{a_2^2} - \\frac{y^2}{b_2^2} = 1 \\ (a_2, b_2 > 0)$ has the same focus points $F_1, F_2$. Point $P$ is one of the intersection points of $C_1$ and $C_2$ and $PF_1 \\perp PF_2$. If $e_1$ is the eccentricity of $C_1$ and $e_2$ is the eccentricity of $C_2$. Then find the minimum value of $9e_1^2 + e_2^2$.",
+      "type": "NUMERICAL",
+      "options": [],
+      "correctIndex": -1,
+      "correctIndices": [],
+      "correctNum": "8",
+      "marks": {
+        "pos": 4,
+        "neg": 1
+      },
+      "diagram": null,
+      "explanation": "Source: Question 958"
+    }
+  ]
+}
