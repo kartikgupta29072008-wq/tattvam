@@ -196,8 +196,8 @@
       "type": "MULTI",
       "options": [
         "$f(p) = 1$ if $p \\in \\left[-\\infty, \\frac{-1}{3\\sqrt{3}}\\right)$",
-        "$f(p) = 2$ if $p \\in \\left(\\frac{-1}{3\\sqrt{3}}, \\frac{1}{3\\sqrt{3}}\\right)$",
-        "$f(p) = 3$ if $p \\in \\left\\{\\frac{-1}{3\\sqrt{3}}, \\frac{1}{3\\sqrt{3}}\\right\\}$",
+        "$f(p) = 3$ if $p \\in \\left(\\frac{-1}{3\\sqrt{3}}, \\frac{1}{3\\sqrt{3}}\\right)$",
+        "$f(p) = 2$ if $p \\in \\left\\{\\frac{-1}{3\\sqrt{3}}, \\frac{1}{3\\sqrt{3}}\\right\\}$",
         "$f(p) = 4$ if $p \\in \\left(\\frac{1}{3\\sqrt{3}}, \\infty\\right)$"
       ],
       "correctIndex": -1,
@@ -342,5 +342,15 @@
       "diagram": null,
       "explanation": "Source: Question 958"
     }
-  ]
+  ],
+  "officialMeta": {
+    "id": "official_13",
+    "title": "test_16",
+    "date": "2026-03-04",
+    "duration": 60,
+    "marks": 65,
+    "url": "https://raw.githubusercontent.com/kartikgupta29072008-wq/tattvam/refs/heads/main/database/test_16.json",
+    "active": true
+  },
+  "studentName": "Arpit"
 }
