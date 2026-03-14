@@ -1,0 +1,373 @@
+{
+  "id": "imported_single_7lzdhcdmmqi7rhn",
+  "title": "Test 17",
+  "created": "2026-03-14T21:18:39.000Z",
+  "questions": [
+    {
+      "id": "q_rnr03v9mmqi7rhn",
+      "text": "If the line $2px + y\\sqrt{1 - p^2} = 1$ always touches the ellipse $\\frac{x^2}{a^2} + \\frac{y^2}{b^2} = 1 \\ \\forall p \\in (-1, 1) - \\{0\\}$. The eccentricity of this ellipse, is:",
+      "type": "SINGLE",
+      "options": [
+        "$\\frac{1}{\\sqrt{2}}$",
+        "$\\frac{\\sqrt{7}}{3}$",
+        "$\\frac{\\sqrt{7}}{4}$",
+        "$\\frac{\\sqrt{3}}{2}$"
+      ],
+      "correctIndex": 3,
+      "correctIndices": [],
+      "correctNum": "",
+      "marks": {
+        "pos": 3,
+        "neg": 1
+      },
+      "diagram": null,
+      "explanation": "Source: Question 36",
+      "matrixAns": {}
+    },
+    {
+      "id": "q_7zg3b02mmqi7rhn",
+      "text": "The value of $\\sum_{m=1}^{\\infty} \\left( \\tan^{-1} \\left( \\frac{3m^2 - 3m + 1}{m^6 - 3m^5 + 3m^4 - m^3 + 1} \\right) \\right)$ equals:",
+      "type": "SINGLE",
+      "options": [
+        "$\\frac{\\pi}{2}$",
+        "$\\frac{\\pi}{3}$",
+        "$\\frac{\\pi}{4}$",
+        "$\\frac{\\pi}{6}$"
+      ],
+      "correctIndex": 0,
+      "correctIndices": [],
+      "correctNum": "",
+      "marks": {
+        "pos": 3,
+        "neg": 1
+      },
+      "diagram": null,
+      "explanation": "Source: Question 37",
+      "matrixAns": {}
+    },
+    {
+      "id": "q_yk7re36mmqi7rhn",
+      "text": "Let $a_n$ be sequence is geometric progression with first term 16 and common ratio of $\\frac{1}{4}$. Let $P_n$ be the product of first $n$ terms of the given geometric progression. The value of $\\sum_{n=1}^{\\infty} P_n^{1/n}$, is:",
+      "type": "SINGLE",
+      "options": [
+        "16",
+        "32",
+        "64",
+        "68"
+      ],
+      "correctIndex": 1,
+      "correctIndices": [],
+      "correctNum": "",
+      "marks": {
+        "pos": 3,
+        "neg": 1
+      },
+      "diagram": null,
+      "explanation": "Source: Question 46",
+      "matrixAns": {}
+    },
+    {
+      "id": "q_4pepql5mmqi7rhn",
+      "text": "Let $x_1, x_2, \\dots, x_{10}$ be the roots of the polynomial equation $x^{10} + x^9 + \\dots + x + 1 = 0$. Then the value of $\\sum_{n=1}^{10} \\left( \\frac{1}{1 - x_n} \\right)$:",
+      "type": "SINGLE",
+      "options": [
+        "3",
+        "4",
+        "5",
+        "6"
+      ],
+      "correctIndex": 2,
+      "correctIndices": [],
+      "correctNum": "",
+      "marks": {
+        "pos": 3,
+        "neg": 1
+      },
+      "diagram": null,
+      "explanation": "Source: Question 52",
+      "matrixAns": {}
+    },
+    {
+      "id": "q_r13bm1wmmqi7rhn",
+      "text": "A continuous even periodic function $f$ with period 8 is such that $f(0)=0, f(1)=-2, f(2)=1, f(3)=2, f(4)=3$ then the value of $\\tan^{-1}(\\tan(f(-5) + f(20) + \\cos^{-1}(f(-10) + f(17))))$ is equal to:",
+      "type": "SINGLE",
+      "options": [
+        "$2\\pi - 5$",
+        "$5 - 2\\pi$",
+        "$3 + \\pi$",
+        "$3 - \\pi$"
+      ],
+      "correctIndex": 1,
+      "correctIndices": [],
+      "correctNum": "",
+      "marks": {
+        "pos": 3,
+        "neg": 1
+      },
+      "diagram": null,
+      "explanation": "Source: Question 159",
+      "matrixAns": {}
+    },
+    {
+      "id": "q_knt723smmqi7rhn",
+      "text": "Let $f(x)$ be continuous function satisfying $f(x) = \\int_{0}^{x} e^{x-y} f'(y)dy - (x^2-x+1)e^x$. The value of $x$ for which $f(x)=0$, is:",
+      "type": "SINGLE",
+      "options": [
+        "$\\frac{1}{2}$",
+        "1",
+        "$\\frac{1}{4}$",
+        "$\\frac{1}{8}$"
+      ],
+      "correctIndex": 0,
+      "correctIndices": [],
+      "correctNum": "",
+      "marks": {
+        "pos": 3,
+        "neg": 1
+      },
+      "diagram": null,
+      "explanation": "Source: Question 188",
+      "matrixAns": {}
+    },
+    {
+      "id": "q_88z8e95mmqi7rhn",
+      "text": "From an unlimited number of red, white, blue and green balls, a selection of 18 balls is to be made so that there are at least two of each colour. If the number of selection is $k$, then $k$ is equal to:",
+      "type": "SINGLE",
+      "options": [
+        "1001",
+        "286",
+        "680",
+        "455"
+      ],
+      "correctIndex": 1,
+      "correctIndices": [],
+      "correctNum": "",
+      "marks": {
+        "pos": 3,
+        "neg": 1
+      },
+      "diagram": null,
+      "explanation": "Source: Question 238",
+      "matrixAns": {}
+    },
+    {
+      "id": "q_2w8eajjmmqi7rhn",
+      "text": "Let $z$ be the complex number satisfying $|z + 16| = 4 |z + 1|$, then:",
+      "type": "SINGLE",
+      "options": [
+        "$|z| = 4$",
+        "$|z| = 5$",
+        "$|z| = 6$",
+        "$4 < |z| < 64$"
+      ],
+      "correctIndex": 0,
+      "correctIndices": [],
+      "correctNum": "",
+      "marks": {
+        "pos": 3,
+        "neg": 1
+      },
+      "diagram": null,
+      "explanation": "Source: Question 261",
+      "matrixAns": {}
+    },
+    {
+      "id": "q_9pfi2hammqi7rhn",
+      "text": "Let $P$ be any point on the line $x - y + 3 = 0$ and $A$ be a fixed point $(3, 4)$. If the family of lines given by the equations $(3\\sec\\theta + 5\\operatorname{cosec}\\theta)x + (7\\sec\\theta - 3\\operatorname{cosec}\\theta)y + 11(\\sec\\theta - \\operatorname{cosec}\\theta) = 0$ are concurrent at a point $B$ for all permissible value of $\\theta$, then:",
+      "type": "MULTI",
+      "options": [
+        "sum of the abscissa and ordinate of point $B$ is equal to $-1$.",
+        "product of the abscissa and ordinate of point $B$ is equal to $-2$.",
+        "maximum value of $|PA - PB|$ is $2\\sqrt{10}$.",
+        "minimum value of $PA + PB$ is $2\\sqrt{34}$."
+      ],
+      "correctIndex": -1,
+      "correctIndices": [
+        0,
+        2,
+        3
+      ],
+      "correctNum": "",
+      "marks": {
+        "pos": 4,
+        "neg": 2
+      },
+      "diagram": null,
+      "explanation": "Source: Question 346",
+      "matrixAns": {}
+    },
+    {
+      "id": "q_671s1pcmmqi7rhn",
+      "text": "Consider a differentiable function $f: R \\to R$ with $f(0)=0$ and $f'(0)=1$. Which of the following statements are true for any such function $f$?",
+      "type": "MULTI",
+      "options": [
+        "$f(x)>0$ on $(0, q)$ for some positive $q$.",
+        "$f(x)$ is increasing on $(p, q)$ for some negative $p$ and some positive $q$.",
+        "There exists a differentiable function $g: R \\to R$ such that $g''(x) = f(x)$.",
+        "$f'(x)$ is continuous."
+      ],
+      "correctIndex": -1,
+      "correctIndices": [
+        0,
+        1,
+        2
+      ],
+      "correctNum": "",
+      "marks": {
+        "pos": 4,
+        "neg": 2
+      },
+      "diagram": null,
+      "explanation": "Source: Question 349",
+      "matrixAns": {}
+    },
+    {
+      "id": "q_u4y14szmmqi7rhn",
+      "text": "Matrices of order $2 \\times 2$ are formed by using the elements of the set $A = \\{-2, -1, 0, 1, 2\\}$, then probability that matrix is either symmetric or skew-symmetric, is greater than:",
+      "type": "MULTI",
+      "options": [
+        "$\\frac{1}{10}$",
+        "$\\frac{2}{10}$",
+        "$\\frac{3}{10}$",
+        "$\\frac{4}{10}$"
+      ],
+      "correctIndex": -1,
+      "correctIndices": [
+        0,
+        1
+      ],
+      "correctNum": "",
+      "marks": {
+        "pos": 4,
+        "neg": 2
+      },
+      "diagram": null,
+      "explanation": "Source: Question 496",
+      "matrixAns": {}
+    },
+    {
+      "id": "q_2yf3v53mmqi7rhn",
+      "text": "Let $E-ABCD$ be a pyramid on square base $ABCD$ where $A$ is the origin and $B$ and $D$ are lying on positive x-axis and y-axis respectively. If $E$ is $(0, 2, 3)$ and $\\vec{DE} \\cdot (\\hat{i} + \\hat{j}) = 0$, then:",
+      "type": "MULTI",
+      "options": [
+        "image of the point $D$ in the plane $ABE$ is $\\left(0, \\frac{-10}{13}, \\frac{24}{13}\\right)$",
+        "image of the point $D$ in the plane $ABE$ is $\\left(0, \\frac{-6}{13}, \\frac{30}{13}\\right)$",
+        "volume of the tetrahedron $ABDE$ is 2 cubic units",
+        "perpendicular distance of the point $D$ from the plane $ABE$ is $\\frac{9}{\\sqrt{13}}$"
+      ],
+      "correctIndex": -1,
+      "correctIndices": [
+        0,
+        2
+      ],
+      "correctNum": "",
+      "marks": {
+        "pos": 4,
+        "neg": 2
+      },
+      "diagram": null,
+      "explanation": "Source: Question 500",
+      "matrixAns": {}
+    },
+    {
+      "id": "q_d45xsyummqi7rhn",
+      "text": "If $\\int_{0}^{\\pi} \\frac{\\sin x (\\sin x + 1)e^{\\sin x + \\cos x}}{e^{\\cos x} + 1} dx = a + \\frac{b}{\\pi} \\int_{0}^{\\pi} e^{\\sin x} dx$ where $a$ and $b$ are positive rational numbers, then find the value of $100(a^2 + b^2)$.",
+      "type": "NUMERICAL",
+      "options": [],
+      "correctIndex": -1,
+      "correctIndices": [],
+      "correctNum": "125",
+      "marks": {
+        "pos": 4,
+        "neg": 1
+      },
+      "diagram": null,
+      "explanation": "Source: Question 711",
+      "matrixAns": {}
+    },
+    {
+      "id": "q_85zhxk4mmqi7rhn",
+      "text": "If $\\forall h \\in R - \\{0\\}$ 2 distinct tangents can be drawn from the points $(2 + h, 3h - 1)$ to the curve $y = x^3 - 6x^2 - a + bx$. Find the value of $\\frac{a}{b}$ (where $a$ and $b$ are co-prime).",
+      "type": "NUMERICAL",
+      "options": [],
+      "correctIndex": -1,
+      "correctIndices": [],
+      "correctNum": "1",
+      "marks": {
+        "pos": 4,
+        "neg": 1
+      },
+      "diagram": null,
+      "explanation": "Source: Question 716",
+      "matrixAns": {},
+      "_start": 14,
+      "_end": 15,
+      "_count": 2,
+      "subQuestions": [
+        {
+          "id": "0.9849332113236676",
+          "type": "SINGLE",
+          "text": "New Sub-Question",
+          "options": [
+            "Option A",
+            "Option B"
+          ],
+          "correctIndex": 0,
+          "marks": {
+            "pos": 4,
+            "neg": 1
+          }
+        },
+        {
+          "id": "0.6693410867163588",
+          "type": "SINGLE",
+          "text": "New Sub-Question",
+          "options": [
+            "Option A",
+            "Option B"
+          ],
+          "correctIndex": 0,
+          "marks": {
+            "pos": 4,
+            "neg": 1
+          }
+        }
+      ]
+    },
+    {
+      "id": "q_3yxg65cmmqi7rhn",
+      "text": "If $T_r = \\sqrt{r} \\sqrt{r+1} \\left( \\frac{4r+5}{(r+2) + \\sqrt{r^2-1}} \\right)$, then find the value of $\\frac{1}{\\sqrt{68}} \\sum_{r=1}^{16} T_r$.",
+      "type": "NUMERICAL",
+      "options": [],
+      "correctIndex": -1,
+      "correctIndices": [],
+      "correctNum": "36",
+      "marks": {
+        "pos": 4,
+        "neg": 1
+      },
+      "diagram": null,
+      "explanation": "Source: Question 788",
+      "matrixAns": {}
+    },
+    {
+      "id": "q_uh6hxppmmqi7rhn",
+      "text": "Let $z_1, z_2 \\in C$ and satisfy the equation $|z+1|^2+|z-1|^2+2|z|=6$. If maximum value of $\\left| 2|z_1-2| + |2z_2+1| \\right|$ is equal to $\\lambda$, then find the value of $4\\lambda$.",
+      "type": "NUMERICAL",
+      "options": [],
+      "correctIndex": -1,
+      "correctIndices": [],
+      "correctNum": "36",
+      "marks": {
+        "pos": 4,
+        "neg": 1
+      },
+      "diagram": null,
+      "explanation": "Source: Question 956",
+      "matrixAns": {},
+      "_start": 16,
+      "_end": 16,
+      "_count": 1
+    }
+  ]
+}
