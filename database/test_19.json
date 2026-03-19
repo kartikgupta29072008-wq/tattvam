@@ -1,0 +1,418 @@
+{
+  "id": "imported_single_s9ssuelmmxie5pb",
+  "title": "Test 19",
+  "created": "2026-03-19T18:57:43.000Z",
+  "questions": [
+    {
+      "id": "q_n460nbtmmxie5pb",
+      "text": "The value of $\\lim_{h \\to 0} \\frac{1}{h} \\int_{1}^{1+2h} e^{\\sqrt{x}} \\sin\\left(\\frac{\\pi x}{3}\\right) dx$ equals:",
+      "type": "SINGLE",
+      "options": [
+        "$\\sin\\frac{\\pi}{3}$",
+        "$4e\\sin\\frac{\\pi}{3}$",
+        "$e\\sin\\frac{\\pi}{3}$",
+        "$2e\\sin\\frac{\\pi}{3}$"
+      ],
+      "correctIndex": 3,
+      "correctIndices": [],
+      "correctNum": "",
+      "marks": {
+        "pos": 3,
+        "neg": 1
+      },
+      "diagram": null,
+      "explanation": "Source: Question 31",
+      "matrixAns": {}
+    },
+    {
+      "id": "q_ym05gr0mmxie5pb",
+      "text": "If $f(x)$ is a differentiable function defined for all positive real numbers such that $xf(x) = x + \\int_{1}^{x} f(t) dt$, then the value of $\\sum_{k=1}^{10} f(e^k)$ is:",
+      "type": "SINGLE",
+      "options": [
+        "45",
+        "55",
+        "65",
+        "75"
+      ],
+      "correctIndex": 2,
+      "correctIndices": [],
+      "correctNum": "",
+      "marks": {
+        "pos": 3,
+        "neg": 1
+      },
+      "diagram": null,
+      "explanation": "Source: Question 35",
+      "matrixAns": {}
+    },
+    {
+      "id": "q_bwv7rzhmmxie5pc",
+      "text": "If $f(x) = \\int_{2}^{x} \\frac{dt}{1+t^4}$, then:",
+      "type": "SINGLE",
+      "options": [
+        "$f(3) < \\frac{1}{17}$",
+        "$f(3) > \\frac{1}{17}$",
+        "$f(3) = \\frac{1}{17}$",
+        "$f(3) > 1$"
+      ],
+      "correctIndex": 0,
+      "correctIndices": [],
+      "correctNum": "",
+      "marks": {
+        "pos": 3,
+        "neg": 1
+      },
+      "diagram": null,
+      "explanation": "Source: Question 79",
+      "matrixAns": {}
+    },
+    {
+      "id": "q_n939vodmmxie5pc",
+      "text": "The solution of the differential equation $y^2 dx + (x^2 - xy + y^2)dy = 0$, is:<br>*[Note: Where C is constant of integration.]*",
+      "type": "SINGLE",
+      "options": [
+        "$\\tan^{-1}\\left(\\frac{x}{y}\\right) + \\ln y + C = 0$",
+        "$2\\tan^{-1}\\left(\\frac{x}{y}\\right) + \\ln y + C = 0$",
+        "$\\ln(y + \\sqrt{x^2+y^2}) + \\ln y + C = 0$",
+        "$\\ln(y + \\sqrt{x^2+y^2}) + C = 0$"
+      ],
+      "correctIndex": 0,
+      "correctIndices": [],
+      "correctNum": "",
+      "marks": {
+        "pos": 3,
+        "neg": 1
+      },
+      "diagram": null,
+      "explanation": "Source: Question 98",
+      "matrixAns": {}
+    },
+    {
+      "id": "q_gtxzphdmmxie5pc",
+      "text": "Assume that $f$ is continuous on $[a, b], a > 0$ and differentiable on $(a, b)$. If $\\frac{f(a)}{a} = \\frac{f(b)}{b}$, then there exists $x_0 \\in (a, b)$ such that:",
+      "type": "SINGLE",
+      "options": [
+        "$x_0 f'(x_0) = f(x_0)$",
+        "$f'(x_0) + x_0 f(x_0) = 0$",
+        "$x_0 f'(x_0) + f(x_0) = 0$",
+        "$f'(x_0) = x_0^2 f(x_0)$"
+      ],
+      "correctIndex": 0,
+      "correctIndices": [],
+      "correctNum": "",
+      "marks": {
+        "pos": 3,
+        "neg": 1
+      },
+      "diagram": null,
+      "explanation": "Source: Question 105",
+      "matrixAns": {}
+    },
+    {
+      "id": "q_shicepummxie5pc",
+      "text": "In a non constant arithmetic progression having odd number of terms, having positive integral common difference, the ratio of the sum of the $1^{\\text{st}}, 3^{\\text{rd}}, 5^{\\text{th}}, 7^{\\text{th}}, \\dots$ terms to the sum of remaining terms is $13 : 12$, then the number of terms in the arithmetic progression, is:",
+      "type": "SINGLE",
+      "options": [
+        "21",
+        "23",
+        "25",
+        "27"
+      ],
+      "correctIndex": 2,
+      "correctIndices": [],
+      "correctNum": "",
+      "marks": {
+        "pos": 3,
+        "neg": 1
+      },
+      "diagram": null,
+      "explanation": "Source: Question 216",
+      "matrixAns": {}
+    },
+    {
+      "id": "q_jrl2e48mmxie5pc",
+      "text": "$S = \\{1, 2, 3\\}, f: S \\to S$ satisfies the property : $\\forall x \\in S, f(f(x)) = f(x)$. How many different functions are there for $f(x)$?",
+      "type": "SINGLE",
+      "options": [
+        "8",
+        "10",
+        "1",
+        "4"
+      ],
+      "correctIndex": 1,
+      "correctIndices": [],
+      "correctNum": "",
+      "marks": {
+        "pos": 3,
+        "neg": 1
+      },
+      "diagram": null,
+      "explanation": "Source: Question 268",
+      "matrixAns": {}
+    },
+    {
+      "id": "q_0zfnjktmmxie5pc",
+      "text": "If the equation of the plane passing through the point $(-1, 2, 0)$ and parallel to the lines $\\frac{x}{3} = \\frac{y+1}{0} = \\frac{z-2}{-1}$ and $\\frac{x-1}{1} = \\frac{y+1}{2} = \\frac{z+1}{-1}$ is $ax + by + cz = 1$, then the value of $(a+b+c)$, is:",
+      "type": "SINGLE",
+      "options": [
+        "3",
+        "4",
+        "5",
+        "10"
+      ],
+      "correctIndex": 2,
+      "correctIndices": [],
+      "correctNum": "",
+      "marks": {
+        "pos": 3,
+        "neg": 1
+      },
+      "diagram": null,
+      "explanation": "Source: Question 298",
+      "matrixAns": {}
+    },
+    {
+      "id": "q_hxd3q8lmmxie5pc",
+      "text": "If $\\cos^2 x - a\\sin x + b = 0$ has only one solution in $[0, \\pi]$. Then:",
+      "type": "MULTI",
+      "options": [
+        "$a \\in (-\\infty, -2] \\cup (-1, \\infty)$",
+        "$a \\neq b$",
+        "$a = b$",
+        "$b \\in (-\\infty, -2] \\cup (-1, \\infty)$"
+      ],
+      "correctIndex": -1,
+      "correctIndices": [
+        0,
+        2,
+        3
+      ],
+      "correctNum": "",
+      "marks": {
+        "pos": 4,
+        "neg": 2
+      },
+      "diagram": null,
+      "explanation": "Source: Question 345",
+      "matrixAns": {}
+    },
+    {
+      "id": "q_idf2lu2mmxie5pc",
+      "text": "In triangle $ABC$, let $a, b, c$ be the length of sides opposite to angles $A, B, C$ respectively and $2s = a+b+c$. If $\\frac{s-a}{4} = \\frac{s-b}{3} = \\frac{s-c}{2}$ and area of circle inscribed in triangle $ABC$ is $\\frac{8\\pi}{3}$, then:",
+      "type": "MULTI",
+      "options": [
+        "the area of $\\Delta ABC$ is equal to $6\\sqrt{6}$",
+        "circumradius of $\\Delta ABC$ is equal to $\\frac{35}{2\\sqrt{6}}$",
+        "angle $A$ is equal to $\\cos^{-1}\\left(\\frac{5}{7}\\right)$",
+        "the value of $\\frac{8\\sin^2\\left(\\frac{A+B}{2}\\right)}{21\\sin\\left(\\frac{A}{2}\\right)\\sin\\left(\\frac{B}{2}\\right)\\sin\\left(\\frac{C}{2}\\right)}$ is equal to 2"
+      ],
+      "correctIndex": -1,
+      "correctIndices": [
+        0,
+        2,
+        3
+      ],
+      "correctNum": "",
+      "marks": {
+        "pos": 4,
+        "neg": 2
+      },
+      "diagram": null,
+      "explanation": "Source: Question 380",
+      "matrixAns": {}
+    },
+    {
+      "id": "q_nt3abc2mmxie5pc",
+      "text": "If words are formed using all the letters of the word 'CHITRANJEEVI', then:",
+      "type": "MULTI",
+      "options": [
+        "number of words in which all vowels are separated is $7! \\times ^8C_5 \\times \\frac{5!}{2!2!}$",
+        "number of words in which vowels appear in alphabetical order is $\\frac{12!}{5!}$",
+        "number of words which contains the word 'CHITRA' is $\\frac{7!}{2!}$",
+        "number of words which contains the word 'IITJEE' is $7!$"
+      ],
+      "correctIndex": -1,
+      "correctIndices": [
+        0,
+        1,
+        2
+      ],
+      "correctNum": "",
+      "marks": {
+        "pos": 4,
+        "neg": 2
+      },
+      "diagram": null,
+      "explanation": "Source: Question 443",
+      "matrixAns": {}
+    },
+    {
+      "id": "q_knypyqcmmxie5pc",
+      "text": "Let $L$ be a straight line passing through origin. Suppose that all the points on $L$ are at constant distance from the two planes $P_1 : x + 3y - z + 1 = 0$ and $P_2 : 3x - y + z - 1 = 0$ then which of the following points lie(s) on the line $L$:",
+      "type": "MULTI",
+      "options": [
+        "$(1, -2, -5)$",
+        "$(1, -2, 5)$",
+        "$(-1, -2, 5)$",
+        "$(-1, 2, 5)$"
+      ],
+      "correctIndex": -1,
+      "correctIndices": [
+        0,
+        3
+      ],
+      "correctNum": "",
+      "marks": {
+        "pos": 4,
+        "neg": 2
+      },
+      "diagram": null,
+      "explanation": "Source: Question 498",
+      "matrixAns": {}
+    },
+    {
+      "id": "q_y3nbi9jmmxie5pc",
+      "text": "An ellipse with eccentricity $\\frac{1}{2}$ passes through $P(3, 4)$ whose nearer focus is $S(0, 0)$ and equation of tangent at $P$ on ellipse is $3x + 4y - 25 = 0$. If a chord through $S$ parallel to tangent at $P$ intersects the ellipse at $A$ and $B$ then:",
+      "type": "MULTI",
+      "options": [
+        "length of $AB$ is 15",
+        "length of latus rectum of ellipse is 15",
+        "focal length of ellipse is 10",
+        "centre of ellipse is $(-3, -4)$"
+      ],
+      "correctIndex": -1,
+      "correctIndices": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "correctNum": "",
+      "marks": {
+        "pos": 4,
+        "neg": 2
+      },
+      "diagram": null,
+      "explanation": "Source: Question 508",
+      "matrixAns": {}
+    },
+    {
+      "id": "q_qrrf1dnmmxie5pc",
+      "text": "$D-ABC$ is a tetrahedron with $A = (2, 0, 0), B = (0, 4, 0)$ and $CD = \\sqrt{14}$. Edge $CD$ lies on the line $\\frac{x-1}{1} = \\frac{y-1}{2} = \\frac{z-3}{3}$. If locus of centroid of tetrahedron is $\\frac{x-\\frac{3}{2}}{1} = \\frac{y-y_1}{a} = \\frac{z-z_1}{b}$, then which of the following is/are true:",
+      "type": "MULTI",
+      "options": [
+        "$a+b=5$",
+        "$y_1+z_1=6$",
+        "$y_1-z_1=1$",
+        "$a+b+y_1=8$"
+      ],
+      "correctIndex": -1,
+      "correctIndices": [
+        0,
+        1,
+        3
+      ],
+      "correctNum": "",
+      "marks": {
+        "pos": 4,
+        "neg": 2
+      },
+      "diagram": null,
+      "explanation": "Source: Question 511",
+      "matrixAns": {}
+    },
+    {
+      "id": "q_5mklbs2mmxie5pc",
+      "text": "Let $P = \\begin{bmatrix} 1 & 1 & 0 \\\\ 0 & 1 & 0 \\\\ 0 & 1 & 1 \\end{bmatrix}$ and $Q$ be an orthogonal matrix of order $3 \\times 3$. Let $A = P^{2018}$ and $B = Q P Q^T$, then which of the following is/are correct?",
+      "type": "MULTI",
+      "options": [
+        "Trace of matrix $A$ is 3",
+        "$Q^T B^{2018} Q = A$",
+        "$\\det(B^5)=1$",
+        "$\\det(\\text{adj}(A)) = \\det(\\text{adj}(B))$"
+      ],
+      "correctIndex": -1,
+      "correctIndices": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "correctNum": "",
+      "marks": {
+        "pos": 4,
+        "neg": 2
+      },
+      "diagram": null,
+      "explanation": "Source: Question 533",
+      "matrixAns": {}
+    },
+    {
+      "id": "q_c1zdhqmmmxie5pc",
+      "text": "If $8\\alpha^3 + \\beta^3 - \\gamma^3 + 6\\alpha\\beta\\gamma = 0$ and $\\alpha^2 + 3\\gamma = 2\\beta$ where $\\alpha, \\beta, \\gamma \\in R$ and $\\beta + \\gamma \\neq 0$, then find the largest integral value of $\\gamma$.",
+      "type": "NUMERICAL",
+      "options": [],
+      "correctIndex": -1,
+      "correctIndices": [],
+      "correctNum": "4",
+      "marks": {
+        "pos": 4,
+        "neg": 1
+      },
+      "diagram": null,
+      "explanation": "Source: Question 847",
+      "matrixAns": {}
+    },
+    {
+      "id": "q_oo2377ymmxie5pc",
+      "text": "If the number of ways in which 5 Apples, 5 Bananas, 5 Chickoos and 5 Oranges (fruits of the same species are alike) can be distributed equally among five persons so that exactly 2 of them get all 4 identical fruits and each of the remaining persons gets exactly 2 kind of fruits, is $N$ then find the sum of the digits in $N$.",
+      "type": "NUMERICAL",
+      "options": [],
+      "correctIndex": -1,
+      "correctIndices": [],
+      "correctNum": "9",
+      "marks": {
+        "pos": 4,
+        "neg": 1
+      },
+      "diagram": null,
+      "explanation": "Source: Question 880",
+      "matrixAns": {}
+    },
+    {
+      "id": "q_ve21r70mmxie5pc",
+      "text": "Let $A_r, r = 1, 2, \\dots, 29$ be arithmetic means between 303 and $-57$ where $A_r > A_{r+1} \\forall r = 1, 2, \\dots, 28$. If $S$ be the sum of these means, then the value of $\\left[ \\frac{S}{(A_{14} - 12) |A_r|_{\\text{min}}} \\right]$.<br>*[Note: $[k]$ denotes greatest integer less than or equal to $k$ and $|A_r|_{\\text{min}}$ denotes the minimum value of $|A_r|$.]*",
+      "type": "NUMERICAL",
+      "options": [],
+      "correctIndex": -1,
+      "correctIndices": [],
+      "correctNum": "9",
+      "marks": {
+        "pos": 4,
+        "neg": 1
+      },
+      "diagram": null,
+      "explanation": "Source: Question 897",
+      "matrixAns": {}
+    },
+    {
+      "id": "q_uxlti6ommxie5pc",
+      "text": "If $f$ and $g$ are two functions such that $2f(1) = g(2) = 4$ and $2f(9) = g(10) = 20$ and $\\int_{0}^{2} (x^2 g(f(x^3+1))f'(x^3+1) - 3x^2) dx = 0$, then find the value of $\\int_{4}^{20} g^{-1}(x)dx$.",
+      "type": "NUMERICAL",
+      "options": [],
+      "correctIndex": -1,
+      "correctIndices": [],
+      "correctNum": "168",
+      "marks": {
+        "pos": 4,
+        "neg": 1
+      },
+      "diagram": null,
+      "explanation": "Source: Question 911",
+      "matrixAns": {},
+      "_start": 19,
+      "_end": 19,
+      "_count": 1
+    }
+  ]
+}
