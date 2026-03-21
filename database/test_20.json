@@ -1,0 +1,352 @@
+{
+  "id": "imported_single_ak8amc3mmxijxru",
+  "title": "Test 20",
+  "created": "2026-03-19T19:02:42.000Z",
+  "questions": [
+    {
+      "id": "q_c4lwhozmmxijxrv",
+      "text": "If $A$ and $B$ are two equivalence relations defined on set $C$, then which of the following is always true?",
+      "type": "SINGLE",
+      "options": [
+        "$A \\cap B$ is an equivalence relation",
+        "$A \\cap B$ is not an equivalence relation",
+        "$A \\cup B$ is an equivalence relation",
+        "$A \\cup B$ is not an equivalence relation"
+      ],
+      "correctIndex": 0,
+      "correctIndices": [],
+      "correctNum": "",
+      "marks": {
+        "pos": 3,
+        "neg": 1
+      },
+      "diagram": null,
+      "explanation": "Source: Question 51",
+      "matrixAns": {}
+    },
+    {
+      "id": "q_fnhhjxvmmxijxrv",
+      "text": "A stone is dropped into a quiet lake and waves move in circles at the speed of $5 \\text{ cm/sec}$. At that instant, when the radius of circular wave is $8 \\text{ cm}$, the rate of increase of enclosed area is:",
+      "type": "SINGLE",
+      "options": [
+        "$6\\pi \\text{ cm}^2/\\text{sec}$",
+        "$8\\pi \\text{ cm}^2/\\text{sec}$",
+        "$\\frac{8\\pi}{3} \\text{ cm}^2/\\text{sec}$",
+        "$80\\pi \\text{ cm}^2/\\text{sec}$"
+      ],
+      "correctIndex": 3,
+      "correctIndices": [],
+      "correctNum": "",
+      "marks": {
+        "pos": 3,
+        "neg": 1
+      },
+      "diagram": null,
+      "explanation": "Source: Question 65",
+      "matrixAns": {}
+    },
+    {
+      "id": "q_n80zpl7mmxijxrv",
+      "text": "If $A$ is an idempotent matrix satisfying $(I - 0.4 A)^{-1} = I - \\alpha A$, where $I$ is unit matrix of the same order as that of $A$, then the value of $\\alpha$ is:",
+      "type": "SINGLE",
+      "options": [
+        "$\\frac{-1}{3}$",
+        "$\\frac{1}{3}$",
+        "$\\frac{-2}{3}$",
+        "$\\frac{2}{3}$"
+      ],
+      "correctIndex": 2,
+      "correctIndices": [],
+      "correctNum": "",
+      "marks": {
+        "pos": 3,
+        "neg": 1
+      },
+      "diagram": null,
+      "explanation": "Source: Question 93",
+      "matrixAns": {}
+    },
+    {
+      "id": "q_lgx6iznmmxijxrv",
+      "text": "If $N = \\sqrt{9\\cos^2\\theta + 16\\sin^2\\theta} + \\sqrt{16\\cos^2\\theta + 9\\sin^2\\theta}$, then the sum of the maximum and minimum value of $N^2$ is:",
+      "type": "SINGLE",
+      "options": [
+        "49",
+        "50",
+        "99",
+        "100"
+      ],
+      "correctIndex": 2,
+      "correctIndices": [],
+      "correctNum": "",
+      "marks": {
+        "pos": 3,
+        "neg": 1
+      },
+      "diagram": null,
+      "explanation": "Source: Question 186",
+      "matrixAns": {}
+    },
+    {
+      "id": "q_gsky2gjmmxijxrv",
+      "text": "For three concentric circle $C_1, C_2$ and $C_3$ with radius $1, r$ and $9$ respectively. If from a point $A$ on $C_3$ a pair of tangents to circle $C_2$ are drawn to touch at $B$ and $C$ such that $BC$ is tangent to circle $C_1$, then the value of $10r$, is [where $1 < r < 9$]:",
+      "type": "SINGLE",
+      "options": [
+        "30",
+        "40",
+        "50",
+        "60"
+      ],
+      "correctIndex": 0,
+      "correctIndices": [],
+      "correctNum": "",
+      "marks": {
+        "pos": 3,
+        "neg": 1
+      },
+      "diagram": null,
+      "explanation": "Source: Question 187",
+      "matrixAns": {}
+    },
+    {
+      "id": "q_7b2r28jmmxijxrv",
+      "text": "Let $A = [a_{ij}]$ be a matrix of order 3 where $a_{ij} = \\begin{cases} 0, & i=j \\\\ (i+2j-3)x, & i>j \\\\ i, & i<j \\end{cases}$.\nIf $f(x) = \\det(A)$, then which of the following is(are) correct statement(s)?",
+      "type": "MULTI",
+      "options": [
+        "$\\int_{-1}^1 f(x) dx = \\frac{8}{3}$",
+        "$|f(|x|)|$ is non-differentiable at 2 points",
+        "$f(|x|) = k$ has four distinct solution for $k \\in (0, \\frac{1}{4})$",
+        "$\\int_0^1 \\frac{dx}{f(x)+2x+1} = \\frac{1}{3}$"
+      ],
+      "correctIndex": -1,
+      "correctIndices": [
+        0,
+        2,
+        3
+      ],
+      "correctNum": "",
+      "marks": {
+        "pos": 4,
+        "neg": 2
+      },
+      "diagram": null,
+      "explanation": "Source: Question 545",
+      "matrixAns": {}
+    },
+    {
+      "id": "q_gtn1mf3mmxijxrv",
+      "text": "If $P(t) = \\lim_{n \\to \\infty} \\sum_{r=2}^{n} \\frac{\\sqrt{t^{2r-3}}(1-t)}{(\\sqrt{t^{2r-1}}+1)(\\sqrt{t^{2r-3}}+1)}$, then $P\\left(\\frac{1}{2}\\right)$ lies in the interval:",
+      "type": "MULTI",
+      "options": [
+        "$\\left(0, \\sin\\frac{\\pi}{6}\\right)$",
+        "$\\left(0, \\tan\\frac{\\pi}{4}\\right)$",
+        "$\\left(\\tan\\frac{\\pi}{4}, \\tan\\frac{\\pi}{3}\\right)$",
+        "$\\left(\\cos\\frac{\\pi}{6}, \\cos\\frac{\\pi}{3}\\right)$"
+      ],
+      "correctIndex": -1,
+      "correctIndices": [
+        0,
+        1
+      ],
+      "correctNum": "",
+      "marks": {
+        "pos": 4,
+        "neg": 2
+      },
+      "diagram": null,
+      "explanation": "Source: Question 555",
+      "matrixAns": {},
+      "_start": 7,
+      "_end": 7,
+      "_count": 1
+    },
+    {
+      "id": "q_ic21rwummxijxrv",
+      "text": "Let $I_1 = \\int_0^1 \\sin^{-1}\\left(\\frac{x}{\\sqrt{1+x^2}}\\right)dx ; I_2 = \\int_0^1 \\cos^{-1}\\left(\\frac{x}{\\sqrt{1+x^2}}\\right)dx$ and\n$I_3 = \\lim_{n \\to \\infty} \\left(\\frac{1}{n+1} + \\frac{1}{n+2} + \\dots + \\frac{1}{2n}\\right)$, then:",
+      "type": "MULTI",
+      "options": [
+        "$I_1 + I_3 = I_2$",
+        "$I_1 + I_2 + I_3 = \\ln 2$",
+        "$I_2 + I_3 = I_1$",
+        "$I_1 + I_2 + I_3 = \\frac{\\pi}{2} + \\ln 2$"
+      ],
+      "correctIndex": -1,
+      "correctIndices": [
+        0,
+        3
+      ],
+      "correctNum": "",
+      "marks": {
+        "pos": 4,
+        "neg": 2
+      },
+      "diagram": null,
+      "explanation": "Source: Question 557",
+      "matrixAns": {}
+    },
+    {
+      "id": "q_43jhncrmmxijxrv",
+      "text": "Which of the following is(are) correct?",
+      "type": "MULTI",
+      "options": [
+        "If $A$ and $B$ are two square matrices of order 3 and $A$ is a non-singular matrix such that $AB=O$, then $B$ must be a null matrix.",
+        "If $A, B, C$ are three square matrices of order 2 and $\\det(A)=2, \\det(B)=3, \\det(C)=4$, then the value of $\\det(3ABC)$ is 216.",
+        "If $A$ is a square matrix of order 3 and $\\det(A)=\\frac{1}{2}$, then $\\det(\\text{adj } A^{-1})$ is 8.",
+        "Every skew symmetric matrix is singular."
+      ],
+      "correctIndex": -1,
+      "correctIndices": [
+        0,
+        1
+      ],
+      "correctNum": "",
+      "marks": {
+        "pos": 4,
+        "neg": 2
+      },
+      "diagram": null,
+      "explanation": "Source: Question 573",
+      "matrixAns": {}
+    },
+    {
+      "id": "q_pnrhbptmmxijxrv",
+      "text": "Let $z$ satisfies $z\\bar{z} + (-4+5i)\\bar{z} + (-4-5i)z - 40 = 0$. If $a = \\max |z+2-3i|$ and $b = \\min |z+2-3i|$, then:",
+      "type": "MULTI",
+      "options": [
+        "$a+b=20$",
+        "$a^2+b^2=362$",
+        "$a-b=18$",
+        "$ab=19$"
+      ],
+      "correctIndex": -1,
+      "correctIndices": [
+        1,
+        2,
+        3
+      ],
+      "correctNum": "",
+      "marks": {
+        "pos": 4,
+        "neg": 2
+      },
+      "diagram": null,
+      "explanation": "Source: Question 574",
+      "matrixAns": {}
+    },
+    {
+      "id": "q_10kiz0wmmxijxrv",
+      "text": "If sum of reciprocal of radii of all the circles which touches all the lines represented by the equation $x^2y - 2xy^2 - 4xy = 0$ is $k\\left(1 + \\cos \\frac{2\\pi}{p}\\right)$, where $k, p \\in N$, then find the value of $(k + p)$.",
+      "type": "NUMERICAL",
+      "options": [],
+      "correctIndex": -1,
+      "correctIndices": [],
+      "correctNum": "7",
+      "marks": {
+        "pos": 4,
+        "neg": 1
+      },
+      "diagram": null,
+      "explanation": "Source: Question 917",
+      "matrixAns": {}
+    },
+    {
+      "id": "q_15gm92smmxijxrv",
+      "text": "If $A$ and $B$ are square matrices of order 3 such that $2(A+B) = A^T + B^T + 3I$ and $AA^T = 4I$, then find the value of $\\det(12A^{-1} - BA^T + I)$.\n*[Note: $I$ is an identity matrix of order 3 and $P^T$ denotes the transpose matrix of matrix $P$.]*",
+      "type": "NUMERICAL",
+      "options": [],
+      "correctIndex": -1,
+      "correctIndices": [],
+      "correctNum": "125",
+      "marks": {
+        "pos": 4,
+        "neg": 1
+      },
+      "diagram": null,
+      "explanation": "Source: Question 921",
+      "matrixAns": {}
+    },
+    {
+      "id": "q_lgh0m3nmmxijxrv",
+      "text": "Let $A(x_1, y_1), B(x_2, y_2)$ and $C(x_3, y_3)$ be the vertices of a triangle such that algebraic sum of perpendicular distance from $A, B$ and $C$ to the variable line $ax + by + c = 0$ is always '0'. If $3a + 2b + c = 0$, then find the value of $\\sum_{i=1}^3 (x_i + y_i)$.",
+      "type": "NUMERICAL",
+      "options": [],
+      "correctIndex": -1,
+      "correctIndices": [],
+      "correctNum": "15",
+      "marks": {
+        "pos": 4,
+        "neg": 1
+      },
+      "diagram": null,
+      "explanation": "Source: Question 948",
+      "matrixAns": {}
+    },
+    {
+      "id": "q_flfn8ofmmxijxrv",
+      "text": "Let $f: A \\to A$ where $A = \\{1, 2, 3, 4, 5, 6, 7\\}$, then number of functions $f$ such that $f(f(f(x))) = x \\forall x \\in A$, is:",
+      "type": "NUMERICAL",
+      "options": [],
+      "correctIndex": -1,
+      "correctIndices": [],
+      "correctNum": "351",
+      "marks": {
+        "pos": 4,
+        "neg": 1
+      },
+      "diagram": null,
+      "explanation": "Source: Question 960",
+      "matrixAns": {}
+    },
+    {
+      "id": "q_3yg5zlpmmxijxrv",
+      "text": "Find the least value of the function $y = x^2e^{-x} + 4 - \\sqrt{4-x^2}$.",
+      "type": "NUMERICAL",
+      "options": [],
+      "correctIndex": -1,
+      "correctIndices": [],
+      "correctNum": "2",
+      "marks": {
+        "pos": 4,
+        "neg": 1
+      },
+      "diagram": null,
+      "explanation": "Source: Question 976",
+      "matrixAns": {}
+    },
+    {
+      "id": "q_bohlsyymmxijxrv",
+      "text": "If $\\lim_{n \\to \\infty} \\left( \\frac{1}{\\sqrt{n}\\sqrt{n+1}} + \\frac{1}{\\sqrt{n}\\sqrt{n+2}} + \\dots + \\frac{1}{\\sqrt{n}\\sqrt{n+n}} \\right)$ is equal to $a\\sqrt{b} - \\frac{c}{d}$, where $a, b, c$ and $d$ are positive integer, $c$ and $d$ are co-prime. Find the value of $(a^4 + b^3 + c^2 + d)$.",
+      "type": "NUMERICAL",
+      "options": [],
+      "correctIndex": -1,
+      "correctIndices": [],
+      "correctNum": "29",
+      "marks": {
+        "pos": 4,
+        "neg": 1
+      },
+      "diagram": null,
+      "explanation": "Source: Question 987",
+      "matrixAns": {}
+    },
+    {
+      "id": "q_1nq037gmmxijxrv",
+      "text": "Given the function $f(x) = e^{2x} + (1-a x^2)e^x - a x^2 \\ (a \\in R)$. If equation: $f(x) = 0$ has three distinct roots, GIF of minimum value of $a$ is.",
+      "type": "NUMERICAL",
+      "options": [],
+      "correctIndex": -1,
+      "correctIndices": [],
+      "correctNum": "1",
+      "marks": {
+        "pos": 4,
+        "neg": 1
+      },
+      "diagram": null,
+      "explanation": "Source: Question 993",
+      "matrixAns": {},
+      "_start": 17,
+      "_end": 17,
+      "_count": 1
+    }
+  ]
+}
