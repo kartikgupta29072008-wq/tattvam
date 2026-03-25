@@ -1,0 +1,386 @@
+{
+  "id": "imported_single_wicuc77mmxivzcr",
+  "title": "Test 21",
+  "created": "2026-03-19T19:07:42.000Z",
+  "questions": [
+    {
+      "id": "q_phdg9l0mmxivzcr",
+      "text": "Let $ABCD$ be a parallelogram, the equations of whose diagonals are $AC: x + 2y - 3 = 0$ and $BD: 2x + y - 3 = 0$. If the length of the diagonal $AC = 4$ units and the area of the parallelogram $[ABCD] = 8$ square units. The length of side $BD$, is:",
+      "type": "SINGLE",
+      "options": [
+        "$\\frac{20}{3}$",
+        "$5$",
+        "$\\frac{10}{3}$",
+        "$2$"
+      ],
+      "correctIndex": 0,
+      "correctIndices": [],
+      "correctNum": "",
+      "marks": {
+        "pos": 3,
+        "neg": 1
+      },
+      "diagram": null,
+      "explanation": "Source: Question 224",
+      "matrixAns": {}
+    },
+    {
+      "id": "q_99k44aummxivzcr",
+      "text": "Let $A = \\{1, 2, 3, 4, 5, 6, 7\\}$. The number of surjective functions defined from $A$ to $A$ such that $f(i) = i$ for atleast four values of $i$ from $i = 1, 2, \\dots, 7$, is:",
+      "type": "SINGLE",
+      "options": [
+        "$7!$",
+        "$92$",
+        "$126$",
+        "$407$"
+      ],
+      "correctIndex": 1,
+      "correctIndices": [],
+      "correctNum": "",
+      "marks": {
+        "pos": 3,
+        "neg": 1
+      },
+      "diagram": null,
+      "explanation": "Source: Question 233",
+      "matrixAns": {}
+    },
+    {
+      "id": "q_lxay1bhmmxivzcr",
+      "text": "Lot $A$ consists of 5 good and 3 defective articles. Lot $B$ consists of 3 good and 5 defective articles. A new lot $C$ is formed by taking 3 articles from $A$ and 4 articles from $B$. The probability that an article chosen at random from $C$ is defective, is:",
+      "type": "SINGLE",
+      "options": [
+        "$\\frac{1}{3}$",
+        "$\\frac{2}{5}$",
+        "$\\frac{29}{56}$",
+        "none of these"
+      ],
+      "correctIndex": 2,
+      "correctIndices": [],
+      "correctNum": "",
+      "marks": {
+        "pos": 3,
+        "neg": 1
+      },
+      "diagram": null,
+      "explanation": "Source: Question 292",
+      "matrixAns": {}
+    },
+    {
+      "id": "q_ioylcgvmmxivzcr",
+      "text": "Let $S$ be a circle with centre $O$ and radius 2. $A$ and $B$ be two points on the circle. $\\angle AOB = x$, tangents at $A$ and $B$ intersect at $D$ and $OA$ and $BD$ intersect at $C$. Then which of the following must be correct?",
+      "type": "MULTI",
+      "options": [
+        "$\\lim_{x \\to 0} \\frac{\\text{Area}(\\Delta OBC)}{\\text{Area}(\\Delta OAB)} = 1$",
+        "$\\lim_{x \\to 0} \\frac{\\text{Area}(\\Delta OBC)}{\\text{Area}(\\Delta OAB)} = 2$",
+        "$\\lim_{x \\to 0} \\frac{\\text{Area}(\\Delta ADB)}{(\\text{Area}(\\Delta OAB))^3} = \\frac{1}{16}$",
+        "$\\lim_{x \\to 0} \\frac{\\text{Area}(\\Delta ADB)}{(\\text{Area}(\\Delta OAB))^3} = \\frac{1}{4}$"
+      ],
+      "correctIndex": -1,
+      "correctIndices": [
+        0,
+        2
+      ],
+      "correctNum": "",
+      "marks": {
+        "pos": 4,
+        "neg": 2
+      },
+      "diagram": null,
+      "explanation": "Source: Question 464",
+      "matrixAns": {}
+    },
+    {
+      "id": "q_jfpbp9rmmxivzcr",
+      "text": "Let $a, b$ and $b - 2$ are the first three terms (in order) of a G.P. where $a, b \\in N$. Identify which of the following statement(s) is(are) correct?",
+      "type": "MULTI",
+      "options": [
+        "If $a \\in [1,8]$, then $r = \\frac{1}{2}$",
+        "If $a \\in [1,8]$, then $S_\\infty = 16$",
+        "If $a \\in (8, 11]$, then $S_\\infty$ can be equal to 27",
+        "If $a \\in (1, 8]$, then $S_\\infty = \\frac{27}{2}$"
+      ],
+      "correctIndex": -1,
+      "correctIndices": [
+        0,
+        1,
+        2
+      ],
+      "correctNum": "",
+      "marks": {
+        "pos": 4,
+        "neg": 2
+      },
+      "diagram": null,
+      "explanation": "Source: Question 474",
+      "matrixAns": {},
+      "_start": 5,
+      "_end": 5,
+      "_count": 1
+    },
+    {
+      "id": "q_ryp6h0fmmxivzcr",
+      "text": "A contest consisting of ranking 10 songs of which 6 are Indian classic and 4 are western songs. Number of ways of ranking so that:",
+      "type": "MULTI",
+      "options": [
+        "there are exactly 3 indian classic songs in top 5 is $(5!)^3$",
+        "top rank goes to indian classic song is $6 \\cdot 9!$",
+        "the ranks of all western songs are consecutive is $4! \\cdot 7!$",
+        "the 6 indian classic songs are in a specified order is $^{10}P_4$"
+      ],
+      "correctIndex": -1,
+      "correctIndices": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "correctNum": "",
+      "marks": {
+        "pos": 4,
+        "neg": 2
+      },
+      "diagram": null,
+      "explanation": "Source: Question 509",
+      "matrixAns": {}
+    },
+    {
+      "id": "q_355rn4nmmxivzcr",
+      "text": "In $\\Delta ABC$, $AB=c, BC=a$ and $CA=b$ and $b^2, a^2$ and $c^2$ are in A.P. such that $a=2$ and point $A$ is variable point. $\\angle CAB = \\theta$, length of median drawn from $A$ to $BC$ is '$L$'. Then which of following is/are must be correct?",
+      "type": "MULTI",
+      "options": [
+        "$L = \\sqrt{3}$",
+        "locus of $A$ is circle",
+        "$\\cos\\theta$ must be positive",
+        "$\\cot A, \\cot B$ and $\\cot C$ in A.P."
+      ],
+      "correctIndex": -1,
+      "correctIndices": [
+        0,
+        1,
+        2
+      ],
+      "correctNum": "",
+      "marks": {
+        "pos": 4,
+        "neg": 2
+      },
+      "diagram": null,
+      "explanation": "Source: Question 546",
+      "matrixAns": {}
+    },
+    {
+      "id": "q_9vs5g6ymmxivzcr",
+      "text": "Let $a, b, c$ (in order) be the first three terms of a sequence and satisfying $\\log\\left(\\frac{8b^3 - a^3 - c^3}{6abc}\\right) = 0$ and $\\log b = \\log(a^2 - 4) = \\log(c - 2)$. If $T_n$ and $S_n$ denote $n^{\\text{th}}$ term and sum of first $n$ terms of the sequence, then:",
+      "type": "MULTI",
+      "options": [
+        "$T_{10} = 31$",
+        "$S_{10} = 120$",
+        "$T_{21}^2 - 2T_{21}T_1 + 2T_1^2 = 1609$",
+        "$S_{11} - S_{10} = 23$"
+      ],
+      "correctIndex": -1,
+      "correctIndices": [
+        1,
+        2,
+        3
+      ],
+      "correctNum": "",
+      "marks": {
+        "pos": 4,
+        "neg": 2
+      },
+      "diagram": null,
+      "explanation": "Source: Question 556",
+      "matrixAns": {}
+    },
+    {
+      "id": "q_2yhz7aemmxivzcr",
+      "text": "If graph of $xy=1$ is reflected in $y=2x$ to give the graph $12x^2 + rxy + sy^2 + t = 0$ then:",
+      "type": "MULTI",
+      "options": [
+        "$r=1, s=12, t=25$",
+        "$r=-1, s=12, t=1$",
+        "$r=-7, s=-12, t=25$",
+        "$r+s = -19$"
+      ],
+      "correctIndex": -1,
+      "correctIndices": [
+        2,
+        3
+      ],
+      "correctNum": "",
+      "marks": {
+        "pos": 4,
+        "neg": 2
+      },
+      "diagram": null,
+      "explanation": "Source: Question 562",
+      "matrixAns": {}
+    },
+    {
+      "id": "q_bhsccdrmmxivzcr",
+      "text": "Paragraph for Question Nos. 10 and 11<br>Let $f(x) = (ax^2 + bx + c)\\text{sgn}(2\\sin x - 1)$ be a continuous function $\\forall x \\in (0, 6)$ where $a, b, c \\in R$.<br>*[Note: $\\text{sgn}(\\cdot)$ represents signum function.]*<br><br>If $a \\neq 0$, then which of the following must be **incorrect**?",
+      "type": "SINGLE",
+      "options": [
+        "$y=f(x)$ is not differentiable at exactly two points",
+        "$y=f(x)$ is differentiable",
+        "if $a=1$, then $\\cos b = -1$",
+        "$b^2 - 4ac > 0$"
+      ],
+      "correctIndex": 1,
+      "correctIndices": [],
+      "correctNum": "",
+      "marks": {
+        "pos": 3,
+        "neg": 1
+      },
+      "diagram": null,
+      "explanation": "Source: Question 666",
+      "matrixAns": {}
+    },
+    {
+      "id": "q_xd81eelmmxivzcr",
+      "text": "Paragraph for Question Nos. 10 and 11<br>Let $f(x) = (ax^2 + bx + c)\\text{sgn}(2\\sin x - 1)$ be a continuous function $\\forall x \\in (0, 6)$ where $a, b, c \\in R$.<br>*[Note: $\\text{sgn}(\\cdot)$ represents signum function.]*<br><br>If $c=0$, then $(a+b)$ equals:",
+      "type": "SINGLE",
+      "options": [
+        "$\\pi$",
+        "$\\frac{\\pi}{6}$",
+        "$\\frac{5\\pi}{6}$",
+        "$0$"
+      ],
+      "correctIndex": 3,
+      "correctIndices": [],
+      "correctNum": "",
+      "marks": {
+        "pos": 3,
+        "neg": 1
+      },
+      "diagram": null,
+      "explanation": "Source: Question 667",
+      "matrixAns": {}
+    },
+    {
+      "id": "q_tz7m9rhmmxivzcr",
+      "text": "Paragraph for Question Nos. 12 and 13<br>Let $\\alpha < \\beta < \\gamma$ be three numbers in G.P. Let $f(x) = x^3 - ax^2 + bx - 8$ be a polynomial such that $f(x)=0$ has three roots $\\alpha, \\beta$ and $\\gamma$, where $\\alpha, \\gamma$ are integers.<br><br>Let $g(x) = f(x - \\beta)$, then the roots of the equation $g(x) = 0$ are in:",
+      "type": "SINGLE",
+      "options": [
+        "A.P.",
+        "G.P.",
+        "H.P.",
+        "none of these"
+      ],
+      "correctIndex": 2,
+      "correctIndices": [],
+      "correctNum": "",
+      "marks": {
+        "pos": 3,
+        "neg": 1
+      },
+      "diagram": null,
+      "explanation": "Source: Question 668",
+      "matrixAns": {}
+    },
+    {
+      "id": "q_92b9rvsmmxivzcr",
+      "text": "Paragraph for Question Nos. 12 and 13<br>Let $\\alpha < \\beta < \\gamma$ be three numbers in G.P. Let $f(x) = x^3 - ax^2 + bx - 8$ be a polynomial such that $f(x)=0$ has three roots $\\alpha, \\beta$ and $\\gamma$, where $\\alpha, \\gamma$ are integers.<br><br>Let $y = g(x)$ be a twice differentiable function such that $g(\\alpha) = 0, g(\\beta) = 2, g(\\gamma) = -3, g(a) = 5, g(b) = 0$, then number of minimum distinct real roots of the equation $(g'(x))^2 + g(x) \\cdot g''(x) = 0$ in $$ is:",
+      "type": "SINGLE",
+      "options": [
+        "2",
+        "6",
+        "3",
+        "5"
+      ],
+      "correctIndex": 1,
+      "correctIndices": [],
+      "correctNum": "",
+      "marks": {
+        "pos": 3,
+        "neg": 1
+      },
+      "diagram": null,
+      "explanation": "Source: Question 669",
+      "matrixAns": {}
+    },
+    {
+      "id": "q_ly5x9m3mmxivzcr",
+      "text": "Consider $A = \\begin{bmatrix} 1 & 2 & 4 \\\\ 0 & 1 & 3 \\\\ 0 & 1 & 1 \\end{bmatrix}$ and $B = \\begin{bmatrix} 2 & 4 & 5 \\\\ 4 & 0 & 0 \\\\ 5 & 0 & 0 \\end{bmatrix}$. If $C = [c_{ij}]_{3} = A^{20} + B$ and $c_{22}c_{33} - c_{23}c_{32} = 2^m$, then find the value of $m$.",
+      "type": "NUMERICAL",
+      "options": [],
+      "correctIndex": -1,
+      "correctIndices": [],
+      "correctNum": "20",
+      "marks": {
+        "pos": 4,
+        "neg": 1
+      },
+      "diagram": null,
+      "explanation": "Source: Question 928",
+      "matrixAns": {}
+    },
+    {
+      "id": "q_38uemwdmmxivzcr",
+      "text": "Let $I = \\int_{-\\frac{\\sqrt{3}}{2}}^{\\frac{\\sqrt{3}}{2}} \\sqrt{\\frac{1-x}{1+x}} \\sin^{-1} x \\ dx$. If $I = \\frac{\\pi}{M} - \\sqrt{N}$, then find the value of $(M + N)$.",
+      "type": "NUMERICAL",
+      "options": [],
+      "correctIndex": -1,
+      "correctIndices": [],
+      "correctNum": "6",
+      "marks": {
+        "pos": 4,
+        "neg": 1
+      },
+      "diagram": null,
+      "explanation": "Source: Question 941",
+      "matrixAns": {}
+    },
+    {
+      "id": "q_52u7zbrmmxivzcr",
+      "text": "If tangent at a point $P_1$ (other than $(0, 0)$) on the curve $y^2 = ax^3$ meets the curve again at $P_2$. The tangent at $P_2$ meets the curve again at $P_3$ and so on, then find $\\lim_{n \\to \\infty} \\sum_{i=1}^n x_i$, where $x_i$'s are abscissae of $P_i$ with $x_1 = 3$.",
+      "type": "NUMERICAL",
+      "options": [],
+      "correctIndex": -1,
+      "correctIndices": [],
+      "correctNum": "4",
+      "marks": {
+        "pos": 4,
+        "neg": 1
+      },
+      "diagram": null,
+      "explanation": "Source: Question 942",
+      "matrixAns": {}
+    },
+    {
+      "id": "q_3tee8ismmxivzcr",
+      "text": "Let $f(x) = \\frac{(x-1)(2x-215)}{(x-c)}$ be an onto-function, then find the greatest integral value of $c$.",
+      "type": "NUMERICAL",
+      "options": [],
+      "correctIndex": -1,
+      "correctIndices": [],
+      "correctNum": "107",
+      "marks": {
+        "pos": 4,
+        "neg": 1
+      },
+      "diagram": null,
+      "explanation": "Source: Question 949",
+      "matrixAns": {}
+    },
+    {
+      "id": "q_ah3uxttmmxivzcr",
+      "text": "Let $f(x) = \\begin{cases} \\{x^2\\}, & -1 \\le x < 1 \\\\ |1 - 2x|, & 1 \\le x < 2 \\\\ (1 - x^2)\\text{sgn}(x^2 - 3x - 4), & 2 \\le x \\le 4 \\end{cases}$ where $\\{x\\}$ and $\\text{sgn}(x)$ denote fractional part function and signum function of $x$ respectively. If number of points where $f(x)$ is discontinuous in $[-1, 4]$ is $m$ and number of points where $f(x)$ is non-derivable in $(-1, 4)$ is $n$, then find the value of $(m+n)$.",
+      "type": "NUMERICAL",
+      "options": [],
+      "correctIndex": -1,
+      "correctIndices": [],
+      "correctNum": "3",
+      "marks": {
+        "pos": 4,
+        "neg": 1
+      },
+      "diagram": null,
+      "explanation": "Source: Question 951",
+      "matrixAns": {}
+    }
+  ]
+}
