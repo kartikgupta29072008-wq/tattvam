@@ -1,0 +1,356 @@
+{
+  "id": "imported_single_qxswnq4mn675s07",
+  "title": "Test 22",
+  "created": "2026-03-25T20:14:03.000Z",
+  "questions": [
+    {
+      "id": "q_rjrgpkdmn675s07",
+      "text": "If $S$ is the set of all real numbers. A relation $R$ has been defined on $S$ by $aRb \\iff |a-b| \\le 1$, then $R$ is:",
+      "type": "SINGLE",
+      "options": [
+        "symmetric and transitive but not reflexive",
+        "reflexive and transitive but not symmetric",
+        "reflexive and symmetric but not transitive",
+        "an equivalence relation"
+      ],
+      "correctIndex": 2,
+      "correctIndices": [],
+      "correctNum": "",
+      "marks": {
+        "pos": 3,
+        "neg": 1
+      },
+      "diagram": null,
+      "explanation": "Source: Question 128",
+      "matrixAns": {}
+    },
+    {
+      "id": "q_uehpw31mn675s07",
+      "text": "If $y = 1 + \\frac{c_1}{x-c_1} + \\frac{c_2x}{(x-c_1)(x-c_2)} + \\frac{c_3x^2}{(x-c_1)(x-c_2)(x-c_3)}$ then $\\frac{dy}{dx}$ is equal to:",
+      "type": "SINGLE",
+      "options": [
+        "$\\frac{-y}{x}\\left[ \\frac{c_1}{c_1-x} + \\frac{c_2}{c_2-x} + \\frac{c_3}{c_3-x} \\right]$",
+        "$\\frac{-y}{x}\\left[ \\frac{c_1}{x} + \\frac{c_2}{x} + \\frac{c_3}{c_3-x} \\right]$",
+        "$\\frac{y}{x}\\left[ \\frac{c_1}{c_1-x} + \\frac{c_2}{c_2-x} + \\frac{c_3}{-x} \\right]$",
+        "$\\frac{y}{x}\\left[ \\frac{c_1}{c_1-x} + \\frac{c_2}{c_2-x} + \\frac{c_3}{c_3-x} \\right]$"
+      ],
+      "correctIndex": 3,
+      "correctIndices": [],
+      "correctNum": "",
+      "marks": {
+        "pos": 3,
+        "neg": 1
+      },
+      "diagram": null,
+      "explanation": "Source: Question 202",
+      "matrixAns": {}
+    },
+    {
+      "id": "q_4ialn0xmn675s07",
+      "text": "If inequality $\\left(\\frac{1}{x}\\right)^{\\lambda/x} \\le \\frac{1}{9}$ has +ve integer solution for $x$ then the minimum value of $\\lambda$ (using $\\ln 9 = 2.197$) is:",
+      "type": "SINGLE",
+      "options": [
+        "3",
+        "4",
+        "5",
+        "6"
+      ],
+      "correctIndex": 3,
+      "correctIndices": [],
+      "correctNum": "",
+      "marks": {
+        "pos": 3,
+        "neg": 1
+      },
+      "diagram": null,
+      "explanation": "Source: Question 283",
+      "matrixAns": {}
+    },
+    {
+      "id": "q_1x1igs6mn675s07",
+      "text": "Consider a conic $\\frac{1}{x+y-2} + \\frac{1}{x-y+2} + \\frac{1}{y-x+2} = 0$ in two dimensional co-ordinate plane. Identify which of the following statement(s) is(are) correct?",
+      "type": "MULTI",
+      "options": [
+        "Length of latus rectum of the conic is $4\\sqrt{2}$",
+        "Length of latus rectum of the conic is $2\\sqrt{2}$",
+        "Focus of the conic is $\\left(\\frac{3}{2}, \\frac{3}{2}\\right)$",
+        "Vertex of the conic is $(0, 0)$"
+      ],
+      "correctIndex": -1,
+      "correctIndices": [
+        1,
+        2
+      ],
+      "correctNum": "",
+      "marks": {
+        "pos": 4,
+        "neg": 2
+      },
+      "diagram": null,
+      "explanation": "Source: Question 504",
+      "matrixAns": {}
+    },
+    {
+      "id": "q_bzjvxj2mn675s07",
+      "text": "Let $A$ be a square matrix of order 3 such that $\\text{adj}(\\text{adj}(\\text{adj}(A))) = \\begin{bmatrix} 16 & 0 & 4 \\\\ 5 & 4 & 0 \\\\ 1 & 4 & 3 \\end{bmatrix}$ and $\\det(A)$ is positive, then which of the following must be correct?",
+      "type": "MULTI",
+      "options": [
+        "$8 \\cdot \\text{trace}(A^{-1}) = 23$",
+        "$8 \\cdot \\text{trace}(A^{-1}) = 35$",
+        "$\\det(\\text{adj } A) = 4$",
+        "$\\det(\\text{adj } A) = 2$"
+      ],
+      "correctIndex": -1,
+      "correctIndices": [
+        0,
+        2
+      ],
+      "correctNum": "",
+      "marks": {
+        "pos": 4,
+        "neg": 2
+      },
+      "diagram": null,
+      "explanation": "Source: Question 536",
+      "matrixAns": {},
+      "_start": 5,
+      "_end": 5,
+      "_count": 1
+    },
+    {
+      "id": "q_8di6b4amn675s07",
+      "text": "If the complex number $z$ satisfies the condition $\\left| z - \\frac{25}{z} \\right| = 24$, then which of the following is(are) correct?",
+      "type": "MULTI",
+      "options": [
+        "Maximum distance of $z$ from origin is 5",
+        "Maximum distance of $z$ from origin is 25",
+        "Minimum distance of $z$ from origin is 1",
+        "Minimum distance of $z$ from origin is 4"
+      ],
+      "correctIndex": -1,
+      "correctIndices": [
+        1,
+        2
+      ],
+      "correctNum": "",
+      "marks": {
+        "pos": 4,
+        "neg": 2
+      },
+      "diagram": null,
+      "explanation": "Source: Question 544",
+      "matrixAns": {}
+    },
+    {
+      "id": "q_smepw55mn675s07",
+      "text": "If two tangents can be drawn to the different branches of the hyperbola $x^2 - \\frac{y^2}{4} = 1$ from the point $(\\alpha, \\alpha^2)$, then:",
+      "type": "MULTI",
+      "options": [
+        "$\\alpha \\in (-\\infty, -3)$",
+        "$\\alpha \\in (3, \\infty)$",
+        "$\\alpha \\in (-2, 0) \\cup (0, 2)$",
+        "$\\alpha \\in (2, \\infty)$"
+      ],
+      "correctIndex": -1,
+      "correctIndices": [
+        0,
+        1
+      ],
+      "correctNum": "",
+      "marks": {
+        "pos": 4,
+        "neg": 2
+      },
+      "diagram": null,
+      "explanation": "Source: Question 558",
+      "matrixAns": {}
+    },
+    {
+      "id": "q_n507l35mn675s07",
+      "text": "A parallelopiped is formed using three non-collinear vectors, $\\mathbf{a}, \\mathbf{b}$ and $\\mathbf{c}$ with fixed magnitudes. Angles between any of the vector with normal of the plane determined by the other two is $\\alpha$ and volume of the parallelopiped is $T$ and its surface area is $Y$. If $\\frac{Y}{T} = 4\\left(\\frac{1}{|\\mathbf{a}|} + \\frac{1}{|\\mathbf{b}|} + \\frac{1}{|\\mathbf{c}|}\\right)$ then:",
+      "type": "MULTI",
+      "options": [
+        "$\\cos^2 \\alpha + \\cos \\alpha = \\frac{3}{4}$",
+        "$\\sin^2 \\alpha + \\sin^4 \\alpha = \\frac{21}{16}$",
+        "$\\cos^2 \\alpha + \\cos \\alpha = \\frac{3+2\\sqrt{3}}{4}$",
+        "$\\sin^2 \\alpha + \\sin^4 \\alpha = \\frac{5}{16}$"
+      ],
+      "correctIndex": -1,
+      "correctIndices": [
+        0,
+        1
+      ],
+      "correctNum": "",
+      "marks": {
+        "pos": 4,
+        "neg": 2
+      },
+      "diagram": null,
+      "explanation": "Source: Question 563",
+      "matrixAns": {}
+    },
+    {
+      "id": "q_f2q5lv7mn675s07",
+      "text": "Let $a, b > 0$ be real numbers satisfying the relation $\\text{arc}\\tan(3+a) + \\text{arc}\\tan(3+b) = \\frac{\\pi}{2} + \\text{arc}\\cot\\left(\\frac{1}{3}\\right)$.\nIf the minimum value of $(a+b)$ is $\\sqrt{N}$, find the value of $N$.",
+      "type": "NUMERICAL",
+      "options": [],
+      "correctIndex": -1,
+      "correctIndices": [],
+      "correctNum": "40",
+      "marks": {
+        "pos": 4,
+        "neg": 1
+      },
+      "diagram": null,
+      "explanation": "Source: Question 755",
+      "matrixAns": {}
+    },
+    {
+      "id": "q_po3ge14mn675s07",
+      "text": "If the equation $\\lim_{\\theta \\to \\frac{\\pi}{4}} \\frac{(\\cos \\theta)^{\\frac{\\sin \\theta}{\\cos \\theta - \\sin \\theta}}}{(\\sin \\theta)^{\\frac{\\cos \\theta}{\\cos \\theta - \\sin \\theta}}} = a\\sqrt{b}$ holds true for square-free positive integer $b$, find $[a] + b$. [Note: $[k]$ denotes greatest integer function less than or equal to $k$.]",
+      "type": "NUMERICAL",
+      "options": [],
+      "correctIndex": -1,
+      "correctIndices": [],
+      "correctNum": "4",
+      "marks": {
+        "pos": 4,
+        "neg": 1
+      },
+      "diagram": null,
+      "explanation": "Source: Question 801",
+      "matrixAns": {},
+      "_start": 10,
+      "_end": 10,
+      "_count": 1
+    },
+    {
+      "id": "q_n3lsul4mn675s07",
+      "text": "Let $S$ be a circle of radius 1 with centre at $A$. Two circles with radius $r$ and $R$ and centre at $C$ and $D$ are externally tangent to each other and internally tangent to $S$. If $\\angle DAC = 120^\\circ$, find the value of $Rr + 3R + 3r$.",
+      "type": "NUMERICAL",
+      "options": [],
+      "correctIndex": -1,
+      "correctIndices": [],
+      "correctNum": "3",
+      "marks": {
+        "pos": 4,
+        "neg": 1
+      },
+      "diagram": null,
+      "explanation": "Source: Question 851",
+      "matrixAns": {}
+    },
+    {
+      "id": "q_pi5rr2pmn675s07",
+      "text": "In $\\Delta ABC$, let $|a - 5| + (7\\cos B - 3)^2 + \\log_3(1 + |c - 7|) = 0$. A circle drawn with the altitude $AD$ as diameter which meets the sides $AB$ and $AC$ at $E$ and $F$ respectively. If $(BE)(CF) = \\frac{p}{q\\sqrt{11}}$ where $p, q \\in N$, then find the least value of $(p+q)$.",
+      "type": "NUMERICAL",
+      "options": [],
+      "correctIndex": -1,
+      "correctIndices": [],
+      "correctNum": "25",
+      "marks": {
+        "pos": 4,
+        "neg": 1
+      },
+      "diagram": null,
+      "explanation": "Source: Question 869",
+      "matrixAns": {}
+    },
+    {
+      "id": "q_vl58gjxmn675s07",
+      "text": "Let there are 6 shirts of different colours and 6 trousers of same colours as that of shirts. If the number of ways in which these can be put on by 5 men such that no men wear the shirt and the trouser of the same colour is $(k)6!$, then find the value of $k$.",
+      "type": "NUMERICAL",
+      "options": [],
+      "correctIndex": -1,
+      "correctIndices": [],
+      "correctNum": "309",
+      "marks": {
+        "pos": 4,
+        "neg": 1
+      },
+      "diagram": null,
+      "explanation": "Source: Question 874",
+      "matrixAns": {}
+    },
+    {
+      "id": "q_wt39zhnmn675s07",
+      "text": "Let $P = \\{x | x^2 + (n-1)x - 2(n+1) = 0\\}$ and $Q = \\{x | (n-1)x^2 + nx + 1 = 0\\}$. Then find the number of values of $n$ such that $P \\cup Q$ has exactly 3 distinct elements (where $x$ is a real number).",
+      "type": "NUMERICAL",
+      "options": [],
+      "correctIndex": -1,
+      "correctIndices": [],
+      "correctNum": "7",
+      "marks": {
+        "pos": 4,
+        "neg": 1
+      },
+      "diagram": null,
+      "explanation": "Source: Question 886",
+      "matrixAns": {}
+    },
+    {
+      "id": "q_ykbmwbcmn675s07",
+      "text": "Let $I = \\int \\frac{(e^x-1)(\\sin x - \\cos x) + x\\cos x}{\\sin^2 x + (e^x-1-x)^2} dx = \\tan^{-1}(f(x)) + C$, where '$C$' is the constant of integration and $\\lim_{x \\to 0} f(x) = 0$. If $\\lim_{x \\to 0} \\frac{f(x)}{x} = \\frac{p}{q}$, where $p, q \\in N$ then find the least value of $(p+q)$.",
+      "type": "NUMERICAL",
+      "options": [],
+      "correctIndex": -1,
+      "correctIndices": [],
+      "correctNum": "3",
+      "marks": {
+        "pos": 4,
+        "neg": 1
+      },
+      "diagram": null,
+      "explanation": "Source: Question 919",
+      "matrixAns": {}
+    },
+    {
+      "id": "q_q5ao6jbmn675s07",
+      "text": "If the set of values of $x$ satisfying the equation $[2x] + [-2x] = \\frac{\\log_{10}(x^2-2x+2)-1}{|\\log_{10}(x^2-2x+2)-1|}$ is $(a, b) - \\{p_1, p_2, \\dots, p_n\\}$, then find the value of $\\left(a+b+\\sum_{i=1}^{n} p_i\\right)$.\n*[Note: $[k]$ denotes greatest integer function less than or equal to $k$.]*",
+      "type": "NUMERICAL",
+      "options": [],
+      "correctIndex": -1,
+      "correctIndices": [],
+      "correctNum": "13",
+      "marks": {
+        "pos": 4,
+        "neg": 1
+      },
+      "diagram": null,
+      "explanation": "Source: Question 953",
+      "matrixAns": {}
+    },
+    {
+      "id": "q_9sc54esmn675s07",
+      "text": "Let a function $f$ is defined as $f: \\{1, 2, 3, 4, 5\\} \\to \\{1, 2, 3, 4, 5\\}$. If $f$ satisfy $f(f(x)) = f(x)$, $\\forall x \\in \\{1, 2, 3, 4\\}$ then find the number of such functions.",
+      "type": "NUMERICAL",
+      "options": [],
+      "correctIndex": -1,
+      "correctIndices": [],
+      "correctNum": "196",
+      "marks": {
+        "pos": 4,
+        "neg": 1
+      },
+      "diagram": null,
+      "explanation": "Source: Question 963",
+      "matrixAns": {}
+    },
+    {
+      "id": "q_kgc9wqwmn675s07",
+      "text": "The number of real solutions of the equation $\\sqrt{1+\\cos 2x} = \\sqrt{2}\\sin^{-1}(\\sin x)$ where $-\\pi \\le x \\le \\pi$.",
+      "type": "NUMERICAL",
+      "options": [],
+      "correctIndex": -1,
+      "correctIndices": [],
+      "correctNum": "2",
+      "marks": {
+        "pos": 4,
+        "neg": 1
+      },
+      "diagram": null,
+      "explanation": "Source: Question 968",
+      "matrixAns": {}
+    }
+  ]
+}
