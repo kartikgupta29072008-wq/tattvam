@@ -1,0 +1,349 @@
+{
+  "id": "imported_single_w90ktt8mn676w8d",
+  "title": "Test 23",
+  "created": "2026-03-26T10:00:00.000Z",
+  "questions": [
+    {
+      "id": "q_qki1l5tmn676w8d",
+      "text": "Given 2019 vectors on a plane. Sum of every 2018 vectors is a scalar multiple of other vector. Not all vectors are scalar multiple of each other. The magnitude of sum of all these vectors is:",
+      "type": "SINGLE",
+      "options": [
+        "0",
+        "$\\sqrt{2019}$",
+        "2019",
+        "$(2019)^2$"
+      ],
+      "correctIndex": 0,
+      "correctIndices": [],
+      "correctNum": "",
+      "marks": {
+        "pos": 3,
+        "neg": 1
+      },
+      "diagram": null,
+      "explanation": "Source: Question 259",
+      "matrixAns": {}
+    },
+    {
+      "id": "q_7i0kevomn676w8d",
+      "text": "The probability of occurrence of a multiple of 2 on one dice and a multiple of 3 on the other dice if both are thrown together, is:",
+      "type": "SINGLE",
+      "options": [
+        "$\\frac{7}{36}$",
+        "$\\frac{1}{3}$",
+        "$\\frac{1}{6}$",
+        "$\\frac{11}{36}$"
+      ],
+      "correctIndex": 3,
+      "correctIndices": [],
+      "correctNum": "",
+      "marks": {
+        "pos": 3,
+        "neg": 1
+      },
+      "diagram": null,
+      "explanation": "Source: Question 260",
+      "matrixAns": {}
+    },
+    {
+      "id": "q_4ybd8o0mn676w8d",
+      "text": "$L = \\lim_{n \\to \\infty} \\sqrt{n} \\int_{0}^{1} \\frac{dx}{(1+x^2)^n}$ \nSuppose that the above limit exists, then choose the correct option.",
+      "type": "SINGLE",
+      "options": [
+        "$\\frac{1}{2} < L < 2$",
+        "$4 < L < 5$",
+        "$2 < L \\le 3$",
+        "$L \\ge 5$"
+      ],
+      "correctIndex": 0,
+      "correctIndices": [],
+      "correctNum": "",
+      "marks": {
+        "pos": 3,
+        "neg": 1
+      },
+      "diagram": null,
+      "explanation": "Source: Question 284",
+      "matrixAns": {}
+    },
+    {
+      "id": "q_6v63qycmn676w8d",
+      "text": "Let the set of complex numbers $(a_1, b_1), (a_2, b_2), (a_3, b_3) \\dots$ denoting the points on the complex plane satisfying $(a_{n+1}, b_{n+1}) = (\\sqrt{3}a_n - b_n, \\sqrt{3}b_n + a_n)$ for $n = 1, 2, 3, \\dots$. \nSuppose $(a_{100}, b_{100}) = (2, 4)$, then the value of $(a_1 + b_1)$ is equal to:",
+      "type": "SINGLE",
+      "options": [
+        "$\\frac{1}{2^{96}}$",
+        "$\\frac{1}{2^{97}}$",
+        "$\\frac{1}{2^{98}}$",
+        "$\\frac{1}{2^{99}}$"
+      ],
+      "correctIndex": 2,
+      "correctIndices": [],
+      "correctNum": "",
+      "marks": {
+        "pos": 3,
+        "neg": 1
+      },
+      "diagram": null,
+      "explanation": "Source: Question 294",
+      "matrixAns": {}
+    },
+    {
+      "id": "q_gpyzt4smn676w8d",
+      "text": "Let $S = \\{14, 15, 16, \\dots, 22\\}$. If $N$ is the number of subsets of $S$ containing two or more elements such that sum of the least and greatest elements has odd number of divisors, then:",
+      "type": "MULTI",
+      "options": [
+        "the number of prime factors of $N$ is 3",
+        "the number of divisors of $N$ is 8",
+        "sum of the digits of $N$ is 8",
+        "the number of divisors of $N$ is 16"
+      ],
+      "correctIndex": -1,
+      "correctIndices": [
+        0,
+        1,
+        2
+      ],
+      "correctNum": "",
+      "marks": {
+        "pos": 4,
+        "neg": 2
+      },
+      "diagram": null,
+      "explanation": "Source: Question 487",
+      "matrixAns": {}
+    },
+    {
+      "id": "q_bn3z7plmn676w8d",
+      "text": "Identify which of the following statement(s) is(are) correct?",
+      "type": "MULTI",
+      "options": [
+        "If $0 \\le \\arg z \\le \\frac{\\pi}{3}$, then minimum value of $|2\\sqrt{3}z - 6i|$ is equal to 6",
+        "If $\\arg\\left(\\frac{z-2}{z+2i}\\right) = \\frac{\\pi}{2}$, then minimum value of $|z + 3 - 3i|$ is equal to $3\\sqrt{2}$",
+        "If $z_1$ and $z_2$ are lying on $|z| = 5$ such that $|z_1 - z_2| = 2$, then the value of $|z_1 + z_2|$ is equal to $4\\sqrt{6}$",
+        "If $\\frac{\\pi}{4} \\le \\arg(z - 1) \\le \\frac{3\\pi}{4}$ and $\\text{Im}(z) \\le 2$, then area of the region in which $z$ lies is 4 sq. units"
+      ],
+      "correctIndex": -1,
+      "correctIndices": [
+        1,
+        2,
+        3
+      ],
+      "correctNum": "",
+      "marks": {
+        "pos": 4,
+        "neg": 2
+      },
+      "diagram": null,
+      "explanation": "Source: Question 503",
+      "matrixAns": {}
+    },
+    {
+      "id": "q_erv0pwpmn676w8d",
+      "text": "Let $f: R \\to [-3, 3]$ be a twice differentiable function such that $f'(0) = f(1) = f(3) = 2$, then which of the following must be correct?",
+      "type": "MULTI",
+      "options": [
+        "$y = f(x)$ is monotonic for some set of values of $x$",
+        "There must be at least one $c \\in [-3, 0)$ such that $f'(x) \\le 2$",
+        "$f''(x) \\ge \\frac{-1}{3}$ for some $c \\in (-3, 3)$",
+        "For some values of $c \\in (-3, 3)$, $f''(c) \\ge -2$"
+      ],
+      "correctIndex": -1,
+      "correctIndices": [
+        0,
+        1,
+        3
+      ],
+      "correctNum": "",
+      "marks": {
+        "pos": 4,
+        "neg": 2
+      },
+      "diagram": null,
+      "explanation": "Source: Question 529",
+      "matrixAns": {}
+    },
+    {
+      "id": "q_a7sdnijmn676w8d",
+      "text": "Consider a $3 \\times 3$ non-singular matrix $A = [a_{ij}]$. A matrix $B = [b_{ij}]_{3 \\times 3}$ is formed such that $b_{ij}$ is the sum of all the elements of $i^{th}$ row in $A$ except $a_{ij}$. If there exists a matrix $C$ such that $AC = B$, then:",
+      "type": "MULTI",
+      "options": [
+        "$C$ is symmetric matrix",
+        "$C$ is a diagonal matrix",
+        "$|B| = \\frac{|A|}{2}$",
+        "$|B| = 2|A|$"
+      ],
+      "correctIndex": -1,
+      "correctIndices": [
+        0,
+        3
+      ],
+      "correctNum": "",
+      "marks": {
+        "pos": 4,
+        "neg": 2
+      },
+      "diagram": null,
+      "explanation": "Source: Question 538",
+      "matrixAns": {}
+    },
+    {
+      "id": "q_z7zun52mn676w8d",
+      "text": "Paragraph for Question Nos. 690 to 692<br>Column-1 represents a quadratic equation with some given conditions. Column-2 represents number of non-positive integral values of '$k$' and column-3 represents number of prime values of '$k$'. Then match the following.<br><br>| Column-1 | Column-2 | Column-3 |<br>| :--- | :--- | :--- |<br>| (I) Let $\\alpha$ and $\\beta$ are real roots of $x^2 - 8x + k^2 - 6k = 0$ such that $\\frac{\\alpha}{\\beta} + \\frac{\\beta}{\\alpha} = 2$. | (i) 0 | (P) 0 |<br>| (II) If one root of the equation $(k-2)x^2 - (8-2k)x + (3k+8) = 0$ is negative and other is positive. | (ii) 1 | (Q) 1 |<br>| (III) If difference between the real roots of equation $4x^2 - 2kx + 1 = 0$ is less than $\\sqrt{3}$. | (iii) 2 | (R) 2 |<br>| (IV) If quadratic expression $2kx^2 - (4k-5)x - 10$ is negative for exactly three distinct integral values of $x$. | (iv) 3 | (S) 3 |<br><br>Which of the following options is the only **correct** combination?",
+      "type": "SINGLE",
+      "options": [
+        "(I) (iii) (S)",
+        "(II) (ii) (R)",
+        "(III) (i) (P)",
+        "(IV) (i) (Q)"
+      ],
+      "correctIndex": 3,
+      "correctIndices": [],
+      "correctNum": "",
+      "marks": {
+        "pos": 3,
+        "neg": 1
+      },
+      "diagram": null,
+      "explanation": "Source: Question 690",
+      "matrixAns": {}
+    },
+    {
+      "id": "q_mhkmso6mn676w8d",
+      "text": "Paragraph for Question Nos. 690 to 692<br>Column-1 represents a quadratic equation with some given conditions. Column-2 represents number of non-positive integral values of '$k$' and column-3 represents number of prime values of '$k$'. Then match the following.<br><br>| Column-1 | Column-2 | Column-3 |<br>| :--- | :--- | :--- |<br>| (I) Let $\\alpha$ and $\\beta$ are real roots of $x^2 - 8x + k^2 - 6k = 0$ such that $\\frac{\\alpha}{\\beta} + \\frac{\\beta}{\\alpha} = 2$. | (i) 0 | (P) 0 |<br>| (II) If one root of the equation $(k-2)x^2 - (8-2k)x + (3k+8) = 0$ is negative and other is positive. | (ii) 1 | (Q) 1 |<br>| (III) If difference between the real roots of equation $4x^2 - 2kx + 1 = 0$ is less than $\\sqrt{3}$. | (iii) 2 | (R) 2 |<br>| (IV) If quadratic expression $2kx^2 - (4k-5)x - 10$ is negative for exactly three distinct integral values of $x$. | (iv) 3 | (S) 3 |<br><br>Which of the following options is the only **correct** combination?",
+      "type": "SINGLE",
+      "options": [
+        "(I) (iv) (Q)",
+        "(II) (iv) (P)",
+        "(III) (ii) (S)",
+        "(IV) (iii) (R)"
+      ],
+      "correctIndex": 1,
+      "correctIndices": [],
+      "correctNum": "",
+      "marks": {
+        "pos": 3,
+        "neg": 1
+      },
+      "diagram": null,
+      "explanation": "Source: Question 691",
+      "matrixAns": {}
+    },
+    {
+      "id": "q_ec5a468mn676w8d",
+      "text": "Paragraph for Question Nos. 690 to 692<br>Column-1 represents a quadratic equation with some given conditions. Column-2 represents number of non-positive integral values of '$k$' and column-3 represents number of prime values of '$k$'. Then match the following.<br><br>| Column-1 | Column-2 | Column-3 |<br>| :--- | :--- | :--- |<br>| (I) Let $\\alpha$ and $\\beta$ are real roots of $x^2 - 8x + k^2 - 6k = 0$ such that $\\frac{\\alpha}{\\beta} + \\frac{\\beta}{\\alpha} = 2$. | (i) 0 | (P) 0 |<br>| (II) If one root of the equation $(k-2)x^2 - (8-2k)x + (3k+8) = 0$ is negative and other is positive. | (ii) 1 | (Q) 1 |<br>| (III) If difference between the real roots of equation $4x^2 - 2kx + 1 = 0$ is less than $\\sqrt{3}$. | (iii) 2 | (R) 2 |<br>| (IV) If quadratic expression $2kx^2 - (4k-5)x - 10$ is negative for exactly three distinct integral values of $x$. | (iv) 3 | (S) 3 |<br><br>Which of the following options is the only **correct** combination?",
+      "type": "SINGLE",
+      "options": [
+        "(I) (ii) (P)",
+        "(II) (i) (Q)",
+        "(III) (iv) (S)",
+        "(IV) (ii) (P)"
+      ],
+      "correctIndex": 0,
+      "correctIndices": [],
+      "correctNum": "",
+      "marks": {
+        "pos": 3,
+        "neg": 1
+      },
+      "diagram": null,
+      "explanation": "Source: Question 692",
+      "matrixAns": {}
+    },
+    {
+      "id": "q_zuz8pftmn676w8d",
+      "text": "Let $f$ be a continuous and differentiable function in $(x_1, x_2)$ and the following conditions hold for it.\n$\\begin{cases} f(x)f'(x) \\ge x\\sqrt{1-(f(x))^4} \\\\ \\lim_{x \\to x_1^+} (f(x))^2 = 1 \\\\ \\lim_{x \\to x_2^-} (f(x))^2 = \\frac{1}{2} \\end{cases}$\nIf the minimum value of $(x_1^2 - x_2^2)$ is equal to $\\frac{\\pi}{k}$ where $k \\in N$, then find the value of $k$.\n*[Note: $f'(x) = \\frac{df(x)}{dx}$]*",
+      "type": "NUMERICAL",
+      "options": [],
+      "correctIndex": -1,
+      "correctIndices": [],
+      "correctNum": "3",
+      "marks": {
+        "pos": 4,
+        "neg": 1
+      },
+      "diagram": null,
+      "explanation": "Source: Question 762",
+      "matrixAns": {}
+    },
+    {
+      "id": "q_bbd2b8nmn676w8d",
+      "text": "Consider a series of $n$ concentric circles $C_1, C_2, \\dots, C_n$ with radii $r_1, r_2, r_3, \\dots, r_n$ respectively satisfying $r_1 > r_2 > r_3 > \\dots > r_n$ and $r_1 = 10$. The circles are such that the chord of contact of tangents from any point on $C_i$ to $C_{i+1}$ is a tangent to $C_{i+2}$ where $i = 1, 2, 3, \\dots$. \nFind the value of $\\lim_{n \\to \\infty} \\sum_{i=1}^{n} r_i$, if the angle between the tangents from any point of $C_1$ to $C_2$ is $60^\\circ$.",
+      "type": "NUMERICAL",
+      "options": [],
+      "correctIndex": -1,
+      "correctIndices": [],
+      "correctNum": "20",
+      "marks": {
+        "pos": 4,
+        "neg": 1
+      },
+      "diagram": null,
+      "explanation": "Source: Question 763",
+      "matrixAns": {}
+    },
+    {
+      "id": "q_6tkohlqmn676w8d",
+      "text": "Let $f$ be a polynomial function of degree 3 satisfying $f(1)=3, f(2)=5$ and $f(3)=7$. If product of the roots of the equation $(f(x))^2 + 4xf(x) + 3x^2 = 0$ is 4 and the sum of all possible values of $f(4)$ is $k$ then find $[k]$.\n*[Note: $[y]$ denotes greatest integer function less than or equal to $y$.]*",
+      "type": "NUMERICAL",
+      "options": [],
+      "correctIndex": -1,
+      "correctIndices": [],
+      "correctNum": "20",
+      "marks": {
+        "pos": 4,
+        "neg": 1
+      },
+      "diagram": null,
+      "explanation": "Source: Question 789",
+      "matrixAns": {}
+    },
+    {
+      "id": "q_dkn35t1mn676w8d",
+      "text": "Let points $A$ and $C$ be lying on straight lines $4y=3x$ and $x=0$ respectively. If point $(6, 2)$ is lying on the straight line $AC$ and rhombus $OABC$ is completed where $O$ is the origin and $B$ lies in first quadrant, then find the area of the rhombus (in sq. units).",
+      "type": "NUMERICAL",
+      "options": [],
+      "correctIndex": -1,
+      "correctIndices": [],
+      "correctNum": "20",
+      "marks": {
+        "pos": 4,
+        "neg": 1
+      },
+      "diagram": null,
+      "explanation": "Source: Question 870",
+      "matrixAns": {}
+    },
+    {
+      "id": "q_eb8axo5mn676w8d",
+      "text": "If sum of all the solutions of the equation $(4\\tan x + \\tan^2 x + 1) = 2\\sqrt{2} \\sin\\left(x + \\frac{\\pi}{4}\\right)(1 + \\tan^2 x)$ in $[0, \\pi]$ is $\\left(\\frac{p\\pi}{q}\\right)$ where $p, q$ are relatively prime number, then find the value of $(p+q)$.",
+      "type": "NUMERICAL",
+      "options": [],
+      "correctIndex": -1,
+      "correctIndices": [],
+      "correctNum": "7",
+      "marks": {
+        "pos": 4,
+        "neg": 1
+      },
+      "diagram": null,
+      "explanation": "Source: Question 900",
+      "matrixAns": {}
+    },
+    {
+      "id": "q_2taad6smn676w8d",
+      "text": "Let $f(x) = \\begin{cases} \\{x^2\\}, & -1 \\le x < 1 \\\\ |1-2x|, & 1 \\le x < 2 \\\\ (1-x^2)\\text{sgn}(x^2-3x-4), & 2 \\le x \\le 4 \\end{cases}$ where $\\{x\\}$ and $\\text{sgn}(x)$ denote fractional part function and signum function of $x$ respectively. If number of points where $f(x)$ is discontinuous in $[-1, 4]$ is $m$ and number of points where $f(x)$ is non-derivable in $(-1, 4)$ is $n$, then find the value of $(m+n)$.",
+      "type": "NUMERICAL",
+      "options": [],
+      "correctIndex": -1,
+      "correctIndices": [],
+      "correctNum": "3",
+      "marks": {
+        "pos": 4,
+        "neg": 1
+      },
+      "diagram": null,
+      "explanation": "Source: Question 951",
+      "matrixAns": {}
+    }
+  ]
+}
