@@ -1,0 +1,354 @@
+{
+  "id": "imported_single_nqzl3afmn677h0c",
+  "title": "Test 24",
+  "created": "2026-03-27T14:20:00.000Z",
+  "questions": [
+    {
+      "id": "q_z4s7a0umn677h0c",
+      "text": "If the point $(\\alpha, 0)$ lies inside the quadrilateral formed by lines $2x + 5y = 15, 5x - 4y = 21, 3x + 5y + 17 = 0$ and $y = x + 3$, then which of the following is true?",
+      "type": "MULTI",
+      "options": [
+        "Number of prime value(s) of $\\alpha$ is 4.",
+        "Number of integral value(s) of $\\alpha$ is 7.",
+        "Minimum integral value of $\\alpha$ is $-3$.",
+        "Maximum integral value of $\\alpha$ is 4."
+      ],
+      "correctIndex": -1,
+      "correctIndices": [
+        1,
+        3
+      ],
+      "correctNum": "",
+      "marks": {
+        "pos": 4,
+        "neg": 2
+      },
+      "diagram": null,
+      "explanation": "Source: Question 435",
+      "matrixAns": {}
+    },
+    {
+      "id": "q_2tgtdbamn677h0c",
+      "text": "If $5 \\cdot 2^8 \\cdot 3^{16}$ is one of the terms of a G.P. whose first term is 5 and all its terms are natural number then possible common ratio of the G.P. is:",
+      "type": "MULTI",
+      "options": [
+        "6",
+        "12",
+        "18",
+        "$(324)^2$"
+      ],
+      "correctIndex": -1,
+      "correctIndices": [
+        2,
+        3
+      ],
+      "correctNum": "",
+      "marks": {
+        "pos": 4,
+        "neg": 2
+      },
+      "diagram": null,
+      "explanation": "Source: Question 458",
+      "matrixAns": {}
+    },
+    {
+      "id": "q_usn3drbmn677h0c",
+      "text": "If $a^2 + 8b^2 + 2c^2 + 2d^2 - 4ab - 4bc - 4bd = 0$ (where $a, b, c, d \\in R$), then the value of $\\begin{vmatrix} a & b \\\\ c & d \\end{vmatrix}$ is:",
+      "type": "MULTI",
+      "options": [
+        "$\\frac{a^2}{4}$",
+        "$b^2$",
+        "$c^2$",
+        "$d^2$"
+      ],
+      "correctIndex": -1,
+      "correctIndices": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "correctNum": "",
+      "marks": {
+        "pos": 4,
+        "neg": 2
+      },
+      "diagram": null,
+      "explanation": "Source: Question 507",
+      "matrixAns": {}
+    },
+    {
+      "id": "q_og3shaomn677h0c",
+      "text": "Paragraph for Question Nos. 660 to 662<br>If equation of column-I is given along with condition of column-II then match it with appropriate value given in column-III.<br><br>| Column-I | Column-II | Column-III |<br>| :--- | :--- | :--- |<br>| (I) $\\int_0^1 f(x) dx = 1$ | (i) $f(2x) = 2f(x)$ | (P) $\\int_1^2 f(x) dx = 5$ |<br>| (II) $\\int_0^2 f(x) dx = 2$ | (ii) $f(2x) = 3f(x)$ | (Q) $\\int_2^4 f(x) dx = 6$ |<br>| (III) $\\int_0^3 f(x) dx = 3$ | (iii) $f(3x) = 3f(x)$ | (R) $\\int_1^3 f(x) dx = 8$ |<br>| (IV) $\\int_0^4 f(x) dx = 4$ | (iv) $f(3x) = 4f(x)$ | (S) $\\int_3^9 f(x) dx = 24$ |<br><br>Which of the following is **correct** combination?",
+      "type": "SINGLE",
+      "options": [
+        "(I) (i) (P)",
+        "(I) (ii) (P)",
+        "(II) (ii) (Q)",
+        "(II) (iii) (Q)"
+      ],
+      "correctIndex": 1,
+      "correctIndices": [],
+      "correctNum": "",
+      "marks": {
+        "pos": 3,
+        "neg": 1
+      },
+      "diagram": null,
+      "explanation": "Source: Question 660",
+      "matrixAns": {}
+    },
+    {
+      "id": "q_n2strpimn677h0c",
+      "text": "Paragraph for Question Nos. 660 to 662<br>If equation of column-I is given along with condition of column-II then match it with appropriate value given in column-III.<br><br>| Column-I | Column-II | Column-III |<br>| :--- | :--- | :--- |<br>| (I) $\\int_0^1 f(x) dx = 1$ | (i) $f(2x) = 2f(x)$ | (P) $\\int_1^2 f(x) dx = 5$ |<br>| (II) $\\int_0^2 f(x) dx = 2$ | (ii) $f(2x) = 3f(x)$ | (Q) $\\int_2^4 f(x) dx = 6$ |<br>| (III) $\\int_0^3 f(x) dx = 3$ | (iii) $f(3x) = 3f(x)$ | (R) $\\int_1^3 f(x) dx = 8$ |<br>| (IV) $\\int_0^4 f(x) dx = 4$ | (iv) $f(3x) = 4f(x)$ | (S) $\\int_3^9 f(x) dx = 24$ |<br><br>Which of the following is **incorrect** combination?",
+      "type": "SINGLE",
+      "options": [
+        "(II) (i) (Q)",
+        "(I) (iii) (R)",
+        "(II) (ii) (Q)",
+        "(I) (ii) (P)"
+      ],
+      "correctIndex": 2,
+      "correctIndices": [],
+      "correctNum": "",
+      "marks": {
+        "pos": 3,
+        "neg": 1
+      },
+      "diagram": null,
+      "explanation": "Source: Question 661",
+      "matrixAns": {}
+    },
+    {
+      "id": "q_5en8s50mn677h0c",
+      "text": "Paragraph for Question Nos. 660 to 662<br>If equation of column-I is given along with condition of column-II then match it with appropriate value given in column-III.<br><br>| Column-I | Column-II | Column-III |<br>| :--- | :--- | :--- |<br>| (I) $\\int_0^1 f(x) dx = 1$ | (i) $f(2x) = 2f(x)$ | (P) $\\int_1^2 f(x) dx = 5$ |<br>| (II) $\\int_0^2 f(x) dx = 2$ | (ii) $f(2x) = 3f(x)$ | (Q) $\\int_2^4 f(x) dx = 6$ |<br>| (III) $\\int_0^3 f(x) dx = 3$ | (iii) $f(3x) = 3f(x)$ | (R) $\\int_1^3 f(x) dx = 8$ |<br>| (IV) $\\int_0^4 f(x) dx = 4$ | (iv) $f(3x) = 4f(x)$ | (S) $\\int_3^9 f(x) dx = 24$ |<br><br>Which of the following is **correct** combination?",
+      "type": "SINGLE",
+      "options": [
+        "(III) (iv) (R)",
+        "(II) (iii) (R)",
+        "(III) (iii) (R)",
+        "(III) (iii) (S)"
+      ],
+      "correctIndex": 3,
+      "correctIndices": [],
+      "correctNum": "",
+      "marks": {
+        "pos": 3,
+        "neg": 1
+      },
+      "diagram": null,
+      "explanation": "Source: Question 662",
+      "matrixAns": {}
+    },
+    {
+      "id": "q_d7p1i4jmn677h0c",
+      "text": "Paragraph for Question Nos. 663 to 665<br>Match the condition of column-I with corresponding number of real roots of $f(x)=0$ in column-II and number of points of non-derivability of $y = f(|x|)$ in column-III, where $f(x) = ax^2 + bx + c$.<br><br>| Column-I | Column-II | Column-III |<br>| :--- | :--- | :--- |<br>| (I) $a^2 + b^2 + c^2 - ab - bc - ca \\le 0$ | (i) 0 | (P) 0 |<br>| (II) $a^2 + b^2 + c^2 + ab + bc + ca \\le 0$ | (ii) 1 | (Q) 1 |<br>| (III) $3(a^2 + b^2 + c^2 + 1) \\le 2(a + b + c + ab + bc + ca)$ | (iii) 2 | (R) 3 |<br>| (IV) $a^2 + b^2 + c^2 \\le 2a + 6b + 4c + 14$ | (iv) $\\infty$ | (S) 5 |<br><br>Which of the following is **correct** combination?",
+      "type": "SINGLE",
+      "options": [
+        "(I) (i) (P)",
+        "(I) (iii) (Q)",
+        "(II) (iv) (P)",
+        "(II) (ii) (Q)"
+      ],
+      "correctIndex": 2,
+      "correctIndices": [],
+      "correctNum": "",
+      "marks": {
+        "pos": 3,
+        "neg": 1
+      },
+      "diagram": null,
+      "explanation": "Source: Question 663",
+      "matrixAns": {}
+    },
+    {
+      "id": "q_25sdqj3mn677h0c",
+      "text": "Paragraph for Question Nos. 663 to 665<br>Match the condition of column-I with corresponding number of real roots of $f(x)=0$ in column-II and number of points of non-derivability of $y = f(|x|)$ in column-III, where $f(x) = ax^2 + bx + c$.<br><br>| Column-I | Column-II | Column-III |<br>| :--- | :--- | :--- |<br>| (I) $a^2 + b^2 + c^2 - ab - bc - ca \\le 0$ | (i) 0 | (P) 0 |<br>| (II) $a^2 + b^2 + c^2 + ab + bc + ca \\le 0$ | (ii) 1 | (Q) 1 |<br>| (III) $3(a^2 + b^2 + c^2 + 1) \\le 2(a + b + c + ab + bc + ca)$ | (iii) 2 | (R) 3 |<br>| (IV) $a^2 + b^2 + c^2 \\le 2a + 6b + 4c + 14$ | (iv) $\\infty$ | (S) 5 |<br><br>Which of the following is **incorrect** combination?",
+      "type": "SINGLE",
+      "options": [
+        "(III) (i) (Q)",
+        "(II) (i) (P)",
+        "(I) (i) (Q)",
+        "(II) (iv) (P)"
+      ],
+      "correctIndex": 1,
+      "correctIndices": [],
+      "correctNum": "",
+      "marks": {
+        "pos": 3,
+        "neg": 1
+      },
+      "diagram": null,
+      "explanation": "Source: Question 664",
+      "matrixAns": {}
+    },
+    {
+      "id": "q_nu8l3comn677h0c",
+      "text": "Paragraph for Question Nos. 663 to 665<br>Match the condition of column-I with corresponding number of real roots of $f(x)=0$ in column-II and number of points of non-derivability of $y = f(|x|)$ in column-III, where $f(x) = ax^2 + bx + c$.<br><br>| Column-I | Column-II | Column-III |<br>| :--- | :--- | :--- |<br>| (I) $a^2 + b^2 + c^2 - ab - bc - ca \\le 0$ | (i) 0 | (P) 0 |<br>| (II) $a^2 + b^2 + c^2 + ab + bc + ca \\le 0$ | (ii) 1 | (Q) 1 |<br>| (III) $3(a^2 + b^2 + c^2 + 1) \\le 2(a + b + c + ab + bc + ca)$ | (iii) 2 | (R) 3 |<br>| (IV) $a^2 + b^2 + c^2 \\le 2a + 6b + 4c + 14$ | (iv) $\\infty$ | (S) 5 |<br><br>Which of the following is **correct** combination?",
+      "type": "SINGLE",
+      "options": [
+        "(III) (i) (P)",
+        "(II) (i) (R)",
+        "(IV) (iii) (R)",
+        "(IV) (iii) (Q)"
+      ],
+      "correctIndex": 3,
+      "correctIndices": [],
+      "correctNum": "",
+      "marks": {
+        "pos": 3,
+        "neg": 1
+      },
+      "diagram": null,
+      "explanation": "Source: Question 665",
+      "matrixAns": {}
+    },
+    {
+      "id": "q_rvfwv28mn677h0c",
+      "text": "If the largest possible value of $x$ such that $0 < x < \\pi$ satisfying the equation $\\frac{2\\sin 2x + 1}{\\cos x + \\sin x} = \\sqrt{2}$ is $\\frac{a\\pi}{b}$. Find $(a + b)$.",
+      "type": "NUMERICAL",
+      "options": [],
+      "correctIndex": -1,
+      "correctIndices": [],
+      "correctNum": "37",
+      "marks": {
+        "pos": 4,
+        "neg": 1
+      },
+      "diagram": null,
+      "explanation": "Source: Question 719",
+      "matrixAns": {}
+    },
+    {
+      "id": "q_spalusvmn677h0c",
+      "text": "Let $f: R \\to R$ satisfy the equation $(x - y)f(x + y) - (x + y)f(x - y) = 4xy(x^2 - y^2) \\ \\forall x, y \\in R$. If $f(1) = -2$, find the absolute difference between maximum and minimum value of $f(x)$ on the interval $[-\\sqrt{3}, \\sqrt{3}]$.",
+      "type": "NUMERICAL",
+      "options": [],
+      "correctIndex": -1,
+      "correctIndices": [],
+      "correctNum": "4",
+      "marks": {
+        "pos": 4,
+        "neg": 1
+      },
+      "diagram": null,
+      "explanation": "Source: Question 720",
+      "matrixAns": {},
+      "_start": 11,
+      "_end": 11,
+      "_count": 1
+    },
+    {
+      "id": "q_wsp0z79mn677h0c",
+      "text": "Let $a_1, a_2, \\dots, a_n$ be the roots of the polynomial $\\sum_{k=1}^n kx^k = 0$. If $\\sum_{k=1}^n \\frac{1}{(1 - a_k)^2} = -13$. Find $n$.",
+      "type": "NUMERICAL",
+      "options": [],
+      "correctIndex": -1,
+      "correctIndices": [],
+      "correctNum": "22",
+      "marks": {
+        "pos": 4,
+        "neg": 1
+      },
+      "diagram": null,
+      "explanation": "Source: Question 728",
+      "matrixAns": {}
+    },
+    {
+      "id": "q_586ra9xmn677h0c",
+      "text": "If $\\lim_{x \\to 0} \\left( 1 + \\int_0^{\\sqrt{a^x - 1}} (\\sin(2 \\text{ arc}\\tan t))(1 + t^2)^{\\ln a} dt \\right)^{\\frac{1}{x}} = 5$, then find the value of $a$. where $a \\in N$ and $a > 1, x > 0$.",
+      "type": "NUMERICAL",
+      "options": [],
+      "correctIndex": -1,
+      "correctIndices": [],
+      "correctNum": "5",
+      "marks": {
+        "pos": 4,
+        "neg": 1
+      },
+      "diagram": null,
+      "explanation": "Source: Question 748",
+      "matrixAns": {}
+    },
+    {
+      "id": "q_gcp9nz9mn677h0c",
+      "text": "Let $\\tau$ be a circle with centre $C(3, 5)$ and $PA$ and $PB$ are pair of tangents drawn from an external point $P(9, 11)$ to the circle $\\tau$. Find the distance between the origin and the point inside the quadrilateral $ACBP$ which is equidistant from its four vertices.",
+      "type": "NUMERICAL",
+      "options": [],
+      "correctIndex": -1,
+      "correctIndices": [],
+      "correctNum": "10",
+      "marks": {
+        "pos": 4,
+        "neg": 1
+      },
+      "diagram": null,
+      "explanation": "Source: Question 805",
+      "matrixAns": {}
+    },
+    {
+      "id": "q_h4bk8x4mn677h0c",
+      "text": "Let $A$ be $m \\times m$ matrix with all elements equal to 1 such that $A^n = 16^{17} A, m, n \\in N$, find sum of possible values of $n$.",
+      "type": "NUMERICAL",
+      "options": [],
+      "correctIndex": -1,
+      "correctIndices": [],
+      "correctNum": "132",
+      "marks": {
+        "pos": 4,
+        "neg": 1
+      },
+      "diagram": null,
+      "explanation": "Source: Question 806",
+      "matrixAns": {}
+    },
+    {
+      "id": "q_z61glqlmn677h0c",
+      "text": "If the function $f(x) = 2x^3 - (8 - a)x^2 + \\left(a^2 + \\frac{16}{9}\\right)x - 12$ has a local minima at some $x \\in R^-$, then find the number of integers in the range of $a$.",
+      "type": "NUMERICAL",
+      "options": [],
+      "correctIndex": -1,
+      "correctIndices": [],
+      "correctNum": "0",
+      "marks": {
+        "pos": 4,
+        "neg": 1
+      },
+      "diagram": null,
+      "explanation": "Source: Question 814",
+      "matrixAns": {}
+    },
+    {
+      "id": "q_qiem8h0mn677h0c",
+      "text": "Let $3, 7 - b$ and $\\frac{-3a^2 + 10}{a + 2}$ be three natural numbers, which are first three terms (in order) of an A.P.. If $(a, b) \\in I$, then find the number of possible such arithmetic progressions.",
+      "type": "NUMERICAL",
+      "options": [],
+      "correctIndex": -1,
+      "correctIndices": [],
+      "correctNum": "4",
+      "marks": {
+        "pos": 4,
+        "neg": 1
+      },
+      "diagram": null,
+      "explanation": "Source: Question 848",
+      "matrixAns": {}
+    },
+    {
+      "id": "q_bz9whq4mn677h0c",
+      "text": "If $\\int_0^{1/2} \\tan^{-1}\\left(\\frac{1}{2} \\left( \\sqrt{\\frac{1+x}{x}} - \\sqrt{\\frac{x}{1+x}} \\right)\\right) dx = p\\ln(2+\\sqrt{3}) - \\frac{\\pi}{q}$, then $pq$ is equal to:",
+      "type": "NUMERICAL",
+      "options": [],
+      "correctIndex": -1,
+      "correctIndices": [],
+      "correctNum": "6",
+      "marks": {
+        "pos": 4,
+        "neg": 1
+      },
+      "diagram": null,
+      "explanation": "Source: Question 902",
+      "matrixAns": {}
+    }
+  ]
+}
